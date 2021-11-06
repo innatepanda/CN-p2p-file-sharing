@@ -1,1 +1,1 @@
-# CN-peer-peer-file-sharing
+# CN-peer-to-peer-file-sharing
