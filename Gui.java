@@ -8,6 +8,7 @@ public class Gui extends JFrame implements ActionListener{
     JPanel  q;
     CardLayout crd;    
     JPanel cPane;  
+    JButton exit;  
     Gui(){
         cPane =new JPanel();  
         crd = new CardLayout();    
@@ -24,7 +25,7 @@ public class Gui extends JFrame implements ActionListener{
         q = new JPanel();
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
-            qgbc.insets = new Insets(1, 8, 8, 1);
+            qgbc.insets = new Insets(8, 8, 8, 8);
             qgbc.gridx = 0;
             qgbc.gridy = 0;
         q.setBounds(0,0,500,500);
@@ -32,8 +33,13 @@ public class Gui extends JFrame implements ActionListener{
         l4=new JLabel("text");
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
-        l4.setText(login.result);
+       // l4.setText(login.result);
         q.add(l4);
+
+        exit =new JButton("Exit");
+        exit.addActionListener(this);
+        qgbc.gridy++;
+        q.add(exit,qgbc);
         cPane.add(q, "b");  
         setContentPane(cPane); 
              
@@ -45,8 +51,10 @@ public class Gui extends JFrame implements ActionListener{
     }
     public void actionPerformed(ActionEvent e) 
     {    
-        
-        System.out.println("x");
+        if(e.getSource()==exit){  
+            
+            System.exit(0);
+        }
     }
     
        public static void main(String[] args) {  

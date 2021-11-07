@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class Login implements ActionListener{
     JTextField t1,t2; 
     JButton b;  
-    JLabel l1,l2,l3, l4;
+    JLabel l1,l2,l3;
     JPanel p;
     CardLayout crd;
     JPanel cPane;
@@ -28,7 +28,7 @@ public class Login implements ActionListener{
         t1=new JTextField(20);  
         
         t2=new JTextField(20); 
-        l1=new JLabel();l2=new JLabel();l3=new JLabel();l4=new JLabel();
+        l1=new JLabel();l2=new JLabel();l3=new JLabel();
         l1.setFont (l1.getFont ().deriveFont (30.0f));
         l1.setText("Login");  l2.setText("Username");  l3.setText("Password");
 
@@ -54,7 +54,7 @@ public class Login implements ActionListener{
         gbc.gridy++;
         p.add(b, gbc);
         gbc.gridy++;
-        p.add(l4, gbc);
+        //p.add(l4, gbc);
     }
 
     public JPanel getpanel()
@@ -68,7 +68,7 @@ public class Login implements ActionListener{
         String s2=t2.getText();  
         
         if(e.getSource()==b){  
-            l4.setText("usr , pass of "+s1+" is: "+s2);
+           // l4.setText("usr , pass of "+s1+" is: "+s2);
             result="usr , pass of "+s1+" is: "+s2;
         
             System.out.println(result);
