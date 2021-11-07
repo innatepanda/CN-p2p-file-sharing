@@ -1,9 +1,49 @@
+import java.awt.*;   
 import javax.swing.*;  
 import java.awt.event.*;
-public class Gui implements ActionListener{
+public class Gui extends JFrame implements ActionListener{
     JTextField t1,t2,t3; 
     JButton b;  
     JLabel l1;
+    JPanel p, q;
+    CardLayout crd;    
+    Container cPane;  
+    Gui(){
+        cPane = getContentPane();  
+        crd = new CardLayout();    
+        cPane.setLayout(crd);  
+        p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(1, 8, 8, 1);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+        p.setBounds(0,0,500,500);
+        p.setBackground(Color.black);
+        
+        
+        
+        t1=new JTextField(20);  
+        
+        t2=new JTextField(20); 
+        
+        l1=new JLabel("Test");  
+        
+        //p.add(Box.createRigidArea(new Dimension(0,5)));
+        p.add(t1, gbc);
+        gbc.gridy++;
+        p.add(t2, gbc);
+        b =new JButton("click");//creating instance of JButton  
+        
+        b.addActionListener(this); 
+        gbc.gridy++;
+        p.add(b, gbc);
+    // cPane.add(l1);
+        cPane.add("a", p);
+        //cPane.add(b);  
+             
+            
+    }
     public void actionPerformed(ActionEvent e) 
     {    
         
@@ -12,30 +52,15 @@ public class Gui implements ActionListener{
         
         if(e.getSource()==b){  
             l1.setText("usr , pass of "+s1+" is: "+s2);
+            crd.next(cPane);  
         }
     }
-    public void test(){
-        JFrame f=new JFrame();//creating instance of JFrame  
-            
-            t1=new JTextField();  
-            t1.setBounds(50,100, 200,30);  
-            t2=new JTextField(); 
-            l1=new JLabel();  
-            l1.setBounds(50,200, 200,30); 
-            f.add(l1);
-            b =new JButton("click");//creating instance of JButton  
-            b.setBounds(50,250,200, 30);  
-            b.addActionListener(this);
-
-            f.add(b);//adding button in JFrame  
-            t2.setBounds(50,150, 200,30);  
-            f.add(t1); f.add(t2);
-            f.setSize(500,500);  
-            f.setLayout(null);  
-            f.setVisible(true);
-    }
+    
        public static void main(String[] args) {  
           Gui g=new Gui();
-            g.test();
+          g.setSize(500,500);  
+          g.setLayout(null);  
+          g.setVisible(true);
+          g.setDefaultCloseOperation(EXIT_ON_CLOSE);    
        } 
 }
