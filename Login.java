@@ -1,0 +1,79 @@
+import java.awt.*;   
+import javax.swing.*;  
+import java.awt.event.*;
+
+public class Login implements ActionListener{
+    JTextField t1,t2; 
+    JButton b;  
+    JLabel l1,l2,l3, l4;
+    JPanel p;
+    CardLayout crd;
+    JPanel cPane;
+    public String result="default";
+    Gui g;
+    Login(CardLayout crd, JPanel cards, Gui g)
+    {
+        this.g=g;
+        this.crd=crd;
+        this.cPane=cards;
+        p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+        p.setBounds(0,0,500,500);
+        p.setBackground(Color.white);
+          
+        t1=new JTextField(20);  
+        
+        t2=new JTextField(20); 
+        l1=new JLabel();l2=new JLabel();l3=new JLabel();l4=new JLabel();
+        l1.setFont (l1.getFont ().deriveFont (30.0f));
+        l1.setText("Login");  l2.setText("Username");  l3.setText("Password");
+
+        gbc.gridx=1;  p.add(l1, gbc);
+        gbc.gridx=0;
+
+        gbc.gridy++;
+        p.add(l2, gbc);
+        gbc.gridx++;
+        p.add(t1, gbc);
+
+        gbc.gridy++;
+        gbc.gridx=0;
+        p.add(l3, gbc);
+        
+        gbc.gridx++;
+        p.add(t2, gbc);
+
+        b =new JButton("click");//creating instance of JButton  
+        
+        //b.addActionListener(this); 
+        b.addActionListener(this);
+        gbc.gridy++;
+        p.add(b, gbc);
+        gbc.gridy++;
+        p.add(l4, gbc);
+    }
+
+    public JPanel getpanel()
+    {
+        return p;
+    }
+    public void actionPerformed(ActionEvent e) 
+    {    
+        
+        String s1=t1.getText();  
+        String s2=t2.getText();  
+        
+        if(e.getSource()==b){  
+            l4.setText("usr , pass of "+s1+" is: "+s2);
+            result="usr , pass of "+s1+" is: "+s2;
+        
+            System.out.println(result);
+            g.changeText(result);
+            crd.next(cPane);  
+        }
+    }
+}
