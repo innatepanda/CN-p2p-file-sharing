@@ -1,6 +1,7 @@
 import java.awt.*;   
 import javax.swing.*;  
 import java.awt.event.*;
+import java.util.Scanner;
 
 public class Login implements ActionListener{
     JTextField t1,t2; 
@@ -66,14 +67,18 @@ public class Login implements ActionListener{
         
         String s1=t1.getText();  
         String s2=t2.getText();  
+        //Scanner scanner = new Scanner(System.in);
         
         if(e.getSource()==b){  
            // l4.setText("usr , pass of "+s1+" is: "+s2);
-            result="usr , pass of "+s1+" is: "+s2;
-        
+         
+            result="usr "+s1+"pass "+s2;
+            result+=" is: "+g.DisplayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             System.out.println(result);
-            g.changeText(result);
+             g.changeText(result);
             crd.next(cPane);  
         }
     }
+   
+   
 }

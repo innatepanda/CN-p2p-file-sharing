@@ -56,12 +56,18 @@ public class Gui extends JFrame implements ActionListener{
             System.exit(0);
         }
     }
-    
+   
+    static{
+        System.loadLibrary("java_c");
+    }    
+    public native int DisplayHello(int a,int b);
        public static void main(String[] args) {  
           Gui g=new Gui();
           g.setSize(500,500);  
           //g.setLayout();  
           g.setVisible(true);
+         
+          System.out.println("java");
           g.setDefaultCloseOperation(EXIT_ON_CLOSE);    
        } 
 }
