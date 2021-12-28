@@ -15,13 +15,7 @@ public class Gui extends JFrame implements ActionListener{
         cPane.setLayout(crd);  
        
         q = new JPanel();
-        
-        
-       
-        //p.add(Box.createRigidArea(new Dimension(0,5)));
-
-        
-
+   
         q = new JPanel();
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
@@ -57,10 +51,11 @@ public class Gui extends JFrame implements ActionListener{
         }
     }
    
-    static{
-        System.loadLibrary("java_c");
-    }    
-    public native int DisplayHello(int a,int b);
+    static {
+        System.loadLibrary("native");
+    }
+    
+    public native int sayHello(int a,int b);
        public static void main(String[] args) {  
           Gui g=new Gui();
           g.setSize(500,500);  
