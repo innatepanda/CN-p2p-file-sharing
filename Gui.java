@@ -27,7 +27,10 @@ public class Gui extends JFrame implements ActionListener{
         l4=new JLabel("text");
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
-       // l4.setText(login.result);
+        //q.add(l4);
+        Register reg = (new Register(crd, cPane, this));
+        cPane.add(reg.getpanel(), "c");
+       // l4.setText(reg.result);
         q.add(l4);
 
         exit =new JButton("Exit");

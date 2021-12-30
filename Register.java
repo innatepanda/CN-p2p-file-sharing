@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.Scanner;
 
-public class Login implements ActionListener{
+public class Register implements ActionListener{
     JTextField t1,t2; 
     JButton b,c;  
     JLabel l1,l2,l3;
@@ -13,8 +13,8 @@ public class Login implements ActionListener{
     int flag=1;
     public String result="default";
     Gui g;
-    
-    Login(CardLayout crd, JPanel cards, Gui g)
+    Login lg;
+    Register(CardLayout crd, JPanel cards, Gui g)
     {
         this.g=g;
         this.crd=crd;
@@ -33,7 +33,7 @@ public class Login implements ActionListener{
         t2=new JTextField(20); 
         l1=new JLabel();l2=new JLabel();l3=new JLabel();
         l1.setFont (l1.getFont ().deriveFont (30.0f));
-        l1.setText("Login");  l2.setText("Username");  l3.setText("Password");
+        l1.setText("Register");  l2.setText("Username");  l3.setText("Password");
 
         gbc.gridx=1;  p.add(l1, gbc);
         gbc.gridx=0;
@@ -50,7 +50,7 @@ public class Login implements ActionListener{
         gbc.gridx++;
         p.add(t2, gbc);
 
-        b =new JButton("Login");//creating instance of JButton  
+        b =new JButton("Register");//creating instance of JButton  
         
         //b.addActionListener(this); 
         b.addActionListener(this);
@@ -58,7 +58,7 @@ public class Login implements ActionListener{
         p.add(b, gbc);
         gbc.gridy++;
         
-        c =new JButton("Register");
+        c =new JButton("Login");
         c.addActionListener(this);
         gbc.gridy++;
         p.add(c, gbc);
@@ -86,11 +86,11 @@ public class Login implements ActionListener{
              g.changeText(result);
             crd.next(cPane);  
           }
-          if(e.getSource()==c ){  
-           // l4.setText("usr , pass of "+s1+" is: "+s2);
-           System.out.println("In register page");
-           // Register reg ;
-           // cPane.add(reg.getpanel(), "c");
+          if(e.getSource()==c ){   
+            //Login login = (new Login(crd, cPane, lg));
+           // cPane.add(login.getpanel(), "a");
+           
+            System.out.println("In login page");
             crd.next(cPane);  
           }
            

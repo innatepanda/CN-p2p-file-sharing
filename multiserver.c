@@ -398,9 +398,10 @@ int main(int argc,char *argv[])
 	           struct sockaddr_in client;	
 	//printf("Waiting for the connection request from clients at server\n");	
 	           clientfd[i] = accept(sockfd,(struct sockaddr*)&client,&clen);
-	           
+	          
 	           pthread_create(&thread_id[i],NULL,func,&clientfd[i]);
 	           ++i;
+	          
               }
              }
           }
@@ -442,22 +443,21 @@ void *func(void *id)
 		  rec=recv(*cfd, neww, sizeof(neww), 0);
 							
 		  //add all the records to the database of clientinfo
-		  int no_of_files = neww[0].filenum;
+		//  int no_of_files = neww[0].filenum;
 		  int n;
 							
 		  FILE *fp;
 		  fp=fopen(fname,"ab");
 							
-		  for(n=0; n<no_of_files; n++)
-		 {
+		 
 		   struct clientinfo c1;
 		   strcpy(c1.username,neww[n].username);
 		   strcpy(c1.password,neww[n].password);
-		   strcpy(c1.filename,neww[n].filename);
+		   //strcpy(c1.filename,neww[n].filename);
 		   c1.status=0;
 								
 		   fwrite(&c1,sizeof(c1),1,fp);
-	                }
+	                
 		   fclose(fp);
 							
 		 strcpy(sent_msg,"Successfully signed up and record added to database\n");

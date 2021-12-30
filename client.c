@@ -41,7 +41,6 @@ int main(int argc,char *argv[])
 	int rec,sen;
 	char rec_msg[500],sent_msg[500],menu[500];
 	char unm[50],pwd[50],fnm[50];
-	int a= atoi(argv[1]);
 	
 /****************************  SOCKET API  **********************************/
 
@@ -60,7 +59,7 @@ int main(int argc,char *argv[])
                    struct sockaddr_in server;
                    struct sockaddr_in client;
                    server.sin_family=AF_INET;
-	    server.sin_port=htons(a);
+	           server.sin_port=htons(4000);
                    server.sin_addr.s_addr=INADDR_ANY;
                    connvar=connect(sockfd,(const struct sockaddr *)(&server),sizeof(server));
                    if(connvar==-1)
@@ -100,21 +99,21 @@ int main(int argc,char *argv[])
 	           scanf("%s",unm);
 	           printf("Enter password: ");
 	           scanf("%s",pwd);
-	           printf("Enter the no of files you want to add: ");
-	           scanf("%d",&num);
-	           struct signup new[num];
-					
+	            struct signup new;
+	            strcpy(new.username,unm);
+	               strcpy(new.password,pwd);
+	           /*printf("Enter the no of files you want to add: ");
+	           scanf("%d",&num);			
 	           for(n=0;n<num;n++)
 	           {
 		printf("Enter filename: ");
 	               scanf("%s",fnm);
-		strcpy(new[n].username,unm);
-	               strcpy(new[n].password,pwd);
+		
 	               strcpy(new[n].filename,fnm);
 	               new[n].filenum = num;
 					
-	           }
-	           sen=send(sockfd, new, sizeof(new), 0); //sending signup details
+	           }*/
+	           sen=send(sockfd, (struct signup *) &new, sizeof(new), 0); //sending signup details
 	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
 	           //receiving confirmation message
 					
