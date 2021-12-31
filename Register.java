@@ -91,7 +91,7 @@ public class Register implements ActionListener{
            // cPane.add(login.getpanel(), "a");
            
             System.out.println("In login page");
-            crd.next(cPane);  
+            crd.show(cPane,"a");  
           }
            
        

@@ -84,7 +84,8 @@ public class Login implements ActionListener{
             result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             System.out.println(result);
              g.changeText(result);
-            crd.next(cPane);  
+           // crd.next(cPane);  
+            crd.show(cPane,"b");
           }
           if(e.getSource()==c ){  
            // l4.setText("usr , pass of "+s1+" is: "+s2);

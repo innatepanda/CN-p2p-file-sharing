@@ -24,10 +24,11 @@ public class Gui extends JFrame implements ActionListener{
             qgbc.gridy = 0;
         q.setBounds(0,0,500,500);
         //q.setBackground(Color.blue);
-        l4=new JLabel("text");
+        
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
         //q.add(l4);
+        l4=new JLabel("text");
         Register reg = (new Register(crd, cPane, this));
         cPane.add(reg.getpanel(), "c");
        // l4.setText(reg.result);
@@ -38,6 +39,7 @@ public class Gui extends JFrame implements ActionListener{
         qgbc.gridy++;
         q.add(exit,qgbc);
         cPane.add(q, "b");  
+       
         setContentPane(cPane); 
              
             
