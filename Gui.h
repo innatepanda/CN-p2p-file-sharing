@@ -77,6 +77,14 @@ extern "C" {
 #define Gui_serialVersionUID 2673458971256075116LL
 /*
  * Class:     Gui
+ * Method:    Cmain
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_Gui_Cmain
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     Gui
  * Method:    Auth
  * Signature: (Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
  */

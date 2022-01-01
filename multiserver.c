@@ -16,6 +16,7 @@ struct clientinfo
 	char username[50];
 	char password[50];
 	char filename[50];
+	int filenum;
 	int status; // 1-online  0-offline 
 	
 };
@@ -239,7 +240,7 @@ void SEARCH(int sockfd)
 
 void ADDFILE(int sockfd)
 {
-	struct signup neww2[20];
+	struct clientinfo neww2[20];
 	int rec,sen;
 	char msg[200];
 	rec=recv(sockfd, neww2, sizeof(neww2), 0);
@@ -409,7 +410,8 @@ void *func(void *id)
 {
     pthread_detach(pthread_self());
     int *cfd = (int*)id;
-    char rec_msg[500],sent_msg[500];
+    char sent_msg[500];
+    struct signup rec_msg;
    if(*cfd==-1)
    {
      printf("Accept failed....\n");
@@ -423,7 +425,7 @@ void *func(void *id)
 		sen=send(*cfd, sent_msg, strlen(sent_msg), 0);*/
       while(1)
       {
-         rec=recv(*cfd,(struct signup *)rec_msg, sizeof(rec_msg), 0);
+         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
 		         
 						
 /****************************  SIGNUP  ******************************/		
@@ -446,7 +448,7 @@ void *func(void *id)
 	           fclose(fp);
 							
 		   strcpy(sent_msg,"Successfully signed up and record added to database\n");
-		   printf("New client ( username : %s ) added to database.\n",neww[0].username);
+		   printf("New client ( username : %s ) added to database.\n",rec_msg.username);
 		   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 							
 		   displayAll();
@@ -502,14 +504,14 @@ void *func(void *id)
 		//sen=send(clientfd[i], sent_msg, strlen(sent_msg), 0);
 								
 		int check = -1;
-		while(check != 0)
+		/*while(check != 0)
 		//while(1)
 		{
 		  //printf("\namia\n");	
-		  rec=recv(*cfd,rec_msg,sizeof(rec_msg),0);
-		  rec_msg[rec]='\0';
+		  //rec=recv(*cfd,rec_msg,sizeof(rec_msg),0);
+		  //rec_msg[rec]='\0';
 		 // printf("\n%s\n",rec_msg);
-		  check=atoi(rec_msg);
+		 // check=atoi(rec_msg);
 		  //printf("\n%d\n",check);			
 		  switch(check)
 		  {
@@ -529,7 +531,7 @@ void *func(void *id)
 		            strcpy(sent_msg,"Successfully Logged out of p2p server\n");
                           sen=send(*cfd, sent_msg, strlen(sent_msg),0);
                           displayAll();
-                          close(*cfd);
+                          //close(*cfd);
                           pthread_exit(0);
                           break;	
                     }
@@ -537,7 +539,7 @@ void *func(void *id)
 	                 //{
 	                 //  break;
 	                 //}
-	         }
+	         }*/
 	     }
 							
 	        

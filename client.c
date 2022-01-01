@@ -73,8 +73,7 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 	               serPort=ntohs(server.sin_port);
 	               printf("Connected to the server at IP address %s and port no %d...\n",serIP,serPort);
 			
-	               rec=recv(sockfd, menu, sizeof(menu), 0);
-	               menu[rec]='\0';
+	              
 	               return 1;
 	            }
 

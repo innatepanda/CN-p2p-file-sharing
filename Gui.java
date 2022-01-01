@@ -59,10 +59,11 @@ public class Gui extends JFrame implements ActionListener{
     static {
         System.loadLibrary("native");
     }
-    
+    public native int Cmain();
     public native String Auth(String usr, String pwd, int status);
        public static void main(String[] args) {  
           Gui g=new Gui();
+          int res=g.Cmain();
           g.setSize(500,500);  
           //g.setLayout();  
           g.setVisible(true);
