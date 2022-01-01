@@ -77,11 +77,11 @@ extern "C" {
 #define Gui_serialVersionUID 2673458971256075116LL
 /*
  * Class:     Gui
- * Method:    sayHello
- * Signature: (II)I
+ * Method:    Auth
+ * Signature: (Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
  */
-JNIEXPORT jint JNICALL Java_Gui_sayHello
-  (JNIEnv *, jobject, jint, jint);
+JNIEXPORT jstring JNICALL Java_Gui_Auth
+  (JNIEnv *, jobject, jstring, jstring, jint);
 
 #ifdef __cplusplus
 }

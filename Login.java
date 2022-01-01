@@ -80,18 +80,16 @@ public class Login implements ActionListener{
            if(e.getSource()==b ){  
            // l4.setText("usr , pass of "+s1+" is: "+s2);
          
-            result="usr "+s1+"pass "+s2;
-            result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
+           // result="usr "+s1+"pass "+s2;
+           // result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
+            result=g.Auth(s1,s2,1);
             System.out.println(result);
              g.changeText(result);
            // crd.next(cPane);  
             crd.show(cPane,"b");
           }
           if(e.getSource()==c ){  
-           // l4.setText("usr , pass of "+s1+" is: "+s2);
-           System.out.println("In register page");
-           // Register reg ;
-           // cPane.add(reg.getpanel(), "c");
+            System.out.println("In register page");
             crd.next(cPane);  
           }
            

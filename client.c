@@ -8,6 +8,7 @@
 #include <netinet/ip.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "Gui.h"
 
 struct clientinfo
 {
@@ -33,14 +34,69 @@ struct login
 	char password[50];
 };
 
+char cliIP[16];int cliPort;
+char serIP[16];int serPort;
+int connvar,sockfd;
+int rec,sen;
+char rec_msg[500],sent_msg[500],menu[500];
+char unm[50],pwd[50],fnm[50];
+
+
+
+JNIEXPORT jstring JNICALL Java_Gui_Auth
+  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint status) {
+    printf("Auth\n"); 
+    //jboolean isCopy;
+    
+    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
+    const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
+   // string unm =(string)GetStringUTFChars(env, un , &isCopy);
+  //  string pwd =(string)GetStringUTFChars(env, pwd , &isCopy);
+ 
+/*const char *unm = env->GetStringUTFChars(un, &isCopy);
+string string =string(unm, length)
+const char *pwd1 = env->GetStringUTFChars(pd, &isCopy);
+string string = string(pwd1, length)*/
+                if(status==0)
+	        {
+	           int num,n;
+	            struct signup sp;
+	            strcpy((char *)sp.username,unm);
+	            strcpy(sp.password,pwd);
+	            sen=send(sockfd, (struct signup *) &sp, sizeof(sp), 0); //sending signup details
+	            rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
+	           //receiving confirmation message
+	         		
+	           rec_msg[rec]='\0';
+	           //return rec_msg;
+	           return  (*env)->NewStringUTF(env, rec_msg);
+	       }
+	        else 
+	       {				  
+	           struct login client[1];
+				
+	           strcpy(client[0].username,unm);
+	           strcpy(client[0].password,pwd);
+				
+	           sen=send(sockfd, client, sizeof(client), 0); //sending login details
+	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
+	           //receiving confirmation or error message
+	           rec_msg[rec]='\0';		
+	            if(strcmp(rec_msg,"nf")==0)
+	           {
+	              return "Incorrect username or password. Please try again";
+	           }
+	           else
+	           {
+	             return "Login successful";
+	           }
+	         }
+	         
+}
+
 int main(int argc,char *argv[])
 {
-	char cliIP[16];int cliPort;
-	char serIP[16];int serPort;
-	int connvar,sockfd;
-	int rec,sen;
-	char rec_msg[500],sent_msg[500],menu[500];
-	char unm[50],pwd[50],fnm[50];
+	
 	
 /****************************  SOCKET API  **********************************/
 
@@ -77,7 +133,8 @@ int main(int argc,char *argv[])
 			
 	        rec=recv(sockfd, menu, sizeof(menu), 0);
 	        menu[rec]='\0';
-	       while(1){
+	        }
+	       /*while(1){
 	        printf("%s",menu);
 			
 				
@@ -88,9 +145,9 @@ int main(int argc,char *argv[])
                        
                        rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0);
 	        rec_msg[rec]='\0';
-	        printf("%s",rec_msg);
+	        printf("%s",rec_msg);*/
 				
-/****************************  SIGNUP  ****************************************/
+/****************************  SIGNUP  ****************************************
 			
 	        if(strcmp(sent_msg,"0")==0)
 	        {
@@ -112,7 +169,7 @@ int main(int argc,char *argv[])
 	               strcpy(new[n].filename,fnm);
 	               new[n].filenum = num;
 					
-	           }*/
+	           }
 	           sen=send(sockfd, (struct signup *) &new, sizeof(new), 0); //sending signup details
 	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
 	           //receiving confirmation message
@@ -126,7 +183,7 @@ int main(int argc,char *argv[])
 	           //exit(1);
 	          //continue;
 	       }
-/****************************  LOGIN  ************************************/
+****************************  LOGIN  ************************************
 				
 	       else if(strcmp(sent_msg,"1")==0)
 	       {				  
@@ -236,7 +293,7 @@ int main(int argc,char *argv[])
 	    }
 	    
 
-/*******************INVALID CHOICE******************************/
+*******************INVALID CHOICE******************************
                    else
 	    {
 	       printf("Invalid choice\n");
@@ -246,7 +303,22 @@ int main(int argc,char *argv[])
 	    }
               }
              }
-          }	
+          }*/	
      return 0;	
+     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

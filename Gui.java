@@ -60,7 +60,7 @@ public class Gui extends JFrame implements ActionListener{
         System.loadLibrary("native");
     }
     
-    public native int sayHello(int a,int b);
+    public native String Auth(String usr, String pwd, int status);
        public static void main(String[] args) {  
           Gui g=new Gui();
           g.setSize(500,500);  
