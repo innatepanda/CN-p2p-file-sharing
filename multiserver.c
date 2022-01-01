@@ -24,16 +24,11 @@ struct signup
 {
 	char username[50];
 	char password[50];
-	char filename[50]; 
-	int filenum;
+	
+	int status;
 	
 };
 
-struct login
-{
-	char username[50];
-	char password[50];
-};
 
 char fname[] = "mydb.dat";
 
@@ -411,88 +406,72 @@ int main(int argc,char *argv[])
 
 }
 void *func(void *id)
-	         {
-	            pthread_detach(pthread_self());
-	            int *cfd = (int*)id;
-	            char rec_msg[500],sent_msg[500];
-	           if(*cfd==-1)
-	           {
-	             printf("Accept failed....\n");
-	             exit(1);
-	           }
-	           else
-	           {
-		cliPort=ntohs(client.sin_port);
-		printf("Client with port no %d connected to the server...\n",cliPort);
-		strcpy(sent_msg,"\nWelcome to the P2P server\nPress 0 and enter to SIGN-UP\nPress 1 and enter to LOGIN\nPress -1 to exit\n\n");
-		sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-	              while(1)
-	              {
-		rec=recv(*cfd, rec_msg, sizeof(rec_msg), 0);
-		//receiving choice 0 or 1
-		rec_msg[rec]='\0';
+{
+    pthread_detach(pthread_self());
+    int *cfd = (int*)id;
+    char rec_msg[500],sent_msg[500];
+   if(*cfd==-1)
+   {
+     printf("Accept failed....\n");
+     exit(1);
+   }
+   else
+   {
+       cliPort=ntohs(client.sin_port);
+       printf("Client with port no %d connected to the server...\n",cliPort);
+       /*strcpy(sent_msg,"\nWelcome to the P2P server\nPress 0 and enter to SIGN-UP\nPress 1 and enter to LOGIN\nPress -1 to exit\n\n");
+		sen=send(*cfd, sent_msg, strlen(sent_msg), 0);*/
+      while(1)
+      {
+         rec=recv(*cfd,(struct signup *)rec_msg, sizeof(rec_msg), 0);
+		         
 						
 /****************************  SIGNUP  ******************************/		
+
+          if(rec_msg.status==0)   //CODE FOR SIGNUP
+          {
+						
+	          FILE *fp;
+	          fp=fopen(fname,"ab");
+						        
+	         
+	           struct clientinfo c1;
+	           strcpy(c1.username,rec_msg.username);
+	           strcpy(c1.password,rec_msg.password);
+	           //strcpy(c1.filename,neww[n].filename);
+	           c1.status=0;
+							        
+	           fwrite(&c1,sizeof(c1),1,fp);
+                        
+	           fclose(fp);
+							
+		   strcpy(sent_msg,"Successfully signed up and record added to database\n");
+		   printf("New client ( username : %s ) added to database.\n",neww[0].username);
+		   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+							
+		   displayAll();
 		
-		if(strcmp(rec_msg,"0")==0)   //CODE FOR SIGNUP
-                              {
-		  strcpy(sent_msg,"Please enter your username , password and list of filenames to SIGNUP\n");
-		  sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-							
-		  struct signup neww[100];
-		  rec=recv(*cfd, neww, sizeof(neww), 0);
-							
-		  //add all the records to the database of clientinfo
-		//  int no_of_files = neww[0].filenum;
-		  int n;
-							
-		  FILE *fp;
-		  fp=fopen(fname,"ab");
-							
-		 
-		   struct clientinfo c1;
-		   strcpy(c1.username,neww[n].username);
-		   strcpy(c1.password,neww[n].password);
-		   //strcpy(c1.filename,neww[n].filename);
-		   c1.status=0;
-								
-		   fwrite(&c1,sizeof(c1),1,fp);
-	                
-		   fclose(fp);
-							
-		 strcpy(sent_msg,"Successfully signed up and record added to database\n");
-		 printf("New client ( username : %s ) added to database.\n",neww[0].username);
-		 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-							
-		displayAll();
-		//close(sockfd);
-		//exit(1);
-                              //continue;
-	             }
+	   }
 
 /****************************  LOGIN  ***********************************/
 						
-                           else if(strcmp(rec_msg,"1")==0)   //CODE FOR LOGIN
-	            {
-	              strcpy(sent_msg,"Please enter your username and password to LOGIN\n");
-	              sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-	              struct login chk[1];
-	              rec=recv(*cfd,chk, sizeof(chk), 0);
-	              //receiving username and password
-													
-	             //check for the details in database and return found or not found
-							
-	              FILE *fp;
-	              fp=fopen(fname,"rb");
-	              struct clientinfo c2;
-	              int found=0;
-	              while(1)
-	             {
+        else if(rec_msg.status==1)   //CODE FOR LOGIN
+        {
+             										
+             //check for the details in database and return found or not found
+						
+              FILE *fp;
+              fp=fopen(fname,"rb");
+              struct clientinfo c2;
+              int found=0;
+              while(1)
+              {
 		fread(&c2,sizeof(c2),1,fp);
 
 		if(feof(fp))
-		   break;     								
-		if(strcmp(chk[0].username,c2.username)==0  &&   strcmp(chk[0].password,c2.password)==0 )
+		   break;  
+		      								
+		if(strcmp(rec_msg.username,c2.username)==0  &&   strcmp(rec_msg.password,c2.password)==0 )
 		{
 		   found=1;
 		   strcpy(sent_msg,"f");
@@ -500,25 +479,25 @@ void *func(void *id)
 								
 		   //update the status to online of the logged in user
 		  UPDATE_STATUS_LOGIN(c2.username);
-		  printf("New client ( username : %s and password : %s) logged into server.Status updated to online\n",chk[0].username,chk[0].password);
+		  printf("New client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
 		  break;
 		}
 		
 
-	             }
-	             fclose(fp);
-	             if(found==0)
-	             {
+	     }
+             fclose(fp);
+             if(found==0)
+             {
 		  strcpy(sent_msg,"nf");
 	                 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-		  printf("Incorrect details ( username : %s and password : %s).\n",chk[0].username,chk[0].password);
-	             }
-	             displayAll();
+		  printf("Incorrect details\n");
+	     }
+             displayAll();
 		  
 							
 							
-	             if(found==1)
-	             {
+             if(found==1)
+             {
 	              // strcpy(sent_msg,"Enter 1 to SEARCH\nEnter 2 to ADD FILES\nEnter 3 to DELETE files\nEnter 0 to LOGOUT\n");
 		//sen=send(clientfd[i], sent_msg, strlen(sent_msg), 0);
 								
@@ -548,44 +527,25 @@ void *func(void *id)
 		    case 0: UPDATE_STATUS_LOGOUT(c2.username);
 		            printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",c2.username,c2.password);	
 		            strcpy(sent_msg,"Successfully Logged out of p2p server\n");
-                                          sen=send(*cfd, sent_msg, strlen(sent_msg),0);
-                                          displayAll();
-                                          break;	
-	                 }
+                          sen=send(*cfd, sent_msg, strlen(sent_msg),0);
+                          displayAll();
+                          close(*cfd);
+                          pthread_exit(0);
+                          break;	
+                    }
 	                // if(check==0)
 	                 //{
 	                 //  break;
 	                 //}
-	               }
-	           }
+	         }
+	     }
 							
-	         // close(sockfd);
-	        //  exit(1);
-	           }
-	           else if(strcmp(rec_msg,"-1")==0)
-	           {
-	              // flag=1;
-	               close(*cfd);
-	               pthread_exit(0);
-	               //break;
-	           }
-						
-/****************************  INVALID CHOICE **********************************/
-						
-	      else
-	      {			
-	          printf("Invalid choice. Please try again.\n");
-	          displayAll();
-	          //close(sockfd);
-	          //exit(1);
-	      }
-	      
-	      //if(flag==1)
-	      //{
-	      //  break;
-	      //}
-						
-                    }				
-						
-	    }
+	        
 	}
+						
+
+						
+    }				
+						
+  }
+}
