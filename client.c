@@ -15,16 +15,9 @@ struct clientinfo
 	char username[50];
 	char password[50];
 	char filename[50];
-	int status; // 1-online  0-offline 
-	
-};
-
-struct signup
-{
-	char username[50];
-	char password[50];
-	int status;
-	
+	//int status;// 1-online  0-offline 
+	int choice; 
+	//0-reg, 1-login, -1-exit(thread close), 2-searchfile, 3-add file, 4-delete, 5-logout
 };
 
 char cliIP[16];int cliPort;
@@ -82,23 +75,23 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
-  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint status) {
+  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
     printf("Auth"); 
     //jboolean isCopy;
     
     const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
     const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
-    printf("Auth1 %s , %s , %d\n",unm,pwd,status); 
+    printf("Auth1 %s , %s , %d\n",unm,pwd,choice); 
    // main();
        
 	         //  return  (*env)->NewStringUTF(env, rec_msg);
 	       
-	         struct signup client;
+	         struct clientinfo client;
 				
 	           strcpy(client.username,unm);
 	           strcpy(client.password,pwd);
-                   client.status=status;	
-	           sen=send(sockfd,(struct signup *) &client, sizeof(client), 0); //sending login details
+                   client.choice=choice;	
+	           sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
 	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
 	           //receiving confirmation or error message
 	           rec_msg[rec]='\0';

@@ -83,10 +83,14 @@ public class Login implements ActionListener{
            // result="usr "+s1+"pass "+s2;
            // result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             result=g.Auth(s1,s2,1);
-            System.out.println(result);
-             g.changeText(result);
-           // crd.next(cPane);  
-            crd.show(cPane,"b");
+            if(result==1){
+               g.SetUserName(s1);
+               System.out.println(result);
+               g.changeText(result);
+               // crd.next(cPane);  
+               crd.show(cPane,"b");
+            }
+            
           }
           if(e.getSource()==c ){  
             System.out.println("In register page");

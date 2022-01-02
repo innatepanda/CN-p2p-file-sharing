@@ -9,6 +9,7 @@ public class Gui extends JFrame implements ActionListener{
     CardLayout crd;    
     JPanel cPane;  
     JButton exit;  
+    String username="User"; 
     Gui(){
         cPane =new JPanel();  
         crd = new CardLayout();    
@@ -52,8 +53,12 @@ public class Gui extends JFrame implements ActionListener{
     {    
         if(e.getSource()==exit){  
             
+            //result=g.Auth(s1,s2,-1);
             System.exit(0);
         }
+    }
+    public void SetUserName(String usern){
+        username=usern;
     }
    
     static {

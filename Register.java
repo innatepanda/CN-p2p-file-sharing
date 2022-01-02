@@ -83,9 +83,15 @@ public class Register implements ActionListener{
           //  result="usr "+s1+"pass "+s2;
           //  result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             result=g.Auth(s1,s2,0);
-            System.out.println(result);
-             g.changeText(result);
-            crd.next(cPane);  
+            if(result==0){
+               g.SetUserName(s1);
+               System.out.println(result);
+              // g.changeText(result);
+               // crd.next(cPane);  
+              crd.next(cPane);
+            }
+           
+              
           }
           if(e.getSource()==c ){   
             //Login login = (new Login(crd, cPane, lg));
