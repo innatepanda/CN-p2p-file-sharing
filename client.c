@@ -14,10 +14,12 @@ struct clientinfo
 {
 	char username[50];
 	char password[50];
+	//char uid[10];
 	char filename[50];
-	//int status;// 1-online  0-offline 
-	int choice; 
-	//0-reg, 1-login, -1-exit(thread close), 2-searchfile, 3-add file, 4-delete, 5-logout
+	int filenum;
+	int status; // 1-online  0-offline 
+	int choice;
+	
 };
 
 char cliIP[16];int cliPort;
@@ -90,7 +92,8 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 				
 	           strcpy(client.username,unm);
 	           strcpy(client.password,pwd);
-                   client.choice=choice;	
+                   client.choice=choice;
+                   printf("choice %s , %d",client.username, client.choice);	
 	           sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
 	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
 	           //receiving confirmation or error message

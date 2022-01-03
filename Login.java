@@ -83,13 +83,16 @@ public class Login implements ActionListener{
            // result="usr "+s1+"pass "+s2;
            // result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             result=g.Auth(s1,s2,1);
-            if(result==1){
+            if(result.substring(0,3).equals("200")){
                g.SetUserName(s1);
                System.out.println(result);
                g.changeText(result);
                // crd.next(cPane);  
                crd.show(cPane,"b");
             }
+            else
+            System.out.print("err - " +result);
+            
             
           }
           if(e.getSource()==c ){  

@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include <time.h>
+
 void *func(void *id);
 struct clientinfo
 {
@@ -64,10 +64,10 @@ void UPDATE_STATUS_LOGIN(char user[50])
 	FILE *fp,*fp1;
 	struct clientinfo t,t1;
 	int recvsize,found=0,count=0;
-	
 	fp=fopen(fname,"rb");
 	fp1=fopen("temp.dat","wb");
-		
+	printf("update login %s\n", user);
+	
 	while(1)
 	{
 		fread(&t,sizeof(t),1,fp);
@@ -76,6 +76,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			break;
 		}
+		printf("t user %s\n", t.username);
 		if(strcmp(t.username,user)==0)
 		{
 			found=1;
@@ -126,13 +127,14 @@ int SEARCH_USER(char usrn[50],char pwd[50]){
       fp=fopen(fname,"rb");
       struct clientinfo c2;
       int found=0;
+      printf("search user %s %s\n",usrn, pwd);
       while(1)
       {
 	fread(&c2,sizeof(c2),1,fp);
 
 	if(feof(fp))
 	   break;  
-	      								
+	printf("c user %s\n", c2.username);      								
 	if(strcmp(usrn,c2.username)==0)
 	{
 	   if(strlen(pwd)==0 || (strlen(pwd)>0 && strcmp(pwd,c2.password)==0))
@@ -146,6 +148,7 @@ int SEARCH_USER(char usrn[50],char pwd[50]){
 
      }
      fclose(fp);
+     printf("found in search %d\n", found);
      return found;
     
 		  
@@ -435,7 +438,6 @@ void *func(void *id)
     pthread_detach(pthread_self());
     int *cfd = (int*)id;
     char sent_msg[500];
-    time_t seconds;
     struct clientinfo rec_msg;
    if(*cfd==-1)
    {
@@ -451,18 +453,20 @@ void *func(void *id)
       while(1)
       {
          rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-		         
+         printf("choice %s %s %d\n", rec_msg.username,rec_msg.password, rec_msg.choice);	
+                
 						
 /****************************  SIGNUP  ******************************/		
 
           if(rec_msg.choice==0)   //CODE FOR SIGNUP
           {
 		  int found=SEARCH_USER(rec_msg.username,NULL);
+		  printf("reg found %d\n", found);
 		  if(found==1)
 		  {
-		      strcpy(sent_msg,"Username alreay exists\n");
+		      strcpy(sent_msg,"500 Username alreay exists\n");
 		      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-		      continue;  
+		        
 		  }
 		  else{
 		     FILE *fp;
@@ -479,7 +483,7 @@ void *func(void *id)
 	               fclose(fp);
 	               UPDATE_STATUS_LOGIN(c1.username);
 		  
-		       strcpy(sent_msg,"Successfully signed up and record added to database\n");
+		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
 		       printf("New client ( username : %s ) added to database.\n",rec_msg.username);
 		       sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 							        
@@ -497,13 +501,13 @@ void *func(void *id)
         {
              										
              //check for the details in database and return found or not found
-						
-       		int found=SEARCH_USER(rec_msg.username,rec_msg.password);
-       					
+		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
+       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
+       	printf("login found %d\n", found);			
 		if(found==1)
 		{
 		   
-		   strcpy(sent_msg,"f");
+		   strcpy(sent_msg,"200 f");
 		   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 								
 		   //update the status to online of the logged in user
@@ -517,7 +521,7 @@ void *func(void *id)
                
                 if(found==0)
                 {
-	             strcpy(sent_msg,"nf");
+	             strcpy(sent_msg,"500 nf");
                      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	             printf("Incorrect details\n");
 	        }
@@ -529,7 +533,7 @@ void *func(void *id)
 	          
 	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
-	          strcpy(sent_msg,"Successfully Logged out of p2p server\n");
+	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
                   sen=send(*cfd, sent_msg, strlen(sent_msg),0);
                   
                   
