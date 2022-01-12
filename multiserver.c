@@ -189,7 +189,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 	}
 	fclose(fp);
 	fclose(fp1);
-	
+	printf("found: %d",found);
 	if(found==0)
 	{
 		//strcpy(msg,"UserNotFound");
