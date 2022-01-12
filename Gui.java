@@ -53,8 +53,9 @@ public class Gui extends JFrame implements ActionListener{
     {    
         if(e.getSource()==exit){  
             
-            //result=g.Auth(s1,s2,-1);
-            System.exit(0);
+            this.Auth(username,"password",-1);
+            //System.out.println("close result: "+resC);
+            //System.exit(0);
         }
     }
     public void SetUserName(String usern){

@@ -49,28 +49,28 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 		
 /****************************  CONNECT API  ***********************************/
 
-                   struct sockaddr_in server;
-                   struct sockaddr_in client;
-                   server.sin_family=AF_INET;
-	           server.sin_port=htons(4000);
-                   server.sin_addr.s_addr=INADDR_ANY;
-                   connvar=connect(sockfd,(const struct sockaddr *)(&server),sizeof(server));
-                   if(connvar==-1)
-                   {
-	               printf("Connect failed...\n");
-	               return 0;
-	           }
-                   else
-                   {
-	               int slen= sizeof(server);
-	               getpeername(sockfd,(struct sockaddr *)(&server),&slen);
-	               inet_ntop(AF_INET,&server.sin_addr,serIP,sizeof(serIP));
-	               serPort=ntohs(server.sin_port);
-	               printf("Connected to the server at IP address %s and port no %d...\n",serIP,serPort);
-			
-	              
-	               return 1;
-	            }
+           struct sockaddr_in server;
+           struct sockaddr_in client;
+           server.sin_family=AF_INET;
+           server.sin_port=htons(4000);
+           server.sin_addr.s_addr=INADDR_ANY;
+           connvar=connect(sockfd,(const struct sockaddr *)(&server),sizeof(server));
+           if(connvar==-1)
+           {
+               printf("Connect failed...\n");
+               return 0;
+           }
+           else
+           {
+               int slen= sizeof(server);
+               getpeername(sockfd,(struct sockaddr *)(&server),&slen);
+               inet_ntop(AF_INET,&server.sin_addr,serIP,sizeof(serIP));
+               serPort=ntohs(server.sin_port);
+               printf("Connected to the server at IP address %s and port no %d...\n",serIP,serPort);
+		
+              
+               return 1;
+            }
 
      }
 
@@ -78,37 +78,29 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
-    printf("Auth"); 
-    //jboolean isCopy;
-    
-    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
-    const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
-    printf("Auth1 %s , %s , %d\n",unm,pwd,choice); 
-   // main();
-       
-	         //  return  (*env)->NewStringUTF(env, rec_msg);
-	       
-	         struct clientinfo client;
-				
-	           strcpy(client.username,unm);
-	           strcpy(client.password,pwd);
-                   client.choice=choice;
-                   printf("choice %s , %d",client.username, client.choice);	
-	           sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
-	           rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
-	           //receiving confirmation or error message
-	           rec_msg[rec]='\0';
-	           printf("%s",rec_msg);		
-	           /* if(strcmp(rec_msg,"nf")==0)
-	           {
-	              printf("%s, %s", client.username, client.password);
-	              return "Incorrect username or password. Please try again";
-	           }
-	           else
-	           {
-	             return "Login successful";
-	           }*/
-	 return  (*env)->NewStringUTF(env, rec_msg);
+  
+   const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
+   const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
+   struct clientinfo client;
+			
+   strcpy(client.username,unm);
+   strcpy(client.password,pwd);
+   client.choice=choice;
+   printf("choice %s , %d",client.username, client.choice);	
+   sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
+   
+   if(client.choice==-1)
+   {
+	   exit(0);
+	}
+   else
+   {
+   	rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
+   	rec_msg[rec]='\0';
+   	printf("rec msg: %s",rec_msg);		
+	   
+ 	return  (*env)->NewStringUTF(env, rec_msg); 
+ }
 	         
 }
 
