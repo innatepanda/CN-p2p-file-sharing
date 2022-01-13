@@ -11,6 +11,7 @@ public class Login implements ActionListener{
     CardLayout crd;
     JPanel cPane;
     int flag=1;
+    public String s1="str",s2;
     public String result="default";
     Gui g;
     
@@ -73,8 +74,8 @@ public class Login implements ActionListener{
     public void actionPerformed(ActionEvent e) 
     {    
         
-        String s1=t1.getText();  
-        String s2=t2.getText();  
+         s1=t1.getText();  
+         s2=t2.getText();  
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
@@ -84,7 +85,8 @@ public class Login implements ActionListener{
            // result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             result=g.Auth(s1,s2,1);
             if(result.substring(0,3).equals("200")){
-               g.username=s1;
+               g.changeUsername(s1);
+               System.out.println("usernameL"+g.username);
                System.out.println(result);
               
                // crd.next(cPane);  

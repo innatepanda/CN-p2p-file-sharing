@@ -4,11 +4,12 @@ import java.awt.event.*;
 public class Gui extends JFrame{
     //JTextField t1,t2,t3; 
     //JButton b;  
-    JLabel l4;
+    JLabel l4,l1;
     JPanel  q;
     CardLayout crd;    
     JPanel cPane;  
-    JButton exit;  
+    JButton exit; 
+    Home home; 
     static String username="user"; 
     Gui(){
         cPane =new JPanel();  
@@ -28,14 +29,15 @@ public class Gui extends JFrame{
         
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
+      //  System.out.println("username"+g.username);
         //q.add(l4);
        
         Register reg = (new Register(crd, cPane, this));
         cPane.add(reg.getpanel(), "c");
-    
-        Home home = (new Home(crd, cPane, this));
+        
+        home = (new Home(crd, cPane, this));
         cPane.add(home.getpanel(), "b");
-
+       
       
         //cPane.add(q, "b");  
        
@@ -47,29 +49,35 @@ public class Gui extends JFrame{
     }
    
   
-   
     static {
         System.loadLibrary("native");
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int status);
-    
+    public native String Files(String[] fname, String[] fpath, int fsize[],int fno,String usr);
+    public void changeUsername(String msg)
+    {
+         username=msg;
+         home.changeText(msg);
+    }
 
        public static void main(String[] args) {  
           Gui g=new Gui();
           int res=g.Cmain();
-          g.setSize(500,500);  
+          g.setSize(1000,1000);  
           //g.setLayout();  
+          g. setResizable(false);
           g.setVisible(true);
          
           System.out.println("java");
+         
           WindowListener exitListener = new WindowAdapter() {
 
-   @Override
-   public void windowClosing(WindowEvent e) {
-      g.Auth(username,"password",-1);
-   }
-};
+            @Override
+            public void windowClosing(WindowEvent e) {
+                  g.Auth(username,"password",-1);
+            }
+           };
           g.addWindowListener(exitListener);
           //login.setDefaultCloseOperation(EXIT_ON_CLOSE); 
              
