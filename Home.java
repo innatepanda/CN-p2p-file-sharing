@@ -5,17 +5,15 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Home implements ActionListener{
-    //JTextField fname,fsize; 
-    JButton logout,delete,add;  
+    JTextField s; 
+    JButton logout,delete,add,search;  
     JLabel welcome,fname,fsize;
     JPanel p;
     CardLayout crd;
     JPanel cPane;
-    int flag=1;
     GridBagConstraints gbc;
     public String result="default";
     Gui g;
-    Login log;
     Home(CardLayout crd, JPanel cards, Gui g)
     {
         this.g=g;
@@ -24,11 +22,14 @@ public class Home implements ActionListener{
         p = new JPanel();
         p.setLayout(new GridBagLayout());
          gbc = new GridBagConstraints();
-            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.insets = new Insets(2, 2, 0, 0);
             gbc.gridx = 0;
             gbc.gridy = 0;
-            
-        p.setBounds(0,0,1000,1000);
+            //gbc.weighty = 1; 
+            gbc.weightx = 1;
+            gbc.anchor = GridBagConstraints.PAGE_START; 
+           // gbc.setVgap(0);
+        p.setBounds(0,0,700,700);
         p.setBackground(Color.white);
        // gbc.setBackground(Color.red);  
      
@@ -38,17 +39,28 @@ public class Home implements ActionListener{
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         p.add(welcome,gbc);
         
+        s=new JTextField(15); 
+        //s.setHorizontalAlignment(JTextField.RIGHT);
+        
+        search=new JButton("Search");
+        search.addActionListener(this);    
+        gbc.gridx=1;
+        s.setOpaque(false);
+        gbc.ipady = 10;  
+        p.add(s, gbc);
+        //search.setHorizontalAlignment(JButton.RIGHT);
+        gbc.gridx=2;
+        p.add(search,gbc);
         
         logout =new JButton("Logout");
         logout.addActionListener(this);    
-        gbc.gridx=6;
+        gbc.gridx=3;
         p.add(logout,gbc);
-        gbc.gridy++;
+        
+        gbc.gridy=1;
         gbc.gridx=0;
-        add =new JButton("Add new file");//creating instance of JButton  
-        //b.addActionListener(this); 
+        add =new JButton("Add new file");     
         add.addActionListener(this);
-        gbc.gridy++;
         p.add(add, gbc);
         gbc.gridy++;
         
@@ -77,9 +89,7 @@ public class Home implements ActionListener{
                int response =jchooser.showOpenDialog(null);
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
-                  //long filesize=file.length();
-                  //fname.setText(file.getName());
-                  //fsize.setText("Size "+filesize);
+                  
                   for (File f: files) {
                        long filesize=f.length();
                        
@@ -89,15 +99,13 @@ public class Home implements ActionListener{
                        
                        
                         fname=new JLabel(f.getName());
-                        fname.setFont (fname.getFont ().deriveFont (15.0f));
-                        //fname.setText(f.getName());
+                        
                         gbc.gridx=0;
                         p.add(fname,gbc);
                         gbc.gridx++;
 
                         fsize=new JLabel("Size "+filesize);
-                        fsize.setFont (fsize.getFont ().deriveFont (15.0f));
-                        //fsize.setText("Size "+filesize);  
+                      
                         p.add(fsize,gbc);
                         gbc.gridx++;
 
@@ -111,18 +119,12 @@ public class Home implements ActionListener{
                   }
 		  p.validate();
                   p.repaint();
-		 // System.out.println("file size "+filesize+"bytes");
-		 // System.out.println("file name "+file.getName());
-		 // System.out.println(jchooser.getSelectedFile().length());
+		
                }
                
                //crd.show(cPane,"b");
            }
-           
-         
-          
-            
-          
+ 
        
     }
    

@@ -24,7 +24,7 @@ public class Gui extends JFrame{
             qgbc.insets = new Insets(8, 8, 8, 8);
             qgbc.gridx = 0;
             qgbc.gridy = 0;
-        q.setBounds(0,0,500,500);
+       // q.setBounds(0,0,500,500);
         //q.setBackground(Color.blue);
         
         Login login = (new Login(crd, cPane, this));
@@ -54,7 +54,7 @@ public class Gui extends JFrame{
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int status);
-    public native String Files(String[] fname, String[] fpath, int fsize[],int fno,String usr);
+    //public native String Files(String[] fname, String[] fpath, int fsize[],int fno,String usr);
     public void changeUsername(String msg)
     {
          username=msg;
@@ -64,11 +64,11 @@ public class Gui extends JFrame{
        public static void main(String[] args) {  
           Gui g=new Gui();
           int res=g.Cmain();
-          g.setSize(1000,1000);  
+          g.setSize(700,700);  
           //g.setLayout();  
-          g. setResizable(false);
+         // g. setResizable(false);
           g.setVisible(true);
-         
+          //g.setUndecorated(true);
           System.out.println("java");
          
           WindowListener exitListener = new WindowAdapter() {

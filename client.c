@@ -92,7 +92,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    if(client.choice==-1)
    {
 	   exit(0);
-	}
+   }
    else
    {
    	rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
@@ -104,7 +104,12 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 	         
 }
 
+/*JNIEXPORT jstring JNICALL Java_Gui_Files
+  (JNIEnv *env, jobject obj, jstring[] fname, jstring[] fpath, jint fsize[],jint fno)
+{
 
+
+}*/
 
 
 

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Register implements ActionListener{
     JTextField t1,t2; 
     JButton b,c;  
-    JLabel l1,l2,l3;
+    JLabel l1,l2,l3,msg1,msg2;
     JPanel p;
     CardLayout crd;
     JPanel cPane;
@@ -33,23 +33,25 @@ public class Register implements ActionListener{
         t2=new JTextField(20); 
         l1=new JLabel();l2=new JLabel();l3=new JLabel();
         l1.setFont (l1.getFont ().deriveFont (30.0f));
-        l1.setText("Register");  l2.setText("Username");  l3.setText("Password");
-
+        l1.setText("Register");  
         gbc.gridx=1;  p.add(l1, gbc);
-        gbc.gridx=0;
-
+        gbc.gridx=0;  gbc.gridy++; 
+         
+        l2.setText("Username");  
+        p.add(l2, gbc); gbc.gridx++;
+        p.add(t1, gbc);   
         gbc.gridy++;
-        p.add(l2, gbc);
-        gbc.gridx++;
-        p.add(t1, gbc);
-
+        msg1=new JLabel();
+        gbc.gridx=1; p.add(msg1,gbc);
         gbc.gridy++;
-        gbc.gridx=0;
-        p.add(l3, gbc);
         
-        gbc.gridx++;
-        p.add(t2, gbc);
-
+        l3.setText("Password");
+        gbc.gridx=0;
+        p.add(l3, gbc); gbc.gridx++;
+        p.add(t2, gbc); gbc.gridy++;
+        msg2=new JLabel();
+        gbc.gridx=1; p.add(msg2,gbc);
+        gbc.gridy++;
         b =new JButton("Register");//creating instance of JButton  
         
         //b.addActionListener(this); 
@@ -90,9 +92,10 @@ public class Register implements ActionListener{
                // crd.next(cPane);  
               crd.next(cPane);
             }
-             else
-            System.out.print("err - " +result);
-            
+             else{
+              // msg1.setText("usern already exists,please try again "+result);
+               System.out.print("err - " +result);
+            }
            
               
           }

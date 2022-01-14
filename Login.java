@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Login implements ActionListener{
     JTextField t1,t2; 
     JButton b,c;  
-    JLabel l1,l2,l3;
+    JLabel l1,l2,l3,msg1,msg2;
     JPanel p;
     CardLayout crd;
     JPanel cPane;
@@ -14,7 +14,7 @@ public class Login implements ActionListener{
     public String s1="str",s2;
     public String result="default";
     Gui g;
-    
+    GridBagConstraints gbc;
     Login(CardLayout crd, JPanel cards, Gui g)
     {
         this.g=g;
@@ -22,8 +22,8 @@ public class Login implements ActionListener{
         this.cPane=cards;
         p = new JPanel();
         p.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(8, 8, 8, 8);
+        gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8,8);
             gbc.gridx = 0;
             gbc.gridy = 0;
         p.setBounds(0,0,500,500);
@@ -34,23 +34,25 @@ public class Login implements ActionListener{
         t2=new JTextField(20); 
         l1=new JLabel();l2=new JLabel();l3=new JLabel();
         l1.setFont (l1.getFont ().deriveFont (30.0f));
-        l1.setText("Login");  l2.setText("Username");  l3.setText("Password");
-
+        l1.setText("Login");
         gbc.gridx=1;  p.add(l1, gbc);
-        gbc.gridx=0;
-
+        gbc.gridx=0;  gbc.gridy++; 
+         
+        l2.setText("Username");  
+        p.add(l2, gbc); gbc.gridx++;
+        p.add(t1, gbc);   
         gbc.gridy++;
-        p.add(l2, gbc);
-        gbc.gridx++;
-        p.add(t1, gbc);
-
+        msg1=new JLabel();
+        gbc.gridx=1; p.add(msg1,gbc);
         gbc.gridy++;
-        gbc.gridx=0;
-        p.add(l3, gbc);
         
-        gbc.gridx++;
-        p.add(t2, gbc);
-
+        l3.setText("Password");
+        gbc.gridx=0;
+        p.add(l3, gbc); gbc.gridx++;
+        p.add(t2, gbc); gbc.gridy++;
+        msg2=new JLabel();
+        gbc.gridx=1; p.add(msg2,gbc);
+        gbc.gridy++;
         b =new JButton("Login");//creating instance of JButton  
         
         //b.addActionListener(this); 
@@ -79,22 +81,22 @@ public class Login implements ActionListener{
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
-           // l4.setText("usr , pass of "+s1+" is: "+s2);
-         
-           // result="usr "+s1+"pass "+s2;
-           // result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
             result=g.Auth(s1,s2,1);
             if(result.substring(0,3).equals("200")){
                g.changeUsername(s1);
+                
                System.out.println("usernameL"+g.username);
                System.out.println(result);
               
                // crd.next(cPane);  
                crd.show(cPane,"b");
             }
-            else
-            System.out.print("err - " +result);
-            
+            else{
+                
+                msg1.setText("Incorrect usern,please try again "+result);
+                //msg2.setText("Incorrect pass,please try again "+result);
+                System.out.print("err - " +result);
+            }
             
           }
           if(e.getSource()==c ){  

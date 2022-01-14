@@ -282,7 +282,7 @@ void ADDFILE(int sockfd)
 	{
 		struct clientinfo cli;
 		strcpy(cli.username,neww2[n].username);
-		strcpy(cli.password,neww2[n].password);
+		//strcpy(cli.password,neww2[n].password);
 		strcpy(cli.filename,neww2[n].filename);
 		cli.status=1;
 								
