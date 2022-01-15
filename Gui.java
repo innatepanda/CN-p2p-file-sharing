@@ -53,7 +53,7 @@ public class Gui extends JFrame{
         System.loadLibrary("native");
     }
     public native int Cmain();
-    public native String Auth(String usr, String pwd, int status);
+    public native String Auth(String usr, String pwd, int status,String fname,int fs,int fno);
     //public native String Files(String[] fname, String[] fpath, int fsize[],int fno,String usr);
     public void changeUsername(String msg)
     {
@@ -75,7 +75,7 @@ public class Gui extends JFrame{
 
             @Override
             public void windowClosing(WindowEvent e) {
-                  g.Auth(username,"password",-1);
+                  g.Auth(username,"password",-1,"fname",1,1);
             }
            };
           g.addWindowListener(exitListener);

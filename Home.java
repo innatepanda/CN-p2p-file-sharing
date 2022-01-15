@@ -2,6 +2,7 @@ import java.awt.*;
 import javax.swing.*;  
 import java.awt.event.*;
 import java.io.File;
+
 import java.util.Scanner;
 
 public class Home implements ActionListener{
@@ -79,26 +80,28 @@ public class Home implements ActionListener{
        
            if(e.getSource()==logout ){  
                //g.username =log.s1;
-               g.Auth(g.username,"password",-1);
+               g.Auth(g.username,"password",-1,"fname",1,1);
                //crd.show(cPane,"b");
            }
            if(e.getSource()==add ){  
           
                JFileChooser jchooser= new JFileChooser();
+               //FileListAccessory accessory = new FileListAccessory(jchooser);
+               //jchooser.setAccessory(accessory);
                jchooser.setMultiSelectionEnabled(true);
-               int response =jchooser.showOpenDialog(null);
+               int response =jchooser.showSaveDialog(null);
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
                   
-                  for (File f: files) {
-                       long filesize=f.length();
+                  for (int i = 0; i < files.length; i++)  {
+                       long filesize=files[i].length();
                        
                        
-                       System.out.println(f.getName());
-                       System.out.println("path "+f);
+                       System.out.println(files[i].getName());
+                       System.out.println("path "+files[i]);
                        
                        
-                        fname=new JLabel(f.getName());
+                        fname=new JLabel(files[i].getName());
                         
                         gbc.gridx=0;
                         p.add(fname,gbc);
@@ -114,9 +117,12 @@ public class Home implements ActionListener{
                         gbc.gridx++;
                         p.add(delete, gbc);
                         gbc.gridy++;
+                        result=g.Auth(g.username,"password",1,files[i].getName(),(int)filesize,files.length);
+                        //System.out.println(files.length);
                         
                         //p.add(l4, gbc);
                   }
+            
 		  p.validate();
                   p.repaint();
 		

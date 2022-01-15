@@ -15,12 +15,22 @@ struct clientinfo
 	char username[50];
 	char password[50];
 	//char uid[10];
-	char filename[50];
+	char filename[50]; 
 	int filenum;
-	int status; // 1-online  0-offline 
+	int filesize;
 	int choice;
 	
 };
+/*struct fileinfo
+{
+	char username[50];
+	char filename[50];
+	char filesize[50];
+	int filenum;
+	int choice;
+	int status;
+	
+};*/
 
 char cliIP[16];int cliPort;
 char serIP[16];int serPort;
@@ -77,16 +87,22 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
-  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
+  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice,jstring fn, jint fs,jint fno) {
   
    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
    const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
+   const char *fname = (*env)->GetStringUTFChars(env, fn,  NULL) ;
    struct clientinfo client;
 			
    strcpy(client.username,unm);
    strcpy(client.password,pwd);
+   strcpy(client.filename,fname);
    client.choice=choice;
-   printf("choice %s , %d",client.username, client.choice);	
+   client.filesize=fs;
+   
+   client.filenum=fno;
+   printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, client.choice);
+   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);		
    sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
    
    if(client.choice==-1)
@@ -107,7 +123,13 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 /*JNIEXPORT jstring JNICALL Java_Gui_Files
   (JNIEnv *env, jobject obj, jstring[] fname, jstring[] fpath, jint fsize[],jint fno)
 {
-
+    const char *fn = (*env)->GetStringUTFChars(env, fname,  NULL) ;
+   const char *fp = (*env)->GetStringUTFChars(env, fpath,NULL ) ;
+   struct fileinfo fileI;
+   strcpy(fileI.,unm);
+   strcpy(fileI.filename,fp);
+   client.choice=choice;
+			
 
 }*/
 

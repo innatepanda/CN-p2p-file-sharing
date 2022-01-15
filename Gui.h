@@ -86,10 +86,10 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 /*
  * Class:     Gui
  * Method:    Auth
- * Signature: (Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
+ * Signature: (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;II)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_Gui_Auth
-  (JNIEnv *, jobject, jstring, jstring, jint);
+  (JNIEnv *, jobject, jstring, jstring, jint, jstring, jint, jint);
 
 #ifdef __cplusplus
 }
