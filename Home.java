@@ -80,7 +80,7 @@ public class Home implements ActionListener{
        
            if(e.getSource()==logout ){  
                //g.username =log.s1;
-               g.Auth(g.username,"password",-1,"fname",1,1);
+               g.Auth(g.username,"password", -1);
                //crd.show(cPane,"b");
            }
            if(e.getSource()==add ){  
@@ -117,7 +117,7 @@ public class Home implements ActionListener{
                         gbc.gridx++;
                         p.add(delete, gbc);
                         gbc.gridy++;
-                        result=g.Auth(g.username,"password",1,files[i].getName(),(int)filesize,files.length);
+                        result=g.Files(g.username,files[i].getName(),(int)filesize,files.length, 1);
                         //System.out.println(files.length);
                         
                         //p.add(l4, gbc);

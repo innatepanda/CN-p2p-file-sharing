@@ -9,36 +9,45 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include<time.h>
 
 void *func(void *id);
 struct clientinfo
 {
 	char username[50];
 	char password[50];
-	//char uid[10];
-	char filename[50];
-	int filenum;
-	int status; // 1-online  0-offline 
 	int choice;
+	time_t date[50]; //at time of reg, server assigns
+	
+};
+struct fileinfo
+{
+	char username[50];
+	char filename[50];
+	int filesize;
+	int filenum;
+	int choice;
+	int status;
 	
 };
 
 
-char fname[] = "mydb.dat";
+char userdb[] = "mydb.dat"; //username, number of files, filenames, filesizes, status
+char users[] = "users.dat"; //username, password, date joined
 
 
 void displayAll()
 {
 	FILE *fp;
-	struct clientinfo t;
+	struct fileinfo t;
 
-	fp=fopen(fname,"rb");
+	fp=fopen(userdb,"rb");
 
 	printf("\n========================================================\n\n");
 	printf("\t\t All Client Details\n\n");
 	printf("========================================================\n\n");
 
-	printf("Username\tPassword\tfilename\tStatus\n\n");
+	printf("Username\tnumber of files\tfilenames\tfile size\tStatus\n\n");
 
 	while(1)
 	{
@@ -49,9 +58,42 @@ void displayAll()
 		break;
 	}
 	printf("%s\t\t",t.username);
-	printf("%s\t\t",t.password);
+	printf("%d\t\t",t.filenum);
 	printf("%s\t\t",t.filename);
+	printf("%s\t\t",t.filesize);
 	printf("%d\t\t\n\n",t.status);
+
+	}
+	printf("========================================================\n\n");
+
+	fclose(fp);
+}
+
+void displayUsers()
+{
+	FILE *fp;
+	struct clientinfo t;
+
+	fp=fopen(users,"rb");
+
+	printf("\n========================================================\n\n");
+	printf("\t\t Clients \n\n");
+	printf("========================================================\n\n");
+
+	printf("Username\tPassword\tDate Joined\n");
+
+	while(1)
+	{
+		fread(&t,sizeof(t),1,fp);
+
+	if(feof(fp))
+	{
+		break;
+	}
+	
+	printf("%s\t\t",t.username);
+	printf("%s\t\t",t.password);
+	printf("%s",ctime(t.date));
 
 	}
 	printf("========================================================\n\n");
@@ -61,11 +103,9 @@ void displayAll()
 
 void UPDATE_STATUS_LOGIN(char user[50])
 {
-	FILE *fp,*fp1;
-	struct clientinfo t,t1;
-	int recvsize,found=0,count=0;
-	fp=fopen(fname,"rb");
-	fp1=fopen("temp.dat","wb");
+	FILE *fp;
+	struct fileinfo t;
+	fp=fopen(userdb,"r+");
 	printf("update login %s\n", user);
 	
 	while(1)
@@ -76,68 +116,67 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			break;
 		}
-		printf("t user %s\n", t.username);
+		//printf("t user %s\n", t.username);
 		if(strcmp(t.username,user)==0)
 		{
-			found=1;
-			//strcpy(msg,"UserFound");
-			//send(sockfd,msg,sizeof(msg),0);
+			
 			
 			t.status=1;
-			
-			fwrite(&t,sizeof(t),1,fp1);
-		}
-		else
-		{
-			fwrite(&t,sizeof(t),1,fp1);
-		}	
-	}
-	fclose(fp);
-	fclose(fp1);
-	
-	if(found==0)
-	{
-		//strcpy(msg,"UserNotFound");
-		//send(sockfd,msg,sizeof(msg),0);
-	}
-	else
-	{
-		fp=fopen(fname,"wb");
-		fp1=fopen("temp.dat","rb");
-	
-		while(1)
-		{
-			fread(&t,sizeof(t),1,fp1);
-		
-			if(feof(fp1))
-			{
-				break;
-			}
+			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
 	}
-		
 	fclose(fp);
-	fclose(fp1);
+	
 	displayAll();
+}
+
+void ADD_USER (char usrn[50],char pwd[50])
+{
+
+	FILE *fp; struct clientinfo c1; struct fileinfo f1;
+	time_t t;   // date of joining
+	time(&t);
+	
+	fp=fopen(users,"ab");
+	strcpy(c1.username,usrn);
+	strcpy(c1.password,pwd);
+	time(c1.date);
+	fwrite(&c1,sizeof(c1),1,fp);
+	fclose(fp);
+	
+	
+	fp=fopen(userdb,"ab");
+	strcpy(f1.username,usrn);
+	strcpy(f1.filename, "");
+	f1.filenum=0;
+	f1.status=1;
+	f1.filesize=0;
+	fwrite(&f1,sizeof(f1),1,fp);
+	fclose(fp);
+	displayUsers();
+	displayAll();
+
+
 }
 
 int SEARCH_USER(char usrn[50],char pwd[50]){
      FILE *fp;
-      fp=fopen(fname,"rb");
+      fp=fopen(users,"rb");
       struct clientinfo c2;
       int found=0;
-      printf("search user %s %s\n",usrn, pwd);
+      //printf("search user %s %s %d\n",usrn, pwd, strlen(pwd));
       while(1)
       {
 	fread(&c2,sizeof(c2),1,fp);
-
-	if(feof(fp))
-	   break;  
-	printf("c user %s\n", c2.username);      								
+ 	if(feof(fp))
+ 	{
+ 		break;
+ 	}
+	//printf("c user %s\n", c2.username);      								
 	if(strcmp(usrn,c2.username)==0)
 	{
-	   if(strlen(pwd)==0 || (strlen(pwd)>0 && strcmp(pwd,c2.password)==0))
+	   if(strlen(pwd)==1 || (strlen(pwd)>1 && strcmp(pwd,c2.password)==0))
            {
                 found=1;
            }
@@ -148,7 +187,7 @@ int SEARCH_USER(char usrn[50],char pwd[50]){
 
      }
      fclose(fp);
-     printf("found in search %d\n", found);
+     //printf("found in search %d\n", found);
      return found;
     
 		  
@@ -157,63 +196,27 @@ int SEARCH_USER(char usrn[50],char pwd[50]){
 
 void UPDATE_STATUS_LOGOUT(char user[50])
 {
-	FILE *fp,*fp1;
-	struct clientinfo t,t1;
-	int recvsize,found=0,count=0;
+	FILE *fp;
+	struct fileinfo t;
+	int count=0;
 	
-	fp=fopen(fname,"rb");
-	fp1=fopen("temp.dat","wb");
+	fp=fopen(userdb,"r+");
 		
 	while(1)
 	{
 		fread(&t,sizeof(t),1,fp);
-
 		if(feof(fp))
-		{
-			break;
-		}
+		{break;}
 		if(strcmp(t.username,user)==0)
 		{
-			found=1;
-			//strcpy(msg,"UserFound");
-			//send(sockfd,msg,sizeof(msg),0);
 			
 			t.status=0;
-			
-			fwrite(&t,sizeof(t),1,fp1);
-		}
-		else
-		{
-			fwrite(&t,sizeof(t),1,fp1);
-		}	
-	}
-	fclose(fp);
-	fclose(fp1);
-	printf("found: %d",found);
-	if(found==0)
-	{
-		//strcpy(msg,"UserNotFound");
-		//send(sockfd,msg,sizeof(msg),0);
-	}
-	else
-	{
-		fp=fopen(fname,"wb");
-		fp1=fopen("temp.dat","rb");
-	
-		while(1)
-		{
-			fread(&t,sizeof(t),1,fp1);
-		
-			if(feof(fp1))
-			{
-				break;
-			}
+			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
+			
 	}
-		
 	fclose(fp);
-	fclose(fp1);
 	displayAll();
 }
 
@@ -222,7 +225,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 void SEARCH(int sockfd)
 {
 	FILE *fp;
-	struct clientinfo t;
+	struct fileinfo t;
 	int rec,sen,found=0,count=0;
 	char filename[50],msg[500];
 	strcpy(msg,"Enter File to be Searched: ");
@@ -230,7 +233,7 @@ void SEARCH(int sockfd)
 	rec=recv(sockfd,filename,sizeof(filename),0);
 	strcpy(msg,"FileFound...The users with the requested file are: ");
 	
-	fp=fopen(fname,"rb");
+	fp=fopen(userdb,"rb");
 		
 	while(1)
 	{
@@ -267,7 +270,7 @@ void SEARCH(int sockfd)
 
 void ADDFILE(int sockfd)
 {
-	struct clientinfo neww2[20];
+	struct fileinfo neww2[20];
 	int rec,sen;
 	char msg[200];
 	rec=recv(sockfd, neww2, sizeof(neww2), 0);
@@ -276,13 +279,12 @@ void ADDFILE(int sockfd)
 	int no_of_files = neww2[0].filenum;
 	
 	FILE *fp;
-	fp=fopen(fname,"ab");
+	fp=fopen(userdb,"ab");
 						
 	for(int n=0; n<no_of_files; n++)
 	{
-		struct clientinfo cli;
+		struct fileinfo cli;
 		strcpy(cli.username,neww2[n].username);
-		//strcpy(cli.password,neww2[n].password);
 		strcpy(cli.filename,neww2[n].filename);
 		cli.status=1;
 								
@@ -297,13 +299,13 @@ void ADDFILE(int sockfd)
 void DELETE(int sockfd,char user[50])
 {
 	FILE *fp,*fp1;
-	struct clientinfo t,t1;
+	struct fileinfo t,t1;
 	int rec,sen,found=0,count=0;
 	char filename[50],msg[200];
 	strcpy(msg,"Enter Filename to be Deleted\n");
 	sen=send(sockfd,msg,strlen(msg),0);
 	rec=recv(sockfd,filename,sizeof(filename),0);
-	fp=fopen(fname,"rb");
+	fp=fopen(userdb,"rb");
 	fp1=fopen("temp.dat","wb");
 		
 	while(1)
@@ -336,7 +338,7 @@ void DELETE(int sockfd,char user[50])
 	}
 	else
 	{
-		fp=fopen(fname,"wb");
+		fp=fopen(userdb,"wb");
 		fp1=fopen("temp.dat","rb");
 	
 		while(1)
@@ -460,7 +462,8 @@ void *func(void *id)
 
           if(rec_msg.choice==0)   //CODE FOR SIGNUP
           {
-		  int found=SEARCH_USER(rec_msg.username,NULL);
+          	printf("in reg\n");
+		  int found = SEARCH_USER(rec_msg.username,"p");
 		  printf("reg found %d\n", found);
 		  if(found==1)
 		  {
@@ -469,20 +472,8 @@ void *func(void *id)
 		        
 		  }
 		  else{
-		     FILE *fp;
-	             fp=fopen(fname,"ab");
-					                
-                      //seconds = time(NULL);
-                       struct clientinfo c1;
-                       strcpy(c1.username,rec_msg.username);
-                       strcpy(c1.password,rec_msg.password);
-                        
-                       c1.status=1;
-                       fwrite(&c1,sizeof(c1),1,fp);
-                        
-	               fclose(fp);
-	               UPDATE_STATUS_LOGIN(c1.username);
-		  
+		     	ADD_USER(rec_msg.username, rec_msg.password);
+	               
 		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
 		       printf("New client ( username : %s ) added to database.\n",rec_msg.username);
 		       sen=send(*cfd, sent_msg, strlen(sent_msg), 0);

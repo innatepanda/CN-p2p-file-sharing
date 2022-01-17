@@ -93,7 +93,7 @@ public class Register implements ActionListener{
               crd.next(cPane);
             }
              else{
-              // msg1.setText("usern already exists,please try again "+result);
+               msg2.setText("usern already exists,please try again "+result);
                System.out.print("err - " +result);
             }
            

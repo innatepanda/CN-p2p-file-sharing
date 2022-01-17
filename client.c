@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include "Gui.h"
 
-struct clientinfo
+/*struct clientinfo
 {
 	char username[50];
 	char password[50];
@@ -21,7 +21,7 @@ struct clientinfo
 	int choice;
 	
 };
-/*struct fileinfo
+struct fileinfo
 {
 	char username[50];
 	char filename[50];
@@ -31,6 +31,24 @@ struct clientinfo
 	int status;
 	
 };*/
+struct clientinfo
+{
+	char username[50];
+	char password[50];
+	int choice;
+	time_t date[50]; //at time of reg, server assigns
+	
+};
+struct fileinfo
+{
+	char username[50];
+	char filename[50];
+	int filesize;
+	int filenum;
+	int choice;
+	int status;
+	
+};
 
 char cliIP[16];int cliPort;
 char serIP[16];int serPort;
@@ -87,22 +105,22 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
-  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice,jstring fn, jint fs,jint fno) {
+  (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
   
    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
    const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
-   const char *fname = (*env)->GetStringUTFChars(env, fn,  NULL) ;
+   
    struct clientinfo client;
 			
    strcpy(client.username,unm);
    strcpy(client.password,pwd);
-   strcpy(client.filename,fname);
+   //strcpy(client.filename,fname);
    client.choice=choice;
-   client.filesize=fs;
+   //client.filesize=fs;
    
-   client.filenum=fno;
+   //client.filenum=fno;
    printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, client.choice);
-   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);		
+   //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);		
    sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
    
    if(client.choice==-1)
@@ -120,18 +138,29 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 	         
 }
 
-/*JNIEXPORT jstring JNICALL Java_Gui_Files
-  (JNIEnv *env, jobject obj, jstring[] fname, jstring[] fpath, jint fsize[],jint fno)
+JNIEXPORT jstring JNICALL Java_Gui_Files
+  (JNIEnv *env, jobject obj,jstring user, jstring fn, jint fs,jint fno, jint choice)
 {
-    const char *fn = (*env)->GetStringUTFChars(env, fname,  NULL) ;
-   const char *fp = (*env)->GetStringUTFChars(env, fpath,NULL ) ;
-   struct fileinfo fileI;
-   strcpy(fileI.,unm);
-   strcpy(fileI.filename,fp);
+    
+   const char *fname = (*env)->GetStringUTFChars(env, fn,  NULL) ;
+    struct fileinfo client;
+			
+   strcpy(client.username,user);
+   strcpy(client.filename,fname);
    client.choice=choice;
+   client.filesize=fs;
+   
+   client.filenum=fno;
+   printf("\nOn client side\nUser info %s , %s , %d\n",client.username, client.choice);
+   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);	
+   rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
+   rec_msg[rec]='\0';
+   printf("rec msg: %s",rec_msg);		
+	   
+	return  (*env)->NewStringUTF(env, rec_msg);	
 			
 
-}*/
+}
 
 
 

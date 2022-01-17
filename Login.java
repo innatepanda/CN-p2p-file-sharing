@@ -81,11 +81,11 @@ public class Login implements ActionListener{
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
-            result=g.Auth(s1,s2,1,"fname",1,1);
+            result=g.Auth(s1,s2,1);
             if(result.substring(0,3).equals("200")){
                g.changeUsername(s1);
                 
-               System.out.println("usernameL"+g.username);
+               System.out.println("username: "+g.username);
                System.out.println(result);
               
                // crd.next(cPane);  
