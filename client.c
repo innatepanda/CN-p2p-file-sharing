@@ -10,32 +10,11 @@
 #include <arpa/inet.h>
 #include "Gui.h"
 
-/*struct clientinfo
-{
-	char username[50];
-	char password[50];
-	//char uid[10];
-	char filename[50]; 
-	int filenum;
-	int filesize;
-	int choice;
-	
-};
-struct fileinfo
-{
-	char username[50];
-	char filename[50];
-	char filesize[50];
-	int filenum;
-	int choice;
-	int status;
-	
-};*/
+//0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 struct clientinfo
 {
 	char username[50];
 	char password[50];
-	int choice;
 	time_t date[50]; //at time of reg, server assigns
 	
 };
@@ -45,7 +24,6 @@ struct fileinfo
 	char filename[50];
 	int filesize;
 	int filenum;
-	int choice;
 	int status;
 	
 };
@@ -54,9 +32,9 @@ char cliIP[16];int cliPort;
 char serIP[16];int serPort;
 int connvar,sockfd;
 int rec,sen;
-char rec_msg[500],sent_msg[500],menu[500];
-char unm[50],pwd[50],fnm[50];
-
+char rec_msg[500],sent_msg[500];
+//char unm[50],pwd[50],fnm[50];
+int userChoice;
 
 
 JNIEXPORT jint JNICALL Java_Gui_Cmain
@@ -115,20 +93,22 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    strcpy(client.username,unm);
    strcpy(client.password,pwd);
    //strcpy(client.filename,fname);
-   client.choice=choice;
+   userChoice=choice;
    //client.filesize=fs;
    
    //client.filenum=fno;
-   printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, client.choice);
-   //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);		
-   sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
+   printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, choice);
+   //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);	
+   sen=send(sockfd, &userChoice, sizeof(userChoice), 0);	
    
-   if(client.choice==-1)
+   if(userChoice==-1)
    {
 	   exit(0);
    }
    else
    {
+   	sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
+   
    	rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
    	rec_msg[rec]='\0';
    	printf("rec msg: %s",rec_msg);		
@@ -141,18 +121,28 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 JNIEXPORT jstring JNICALL Java_Gui_Files
   (JNIEnv *env, jobject obj,jstring user, jstring fn, jint fs,jint fno, jint choice)
 {
-    
+    //printf("user info %s\n", user);
    const char *fname = (*env)->GetStringUTFChars(env, fn,  NULL) ;
+   const char *uname = (*env)->GetStringUTFChars(env, user,  NULL) ;
+   printf("----usern: %s----\n", uname);
     struct fileinfo client;
 			
-   strcpy(client.username,user);
+   strcpy(client.username,uname);
    strcpy(client.filename,fname);
-   client.choice=choice;
-   client.filesize=fs;
-   
+   userChoice=choice;
+   client.filesize=fs;   
    client.filenum=fno;
-   printf("\nOn client side\nUser info %s , %s , %d\n",client.username, client.choice);
-   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);	
+   
+   printf("\nOn client side\nUser info %s , %d\n",client.username, choice);
+   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);
+   
+   
+   
+   sen=send(sockfd, &userChoice, sizeof(userChoice), 0);
+   printf("--sent bytes choice: %d\n", sen);
+   sen=send(sockfd,(struct fileinfo *) &client, sizeof(client), 0); 
+   printf("sent bytes file: %d--\n", sen);
+   	
    rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
    rec_msg[rec]='\0';
    printf("rec msg: %s",rec_msg);		

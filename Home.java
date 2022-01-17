@@ -15,6 +15,7 @@ public class Home implements ActionListener{
     GridBagConstraints gbc;
     public String result="default";
     Gui g;
+    String usern="user";
     Home(CardLayout crd, JPanel cards, Gui g)
     {
         this.g=g;
@@ -117,11 +118,12 @@ public class Home implements ActionListener{
                         gbc.gridx++;
                         p.add(delete, gbc);
                         gbc.gridy++;
-                        result=g.Files(g.username,files[i].getName(),(int)filesize,files.length, 1);
+                        result = g.Files(usern,files[i].getName(),(int)filesize,files.length, 2);
                         //System.out.println(files.length);
                         
                         //p.add(l4, gbc);
                   }
+                  
             
 		  p.validate();
                   p.repaint();

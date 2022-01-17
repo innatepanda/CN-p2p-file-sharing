@@ -10,7 +10,7 @@ public class Gui extends JFrame{
     JPanel cPane;  
     JButton exit; 
     Home home; 
-    static String username="user"; 
+    static String username="user";
     Gui(){
         cPane =new JPanel();  
         crd = new CardLayout();    
@@ -57,7 +57,8 @@ public class Gui extends JFrame{
     public native String Files(String user, String fname, int fsize,int fno, int choice);
     public void changeUsername(String msg)
     {
-         username=msg;
+    	 username=msg;
+         home.usern=msg;
          home.changeText(msg);
     }
 

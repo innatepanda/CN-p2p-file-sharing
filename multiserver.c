@@ -16,7 +16,6 @@ struct clientinfo
 {
 	char username[50];
 	char password[50];
-	int choice;
 	time_t date[50]; //at time of reg, server assigns
 	
 };
@@ -26,7 +25,6 @@ struct fileinfo
 	char filename[50];
 	int filesize;
 	int filenum;
-	int choice;
 	int status;
 	
 };
@@ -60,7 +58,7 @@ void displayAll()
 	printf("%s\t\t",t.username);
 	printf("%d\t\t",t.filenum);
 	printf("%s\t\t",t.filename);
-	printf("%s\t\t",t.filesize);
+	printf("%d\t\t",t.filesize);
 	printf("%d\t\t\n\n",t.status);
 
 	}
@@ -440,7 +438,7 @@ void *func(void *id)
     pthread_detach(pthread_self());
     int *cfd = (int*)id;
     char sent_msg[500];
-    struct clientinfo rec_msg;
+    struct clientinfo rec_msg; int choice; struct fileinfo finfo;
    if(*cfd==-1)
    {
      printf("Accept failed....\n");
@@ -454,17 +452,19 @@ void *func(void *id)
 		sen=send(*cfd, sent_msg, strlen(sent_msg), 0);*/
       while(1)
       {
-         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-         printf("choice %s %s %d\n", rec_msg.username,rec_msg.password, rec_msg.choice);	
+         rec = recv(*cfd,&choice, sizeof(choice), 0);
+         printf("choice %d\n", choice);
+         
+         
                 
 						
 /****************************  SIGNUP  ******************************/		
 
-          if(rec_msg.choice==0)   //CODE FOR SIGNUP
+          if(choice==0)   //CODE FOR SIGNUP
           {
-          	printf("in reg\n");
+          	rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
+          	
 		  int found = SEARCH_USER(rec_msg.username,"p");
-		  printf("reg found %d\n", found);
 		  if(found==1)
 		  {
 		      strcpy(sent_msg,"500 Username alreay exists\n");
@@ -488,9 +488,9 @@ void *func(void *id)
 
 /****************************  LOGIN  ***********************************/
 						
-        else if(rec_msg.choice==1)   //CODE FOR LOGIN
+        else if(choice==1)   //CODE FOR LOGIN
         {
-             										
+             	rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);								
              //check for the details in database and return found or not found
 		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
        	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
@@ -510,18 +510,29 @@ void *func(void *id)
 		}
 		
                
-                if(found==0)
+                else if(found==0)
                 {
 	             strcpy(sent_msg,"500 nf");
                      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	             printf("Incorrect details\n");
 	        }
 	     }
+	     
+	     else if(choice == 2)
+	     {
+	     	printf("--here--");
+	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
+	     	printf("recvd file: %s", finfo.filename);
+	     	displayAll();
+	     	strcpy(sent_msg,"500 nf");
+                sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+	     
+	     }
              
              
 		
-	     else if(rec_msg.choice==5){
-	          
+	     else if(choice==5){
+	          rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
 	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
@@ -532,8 +543,8 @@ void *func(void *id)
                  // pthread_exit(0);
                   //break;
 	     } 
-	     else if(rec_msg.choice==-1){
-	         
+	     else if(choice==-1){
+	         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
 	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
                   
@@ -543,7 +554,7 @@ void *func(void *id)
                   //break;
 	     } 
 	     
-	     
+	     printf("---end of loop---");
 	}						
 	        
 	}
