@@ -58,13 +58,13 @@ void displayAll()
 	}
 	printf("%s\t\t",t.username);
 	printf("%d\t\t",t.filenum);
-	printf("\t\t\t\t%d\t\n\n",t.status);
+	printf("%d\n",t.status);
 
-	for(int i=0;i<t.filenum;i++)
+	/*for(int i=0;i<t.filenum;i++)
 	{
 		printf("\t\t%s\t\t",t.filename[i]);
 		printf("\t\t%d\t\t",t.filesize[i]);
-	}
+	}*/
 	
 	
 	}
@@ -225,7 +225,7 @@ void ADD_File(struct fileinfo finfo)
 
 	FILE *fp; 
 	struct fileinfo f1;
-	int found;
+	int found=0;
 	fp=fopen(userdb,"r+");
 	//for(int n=0; n<fnum; n++)
 	//{
@@ -245,12 +245,13 @@ void ADD_File(struct fileinfo finfo)
                 for(int i=0;i<finfo.filenum;i++)
                 {
                 	strcpy(f1.filename[f1.filenum+i],finfo.filename[i]);
+                	printf("--fn:%s\t", f1.filename[f1.filenum+i]);
                 	f1.filesize[f1.filenum+i]=finfo.filesize[i];
                 }
                 f1.filenum+=finfo.filenum;
                 f1.status=1;
 		
-								
+		fseek(fp, ftell(fp)-sizeof(f1), SEEK_SET);						
 		fwrite(&f1,sizeof(f1),1,fp);
 	
            
@@ -260,18 +261,19 @@ void ADD_File(struct fileinfo finfo)
 	
 
      }
+     
      if(found==0)
      {
 		finfo.status=1;
-		
+		printf("adding new line\n");
 								
-		fwrite(&f1,sizeof(finfo),1,fp);
-	}
-	//}	
+		fwrite(&finfo,sizeof(finfo),1,fp);
+     }
+		
 	fclose(fp);
+	displayAll();
+
 	
-	//displayUsers();
-	//displayAll();
 }
 
 /*
@@ -556,7 +558,7 @@ void *func(void *id)
 	     	
 	     	   ADD_File(finfo);
 	     	
-	     	displayAll();
+	     	
 	     	strcpy(sent_msg,"file added");
                 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     

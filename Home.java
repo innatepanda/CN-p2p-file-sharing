@@ -94,10 +94,11 @@ public class Home implements ActionListener{
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
                   
-                  int fs[] = new int[files.length]; String fnm[] = new String[files.length];
-                  
+                  int fs[] = new int[50]; String fnm[] = new String[50];
+                  System.out.println("--n files:"+files.length);
                   for (int i = 0; i < files.length; i++)  {
                        fs[i]=(int)files[i].length();
+                       System.out.println("--length:"+ fs[i]);
                        fnm[i]=files[i].getName();
                   }
                        

@@ -127,18 +127,18 @@ JNIEXPORT jstring JNICALL Java_Gui_Files
    jint *filesize = (*env)->GetIntArrayElements(env, fs, 0);
    
     struct fileinfo client;
-    
+    client.filenum=fno;
+   
    for(int i=0;i<fno;i++)
    {
    	const char *fname = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fn, i),  NULL) ;
    	strcpy(client.filename[i],fname);
    	client.filesize[i]=filesize[i];   
-   	printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);
+   	printf("File info %s , %d , %d\n\n",client.filename[i],client.filesize[i], client.filenum);
    
    }			
    strcpy(client.username,uname);
    userChoice=choice;
-   client.filenum=fno;
    
    printf("\n---On client side\nUser info %s , %d----\n",client.username, choice);
    
