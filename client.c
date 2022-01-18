@@ -21,8 +21,8 @@ struct clientinfo
 struct fileinfo
 {
 	char username[50];
-	char filename[50];
-	int filesize;
+	char filename[50][50];
+	int filesize[50];
 	int filenum;
 	int status;
 	
@@ -119,24 +119,28 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Files
-  (JNIEnv *env, jobject obj,jstring user, jstring fn, jint fs,jint fno, jint choice)
+  (JNIEnv *env, jobject obj,jstring user, jobjectArray fn, jintArray fs,jint fno, jint choice)
 {
     //printf("user info %s\n", user);
-   const char *fname = (*env)->GetStringUTFChars(env, fn,  NULL) ;
+   
    const char *uname = (*env)->GetStringUTFChars(env, user,  NULL) ;
-   printf("----usern: %s----\n", uname);
+   jint *filesize = (*env)->GetIntArrayElements(env, fs, 0);
+   
     struct fileinfo client;
-			
+    
+   for(int i=0;i<fno;i++)
+   {
+   	const char *fname = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fn, i),  NULL) ;
+   	strcpy(client.filename[i],fname);
+   	client.filesize[i]=filesize[i];   
+   	printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);
+   
+   }			
    strcpy(client.username,uname);
-   strcpy(client.filename,fname);
    userChoice=choice;
-   client.filesize=fs;   
    client.filenum=fno;
    
-   printf("\nOn client side\nUser info %s , %d\n",client.username, choice);
-   printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);
-   
-   
+   printf("\n---On client side\nUser info %s , %d----\n",client.username, choice);
    
    sen=send(sockfd, &userChoice, sizeof(userChoice), 0);
    printf("--sent bytes choice: %d\n", sen);

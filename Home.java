@@ -94,6 +94,16 @@ public class Home implements ActionListener{
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
                   
+                  int fs[] = new int[files.length]; String fnm[] = new String[files.length];
+                  
+                  for (int i = 0; i < files.length; i++)  {
+                       fs[i]=(int)files[i].length();
+                       fnm[i]=files[i].getName();
+                  }
+                       
+                  result = g.Files(usern, fnm,fs,files.length, 2);
+                  
+                  
                   for (int i = 0; i < files.length; i++)  {
                        long filesize=files[i].length();
                        
@@ -118,7 +128,7 @@ public class Home implements ActionListener{
                         gbc.gridx++;
                         p.add(delete, gbc);
                         gbc.gridy++;
-                        result = g.Files(usern,files[i].getName(),(int)filesize,files.length, 2);
+                        
                         //System.out.println(files.length);
                         
                         //p.add(l4, gbc);

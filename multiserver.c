@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include<time.h>
+#include <time.h>
 
 void *func(void *id);
 struct clientinfo
@@ -19,12 +19,12 @@ struct clientinfo
 	time_t date[50]; //at time of reg, server assigns
 	
 };
-struct fileinfo
+struct fileinfo //to write in database, prev struct + incoming struct, then write
 {
 	char username[50];
-	char filename[50];
-	int filesize;
-	int filenum;
+	char filename[50][50];
+	int filesize[50];
+	int filenum; 
 	int status;
 	
 };
@@ -58,10 +58,15 @@ void displayAll()
 	}
 	printf("%s\t\t",t.username);
 	printf("%d\t\t",t.filenum);
-	printf("%s\t\t\t",t.filename);
-	printf("%d\t\t",t.filesize);
-	printf("%d\t\n\n",t.status);
+	printf("\t\t\t\t%d\t\n\n",t.status);
 
+	for(int i=0;i<t.filenum;i++)
+	{
+		printf("\t\t%s\t\t",t.filename[i]);
+		printf("\t\t%d\t\t",t.filesize[i]);
+	}
+	
+	
 	}
 	printf("========================================================\n\n");
 
@@ -215,23 +220,53 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 }
 
 
-void ADD_File(char usrn[50],char fname[50],int fsize,int fnum)
+void ADD_File(struct fileinfo finfo)
 {
 
 	FILE *fp; 
 	struct fileinfo f1;
-	
-	fp=fopen(userdb,"ab");
+	int found;
+	fp=fopen(userdb,"r+");
 	//for(int n=0; n<fnum; n++)
 	//{
-		strcpy(f1.username,usrn);
-	        strcpy(f1.filename,fname);
-	        f1.filenum=fnum;
-	        f1.filesize=fsize;
-	        f1.status=1;
-	        
+	while(1)
+      {
+	fread(&f1,sizeof(f1),1,fp);
+ 	if(feof(fp))
+ 	{
+ 		break;
+ 	}
+	//printf("c user %s\n", c2.username);      								
+	if(strcmp(finfo.username,f1.username)==0)
+	{
+	   
+                found=1;
+                
+                for(int i=0;i<finfo.filenum;i++)
+                {
+                	strcpy(f1.filename[f1.filenum+i],finfo.filename[i]);
+                	f1.filesize[f1.filenum+i]=finfo.filesize[i];
+                }
+                f1.filenum+=finfo.filenum;
+                f1.status=1;
+		
 								
 		fwrite(&f1,sizeof(f1),1,fp);
+	
+           
+	   
+	  break;
+	}
+	
+
+     }
+     if(found==0)
+     {
+		finfo.status=1;
+		
+								
+		fwrite(&f1,sizeof(finfo),1,fp);
+	}
 	//}	
 	fclose(fp);
 	
@@ -239,6 +274,7 @@ void ADD_File(char usrn[50],char fname[50],int fsize,int fnum)
 	//displayAll();
 }
 
+/*
 void SEARCH(int sockfd)
 {
 	FILE *fp;
@@ -347,7 +383,7 @@ void DELETE(int sockfd,char user[50])
 	fclose(fp1);
 }	
 
-	
+	*/
 
 int sen,rec;
 int cliPort;
@@ -516,9 +552,9 @@ void *func(void *id)
 	     {
 	     	printf("--here--");
 	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
-	     	printf("recvd file: %s %d", finfo.filename,finfo.filenum);
+	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
-	     	   ADD_File(finfo.username,finfo.filename,finfo.filesize,finfo.filenum);
+	     	   ADD_File(finfo);
 	     	
 	     	displayAll();
 	     	strcpy(sent_msg,"file added");
