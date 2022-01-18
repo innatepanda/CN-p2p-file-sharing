@@ -46,7 +46,7 @@ void displayAll()
 	printf("\t\t All Client Details\n\n");
 	printf("========================================================\n\n");
 
-	printf("Username\tno. of files\tfilenames\t\tfile size\tStatus\n\n");
+	printf("Username\tStatus\tno. of files\tfilenames\t\tfile size\t\n\n");
 
 	while(1)
 	{
@@ -57,15 +57,19 @@ void displayAll()
 		break;
 	}
 	printf("%s\t\t",t.username);
+	printf("%d\t",t.status);
 	printf("%d\t\t",t.filenum);
-	printf("%d\n",t.status);
-
-	/*for(int i=0;i<t.filenum;i++)
-	{
-		printf("\t\t%s\t\t",t.filename[i]);
-		printf("\t\t%d\t\t",t.filesize[i]);
-	}*/
 	
+        
+	for(int i=0;i<t.filenum;i++)
+	{
+	        if(i>0)
+                     printf("\t\t\t\t\t");
+		printf("%s\t\t",t.filename[i]);
+		printf("%d\n",t.filesize[i]);
+		
+	}
+	printf("\n");
 	
 	}
 	printf("========================================================\n\n");
