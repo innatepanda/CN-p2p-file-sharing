@@ -38,6 +38,7 @@ void displayAll()
 {
 	FILE *fp;
 	struct fileinfo t;
+	//struct clientinfo c;
 
 	fp=fopen(userdb,"rb");
 
@@ -45,7 +46,7 @@ void displayAll()
 	printf("\t\t All Client Details\n\n");
 	printf("========================================================\n\n");
 
-	printf("Username\tnumber of files\tfilenames\tfile size\tStatus\n\n");
+	printf("Username\tno. of files\tfilenames\t\tfile size\tStatus\n\n");
 
 	while(1)
 	{
@@ -57,9 +58,9 @@ void displayAll()
 	}
 	printf("%s\t\t",t.username);
 	printf("%d\t\t",t.filenum);
-	printf("%s\t\t",t.filename);
+	printf("%s\t\t\t",t.filename);
 	printf("%d\t\t",t.filesize);
-	printf("%d\t\t\n\n",t.status);
+	printf("%d\t\n\n",t.status);
 
 	}
 	printf("========================================================\n\n");
@@ -142,20 +143,15 @@ void ADD_USER (char usrn[50],char pwd[50])
 	time(c1.date);
 	fwrite(&c1,sizeof(c1),1,fp);
 	fclose(fp);
+	//fp=fopen(userdb,"ab");
 	
-	
-	fp=fopen(userdb,"ab");
-	strcpy(f1.username,usrn);
-	strcpy(f1.filename, "");
-	f1.filenum=0;
-	f1.status=1;
-	f1.filesize=0;
-	fwrite(&f1,sizeof(f1),1,fp);
-	fclose(fp);
+        //f1.status=1;
+	        
+								
+	//fwrite(&f1,sizeof(f1),1,fp);	
+	//fclose(fp);
 	displayUsers();
-	displayAll();
-
-
+	//displayAll();
 }
 
 int SEARCH_USER(char usrn[50],char pwd[50]){
@@ -215,10 +211,33 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 			
 	}
 	fclose(fp);
-	displayAll();
+	//displayAll();
 }
 
 
+void ADD_File(char usrn[50],char fname[50],int fsize,int fnum)
+{
+
+	FILE *fp; 
+	struct fileinfo f1;
+	
+	fp=fopen(userdb,"ab");
+	//for(int n=0; n<fnum; n++)
+	//{
+		strcpy(f1.username,usrn);
+	        strcpy(f1.filename,fname);
+	        f1.filenum=fnum;
+	        f1.filesize=fsize;
+	        f1.status=1;
+	        
+								
+		fwrite(&f1,sizeof(f1),1,fp);
+	//}	
+	fclose(fp);
+	
+	//displayUsers();
+	//displayAll();
+}
 
 void SEARCH(int sockfd)
 {
@@ -266,33 +285,6 @@ void SEARCH(int sockfd)
 }
 
 
-void ADDFILE(int sockfd)
-{
-	struct fileinfo neww2[20];
-	int rec,sen;
-	char msg[200];
-	rec=recv(sockfd, neww2, sizeof(neww2), 0);
-
-	//add all the new files to the database of clientinfo
-	int no_of_files = neww2[0].filenum;
-	
-	FILE *fp;
-	fp=fopen(userdb,"ab");
-						
-	for(int n=0; n<no_of_files; n++)
-	{
-		struct fileinfo cli;
-		strcpy(cli.username,neww2[n].username);
-		strcpy(cli.filename,neww2[n].filename);
-		cli.status=1;
-								
-		fwrite(&cli,sizeof(cli),1,fp);
-	}
-	fclose(fp);
-	
-	strcpy(msg,"Successfully added new files to database\n");
-	sen=send(sockfd, msg, strlen(msg), 0);
-}
 
 void DELETE(int sockfd,char user[50])
 {
@@ -448,8 +440,6 @@ void *func(void *id)
    {
        cliPort=ntohs(client.sin_port);
        printf("Client with port no %d connected to the server...\n",cliPort);
-       /*strcpy(sent_msg,"\nWelcome to the P2P server\nPress 0 and enter to SIGN-UP\nPress 1 and enter to LOGIN\nPress -1 to exit\n\n");
-		sen=send(*cfd, sent_msg, strlen(sent_msg), 0);*/
       while(1)
       {
          rec = recv(*cfd,&choice, sizeof(choice), 0);
@@ -472,8 +462,8 @@ void *func(void *id)
 		        
 		  }
 		  else{
-		     	ADD_USER(rec_msg.username, rec_msg.password);
-	               
+		       //ADD_USER(rec_msg.username, rec_msg.password,"",0,0);
+	               ADD_USER(rec_msg.username, rec_msg.password);
 		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
 		       printf("New client ( username : %s ) added to database.\n",rec_msg.username);
 		       sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
@@ -507,6 +497,10 @@ void *func(void *id)
 		  
 		  //displayAll();
 		   //return "Successfully Logedin";
+		   
+		   
+		   
+		   
 		}
 		
                
@@ -522,9 +516,12 @@ void *func(void *id)
 	     {
 	     	printf("--here--");
 	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
-	     	printf("recvd file: %s", finfo.filename);
+	     	printf("recvd file: %s %d", finfo.filename,finfo.filenum);
+	     	
+	     	   ADD_File(finfo.username,finfo.filename,finfo.filesize,finfo.filenum);
+	     	
 	     	displayAll();
-	     	strcpy(sent_msg,"500 nf");
+	     	strcpy(sent_msg,"file added");
                 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
