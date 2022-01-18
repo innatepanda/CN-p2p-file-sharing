@@ -95,14 +95,17 @@ public class Home implements ActionListener{
                   File[] files = jchooser.getSelectedFiles();
                   
                   int fs[] = new int[50]; String fnm[] = new String[50];
+                  String fpath[] = new String[100];
                   System.out.println("--n files:"+files.length);
+                  
                   for (int i = 0; i < files.length; i++)  {
                        fs[i]=(int)files[i].length();
                        System.out.println("--length:"+ fs[i]);
                        fnm[i]=files[i].getName();
+                       fpath[i]=files[i].getPath();
                   }
                        
-                  result = g.Files(usern, fnm,fs,files.length, 2);
+                  result = g.Files(usern, fnm,fpath,fs,files.length, 2);
                   
                   
                   for (int i = 0; i < files.length; i++)  {

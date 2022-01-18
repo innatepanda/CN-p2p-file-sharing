@@ -94,10 +94,10 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 /*
  * Class:     Gui
  * Method:    Files
- * Signature: (Ljava/lang/String;[Ljava/lang/String;[III)Ljava/lang/String;
+ * Signature: (Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;[III)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_Gui_Files
-  (JNIEnv *, jobject, jstring, jobjectArray, jintArray, jint, jint);
+  (JNIEnv *, jobject, jstring, jobjectArray, jobjectArray, jintArray, jint, jint);
 
 #ifdef __cplusplus
 }

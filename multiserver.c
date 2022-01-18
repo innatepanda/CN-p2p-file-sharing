@@ -23,6 +23,7 @@ struct fileinfo //to write in database, prev struct + incoming struct, then writ
 {
 	char username[50];
 	char filename[50][50];
+	char filepath[50][50];
 	int filesize[50];
 	int filenum; 
 	int status;
@@ -249,7 +250,8 @@ void ADD_File(struct fileinfo finfo)
                 for(int i=0;i<finfo.filenum;i++)
                 {
                 	strcpy(f1.filename[f1.filenum+i],finfo.filename[i]);
-                	printf("--fn:%s\t", f1.filename[f1.filenum+i]);
+                	strcpy(f1.filepath[f1.filenum+i],finfo.filepath[i]);
+                	printf("--fn:%s %s\t", f1.filename[f1.filenum+i],f1.filepath[f1.filenum+i]);
                 	f1.filesize[f1.filenum+i]=finfo.filesize[i];
                 }
                 f1.filenum+=finfo.filenum;

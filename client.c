@@ -22,6 +22,7 @@ struct fileinfo
 {
 	char username[50];
 	char filename[50][50];
+	char filepath[50][50];
 	int filesize[50];
 	int filenum;
 	int status;
@@ -119,7 +120,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Files
-  (JNIEnv *env, jobject obj,jstring user, jobjectArray fn, jintArray fs,jint fno, jint choice)
+  (JNIEnv *env, jobject obj,jstring user, jobjectArray fn,jobjectArray fp, jintArray fs,jint fno, jint choice)
 {
     //printf("user info %s\n", user);
    
@@ -132,9 +133,11 @@ JNIEXPORT jstring JNICALL Java_Gui_Files
    for(int i=0;i<fno;i++)
    {
    	const char *fname = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fn, i),  NULL) ;
+   	const char *fpath = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fp, i),  NULL) ;
    	strcpy(client.filename[i],fname);
+   	strcpy(client.filepath[i],fpath);
    	client.filesize[i]=filesize[i];   
-   	printf("File info %s , %d , %d\n\n",client.filename[i],client.filesize[i], client.filenum);
+   	printf("File info %s ,%s, %d , %d\n\n",client.filename[i],client.filepath[i],client.filesize[i], client.filenum);
    
    }			
    strcpy(client.username,uname);
