@@ -159,7 +159,49 @@ JNIEXPORT jstring JNICALL Java_Gui_Files
 
 }
 
+JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj){
 
+
+   //Declare an object array
+    jobjectArray args = 0;
+   
+    //Array size
+    jsize len=50;
+
+    //Get the class of the object, generally ava/lang/Object is enough
+    jclass objClass = (env)->FindClass("java/lang/Object");
+
+    //New object array
+    args = (env)->NewObjectArray(len, objClass, 0);
+
+    /**//* The following are the variables in the corresponding instance class obtained in Java*/
+
+    //Get the instance class in Java
+    jclass objectClass = (env)->FindClass("fileinfo");
+   
+    //Get the definition of each variable in the class
+    //first name
+    jfieldID str = (env)->GetFieldID(objectClass,"usern","Ljava/lang/String;");
+    //serial number
+    jfieldID ival = (env)->GetFieldID(objectClass,"status","I");
+    jfieldID ival = (env)->GetFieldID(objectClass,"fno","I");
+    
+    for(int i=0; i < len; i++ )
+    {
+        //Pay value to each instance variable
+        //jstring jstr = WindowsTojstring(env,"My disk name is D:");
+        //(env)->SetObjectField(_obj,str,(env)->NewStringUTF("my name is D:"));
+        const char *uname = (*env)->GetStringUTFChars(env, user,  NULL) ;
+        (env)->SetObjectField(_obj,str,jstr);
+        (env)->SetShortField(_obj,ival,10);
+
+        //Add to the objcet array
+        (env)->SetObjectArrayElement(args, i, _obj);
+    }
+    //Return object array
+    return args;
+
+}
 
 
 

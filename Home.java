@@ -5,6 +5,15 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import java.util.Scanner;
 
+class fileinfo{
+   String usern;
+   int status;
+   int fs[];
+   int fno;
+   String fnm[];
+   String fpath[];
+   
+}
 public class Home implements ActionListener{
     JTextField s; 
     JButton logout,delete,add,search;  
@@ -15,6 +24,7 @@ public class Home implements ActionListener{
     GridBagConstraints gbc;
     public String result="default";
     Gui g;
+    final fileinfo finfo=new fileinfo();
     String usern="user";
     Home(CardLayout crd, JPanel cards, Gui g)
     {

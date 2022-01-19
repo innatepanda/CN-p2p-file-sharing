@@ -99,6 +99,14 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 JNIEXPORT jstring JNICALL Java_Gui_Files
   (JNIEnv *, jobject, jstring, jobjectArray, jobjectArray, jintArray, jint, jint);
 
+/*
+ * Class:     Gui
+ * Method:    getStructArray
+ * Signature: ()[Lfileinfo;
+ */
+JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

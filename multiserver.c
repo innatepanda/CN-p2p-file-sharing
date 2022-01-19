@@ -395,7 +395,7 @@ void DELETE(struct fileinfo finfo)
 int sen,rec;
 int cliPort;
 struct sockaddr_in client;
-int main(int argc,char *argv[])
+int main()
 {
       
 	int sockfd,bindvar,listenvar;
@@ -405,7 +405,7 @@ int main(int argc,char *argv[])
 	char cliIP[16];
 	
 	
-	int a= atoi(argv[1]);
+	//int a= atoi(argv[1]);
 /****************************  SOCKET API  ***********************************************************************************************/
 
 	sockfd=socket(AF_INET,SOCK_STREAM,0);
@@ -421,7 +421,7 @@ int main(int argc,char *argv[])
 		
 		struct sockaddr_in server;
 		server.sin_family=AF_INET;
-		server.sin_port=htons(a);
+		server.sin_port=htons(4000);
 		server.sin_addr.s_addr=INADDR_ANY;
 		
 		int clen = sizeof(client);
