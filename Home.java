@@ -2,7 +2,7 @@ import java.awt.*;
 import javax.swing.*;  
 import java.awt.event.*;
 import java.io.File;
-
+import javax.swing.AbstractAction;
 import java.util.Scanner;
 
 public class Home implements ActionListener{
@@ -91,14 +91,15 @@ public class Home implements ActionListener{
                //jchooser.setAccessory(accessory);
                jchooser.setMultiSelectionEnabled(true);
                int response =jchooser.showSaveDialog(null);
+               
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
                   
-                  int fs[] = new int[50]; String fnm[] = new String[50];
-                  String fpath[] = new String[100];
+                  final int fs[] = new int[50]; final String fnm[] = new String[50]; final String fpath[] = new String[100];
                   System.out.println("--n files:"+files.length);
                   
                   for (int i = 0; i < files.length; i++)  {
+                  
                        fs[i]=(int)files[i].length();
                        System.out.println("--length:"+ fs[i]);
                        fnm[i]=files[i].getName();
@@ -111,7 +112,7 @@ public class Home implements ActionListener{
                   for (int i = 0; i < files.length; i++)  {
                        long filesize=files[i].length();
                        
-                       
+                       final int index = i;
                        System.out.println(files[i].getName());
                        System.out.println("path "+files[i]);
                        
@@ -127,8 +128,20 @@ public class Home implements ActionListener{
                         p.add(fsize,gbc);
                         gbc.gridx++;
 
-                        delete=new JButton("Delete file");
-                        //delete.addActionListener(this);
+                        delete=new JButton(new AbstractAction(""+i) {
+                        @Override
+			  public void actionPerformed(ActionEvent e) {
+			  
+			  int nfs[]=new int[1]; String nfnm[]=new String[1]; String nfpath[]=new String[1];
+			    nfs[0]=(int)files[index].length();
+                           nfnm[0]=files[index].getName();
+                           nfpath[0]=files[index].getPath();
+			    System.out.println("--del path: "+files[index]);
+			    result = g.Files(usern, nfnm,nfpath,nfs,1, 4);
+			    System.out.println("--result: "+result);
+			  }
+			});
+			delete.setText("Delete");
                         gbc.gridx++;
                         p.add(delete, gbc);
                         gbc.gridy++;

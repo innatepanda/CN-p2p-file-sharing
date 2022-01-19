@@ -328,19 +328,16 @@ void SEARCH(int sockfd)
 	fclose(fp);
 }
 
+*/
 
-
-void DELETE(int sockfd,char user[50])
+void DELETE(struct fileinfo finfo)
 {
-	FILE *fp,*fp1;
-	struct fileinfo t,t1;
-	int rec,sen,found=0,count=0;
-	char filename[50],msg[200];
-	strcpy(msg,"Enter Filename to be Deleted\n");
-	sen=send(sockfd,msg,strlen(msg),0);
-	rec=recv(sockfd,filename,sizeof(filename),0);
-	fp=fopen(userdb,"rb");
-	fp1=fopen("temp.dat","wb");
+	FILE *fp;
+	struct fileinfo t;
+	int found=0, i;
+	
+	
+	fp=fopen(userdb,"r+");
 		
 	while(1)
 	{
@@ -350,48 +347,50 @@ void DELETE(int sockfd,char user[50])
 		{
 			break;
 		}
-		if(strcmp(t.username,user)==0 && strcmp(t.filename,filename)==0)
+		if(strcmp(t.username,finfo.username)==0)
 		{
-			found=1;
-			strcpy(msg,"File Successfully Deleted\n");
-			send(sockfd,msg,sizeof(msg),0);
+			
+			for( i=0;i<t.filenum;i++)
+			{
+				if(strcmp(t.filepath[i],finfo.filepath[0])==0)
+				{
+					
+					found=1;
+					break;
+					
+				}
+			}
+			
+			if(found)
+			{ 
+				for(;i<t.filenum-1;i++)
+				{
+					strcpy(t.filename[i],t.filename[i+1]);
+					strcpy(t.filepath[i],t.filepath[i+1]);
+					t.filesize[i]=t.filesize[i+1];
+				}
+				
+				t.filenum--;
+				fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);	
+				fwrite(&t,sizeof(t),1,fp);
+				
+				
+			}
 			
 		}
-		else
+		if(found)
 		{
-			fwrite(&t,sizeof(t),1,fp1);
-		}	
-	}
-	fclose(fp);
-	fclose(fp1);
-	
-	if(found==0)
-	{
-		strcpy(msg,"FileNotFound\n");
-		send(sockfd,msg,strlen(msg),0);
-	}
-	else
-	{
-		fp=fopen(userdb,"wb");
-		fp1=fopen("temp.dat","rb");
-	
-		while(1)
-		{
-			fread(&t,sizeof(t),1,fp1);
-		
-			if(feof(fp1))
-			{
-				break;
-			}
-			fwrite(&t,sizeof(t),1,fp);
+			break;
 		}
-	}
 		
+			
+			
+	}
 	fclose(fp);
-	fclose(fp1);
+	displayAll();
 }	
 
-	*/
+	
 
 int sen,rec;
 int cliPort;
@@ -558,7 +557,7 @@ void *func(void *id)
 	     
 	     else if(choice == 2)
 	     {
-	     	printf("--here--");
+	     	
 	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
@@ -566,6 +565,20 @@ void *func(void *id)
 	     	
 	     	
 	     	strcpy(sent_msg,"file added");
+                sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+	     
+	     }
+	     
+	     else if(choice == 4)
+	     {
+	     	printf("--here--");
+	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
+	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
+	     	
+	     	   DELETE(finfo);
+	     	
+	     	
+	     	strcpy(sent_msg,"200 file deleted");
                 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
