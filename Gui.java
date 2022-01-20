@@ -1,67 +1,88 @@
 import java.awt.*;   
 import javax.swing.*;  
 import java.awt.event.*;
-public class Gui extends JFrame implements ActionListener{
+public class Gui extends JFrame{
     //JTextField t1,t2,t3; 
     //JButton b;  
-    JLabel l4;
+    JLabel l4,l1;
     JPanel  q;
     CardLayout crd;    
     JPanel cPane;  
-    JButton exit;  
+    JButton exit; 
+    Home home; 
+    static String username="user";
+    fileinfo finfo = new fileinfo();
     Gui(){
         cPane =new JPanel();  
         crd = new CardLayout();    
         cPane.setLayout(crd);  
        
         q = new JPanel();
-        
-        
-       
-        //p.add(Box.createRigidArea(new Dimension(0,5)));
-
-        
-
+   
         q = new JPanel();
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
             qgbc.insets = new Insets(8, 8, 8, 8);
             qgbc.gridx = 0;
             qgbc.gridy = 0;
-        q.setBounds(0,0,500,500);
+       // q.setBounds(0,0,500,500);
         //q.setBackground(Color.blue);
-        l4=new JLabel("text");
+        
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
-       // l4.setText(login.result);
-        q.add(l4);
-
-        exit =new JButton("Exit");
-        exit.addActionListener(this);
-        qgbc.gridy++;
-        q.add(exit,qgbc);
-        cPane.add(q, "b");  
+      //  System.out.println("username"+g.username);
+        //q.add(l4);
+       
+        Register reg = (new Register(crd, cPane, this));
+        cPane.add(reg.getpanel(), "c");
+        
+        home = (new Home(crd, cPane, this));
+        cPane.add(home.getpanel(), "b");
+       
+      
+        //cPane.add(q, "b");  
+       
+      
+       // cPane.add(q, "b");  
         setContentPane(cPane); 
              
             
     }
-    public void changeText(String msg)
+   
+  
+    static {
+        System.loadLibrary("native");
+    }
+    public native int Cmain();
+    public native String Auth(String usr, String pwd, int choice);
+    public native String Files(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
+      public native fileinfo[] getStructArray();
+    public void changeUsername(String msg)
     {
-        l4.setText(msg);
+    	 username=msg;
+         home.usern=msg;
+         home.changeText(msg);
     }
-    public void actionPerformed(ActionEvent e) 
-    {    
-        if(e.getSource()==exit){  
-            
-            System.exit(0);
-        }
-    }
-    
+
        public static void main(String[] args) {  
           Gui g=new Gui();
-          g.setSize(500,500);  
+          int res=g.Cmain();
+          g.setSize(700,700);  
           //g.setLayout();  
+         // g. setResizable(false);
           g.setVisible(true);
-          g.setDefaultCloseOperation(EXIT_ON_CLOSE);    
+          //g.setUndecorated(true);
+          System.out.println("java");
+         
+          WindowListener exitListener = new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                  g.Auth(username,"password",-1);
+            }
+           };
+          g.addWindowListener(exitListener);
+          //login.setDefaultCloseOperation(EXIT_ON_CLOSE); 
+             
        } 
 }

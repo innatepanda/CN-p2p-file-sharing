@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.Scanner;
 
-public class Login implements ActionListener{
+public class Register implements ActionListener{
     JTextField t1,t2; 
     JButton b,c;  
     JLabel l1,l2,l3,msg1,msg2;
@@ -11,19 +11,18 @@ public class Login implements ActionListener{
     CardLayout crd;
     JPanel cPane;
     int flag=1;
-    public String s1="str",s2;
     public String result="default";
     Gui g;
-    GridBagConstraints gbc;
-    Login(CardLayout crd, JPanel cards, Gui g)
+    Login lg;
+    Register(CardLayout crd, JPanel cards, Gui g)
     {
         this.g=g;
         this.crd=crd;
         this.cPane=cards;
         p = new JPanel();
         p.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-            gbc.insets = new Insets(8, 8, 8,8);
+        GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
             gbc.gridx = 0;
             gbc.gridy = 0;
         p.setBounds(0,0,500,500);
@@ -34,7 +33,7 @@ public class Login implements ActionListener{
         t2=new JTextField(20); 
         l1=new JLabel();l2=new JLabel();l3=new JLabel();
         l1.setFont (l1.getFont ().deriveFont (30.0f));
-        l1.setText("Login");
+        l1.setText("Register");  
         gbc.gridx=1;  p.add(l1, gbc);
         gbc.gridx=0;  gbc.gridy++; 
          
@@ -53,7 +52,7 @@ public class Login implements ActionListener{
         msg2=new JLabel();
         gbc.gridx=1; p.add(msg2,gbc);
         gbc.gridy++;
-        b =new JButton("Login");//creating instance of JButton  
+        b =new JButton("Register");//creating instance of JButton  
         
         //b.addActionListener(this); 
         b.addActionListener(this);
@@ -61,7 +60,7 @@ public class Login implements ActionListener{
         p.add(b, gbc);
         gbc.gridy++;
         
-        c =new JButton("Register");
+        c =new JButton("Login");
         c.addActionListener(this);
         gbc.gridy++;
         p.add(c, gbc);
@@ -76,32 +75,36 @@ public class Login implements ActionListener{
     public void actionPerformed(ActionEvent e) 
     {    
         
-         s1=t1.getText();  
-         s2=t2.getText();  
+        String s1=t1.getText();  
+        String s2=t2.getText();  
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
-            result=g.Auth(s1,s2,1);
+           // l4.setText("usr , pass of "+s1+" is: "+s2);
+         
+          //  result="usr "+s1+"pass "+s2;
+          //  result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
+            result=g.Auth(s1,s2,0);
             if(result.substring(0,3).equals("200")){
                g.changeUsername(s1);
-                
-               System.out.println("username: "+g.username);
                System.out.println(result);
-              
+              // g.changeText(result);
                // crd.next(cPane);  
-               crd.show(cPane,"b");
+              crd.next(cPane);
             }
-            else{
-                
-                msg1.setText("Incorrect usern,please try again "+result);
-                //msg2.setText("Incorrect pass,please try again "+result);
-                System.out.println("err - " +result);
+             else{
+               msg2.setText("usern already exists,please try again "+result);
+               System.out.print("err - " +result);
             }
-            
+           
+              
           }
-          if(e.getSource()==c ){  
-            System.out.println("In register page");
-            crd.next(cPane);  
+          if(e.getSource()==c ){   
+            //Login login = (new Login(crd, cPane, lg));
+           // cPane.add(login.getpanel(), "a");
+           
+            System.out.println("In login page");
+            crd.show(cPane,"a");  
           }
            
        
