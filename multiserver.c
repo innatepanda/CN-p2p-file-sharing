@@ -247,7 +247,7 @@ void ADD_File(struct fileinfo finfo)
 	   
                 found=1;
                 
-                for(int i=0;i<finfo.filenum;i++)
+                for(int i=0;i<finfo[].filenum;i++)
                 {
                 	strcpy(f1.filename[f1.filenum+i],finfo.filename[i]);
                 	strcpy(f1.filepath[f1.filenum+i],finfo.filepath[i]);
@@ -278,6 +278,35 @@ void ADD_File(struct fileinfo finfo)
 		
 	fclose(fp);
 	displayAll();
+
+	
+}
+struct fileinfo * GET_File()
+{
+
+	FILE *fp; 
+	struct fileinfo f1[20];
+	struct fileinfo f2;
+	int found=0;
+	int i=0;
+	fp=fopen(userdb,"r+");
+	//for(int n=0; n<fnum; n++)
+	//{
+	while(1)
+        {
+	        fread(&f1[i],sizeof(f1[i]),1,fp);
+         	if(feof(fp))
+         	{
+         		break;
+         	}
+         	i++;
+        }
+        
+     
+     
+	fclose(fp);
+	displayAll();
+	return f1;
 
 	
 }
@@ -566,6 +595,23 @@ void *func(void *id)
 	     	
 	     	strcpy(sent_msg,"file added");
                 sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+	     
+	     }
+	     
+	     else if(choice == 6)
+	     {
+	     	
+	     	//rec=recv(*cfd,&finfo, sizeof(finfo), 0);
+	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
+	     	   
+	     	   
+	     	   finfo=GET_File();
+	     	   
+	     	   
+	     	   sen=send(sockfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
+	     	   
+	     	   strcpy(sent_msg,"file added");
+                   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
 	     

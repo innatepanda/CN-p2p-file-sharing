@@ -132,8 +132,8 @@ JNIEXPORT jstring JNICALL Java_Gui_Files
    
    for(int i=0;i<fno;i++)
    {
-   	const char *fname = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fn, i),  NULL) ;
-   	const char *fpath = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fp, i),  NULL) ;
+   	const char *fname = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fn, i), NULL) ;
+   	const char *fpath = (*env)->GetStringUTFChars(env, (*env)->GetObjectArrayElement(env, fp, i), NULL) ;
    	strcpy(client.filename[i],fname);
    	strcpy(client.filepath[i],fpath);
    	client.filesize[i]=filesize[i];   
@@ -183,8 +183,10 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     //first name
     jfieldID str = (env)->GetFieldID(objectClass,"usern","Ljava/lang/String;");
     //serial number
-    jfieldID ival = (env)->GetFieldID(objectClass,"status","I");
-    jfieldID ival = (env)->GetFieldID(objectClass,"fno","I");
+    jfieldID stat = (env)->GetFieldID(objectClass,"status","I");
+    jfieldID fnumber = (env)->GetFieldID(objectClass,"fno","I");
+    int choice=6;
+    sen=send(sockfd, &choice, sizeof(userChoice), 0);
     
     for(int i=0; i < len; i++ )
     {
@@ -192,11 +194,12 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
         //jstring jstr = WindowsTojstring(env,"My disk name is D:");
         //(env)->SetObjectField(_obj,str,(env)->NewStringUTF("my name is D:"));
         const char *uname = (*env)->GetStringUTFChars(env, user,  NULL) ;
-        (env)->SetObjectField(_obj,str,jstr);
-        (env)->SetShortField(_obj,ival,10);
+        (env)->SetObjectField(obj,str,uname);
+        (env)->SetShortField(obj,stat,10);
+        (env)->SetShortField(obj,fnumber,10);
 
         //Add to the objcet array
-        (env)->SetObjectArrayElement(args, i, _obj);
+        (env)->SetObjectArrayElement(args, i, obj);
     }
     //Return object array
     return args;
