@@ -182,17 +182,22 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     //Get the definition of each variable in the class
     //first name
     jfieldID str = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
+    jfieldID  = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
     //serial number
     jfieldID stat = (*env)->GetFieldID(env,objectClass,"status","I");
     jfieldID fnumber = (*env)->GetFieldID(env,objectClass,"fno","I");
     
     int choice=6,fno=0;
-    struct fileinfo *rec_msg;
+    
     
     sen=send(sockfd, &choice, sizeof(userChoice), 0);
+    rec=recv(sockfd,(int*)&fno, sizeof(fno), 0);
+    //struct fileinfo *rec_msg=(struct fileinfo *)calloc(fno,sizeof(struct fileinfo));
+    struct fileinfo rec_msg[fno];
     rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
-    fno=rec_msg[0].filenum;
-    printf("\nFile no.(new func) %d\n",fno);
+    
+    
+    printf("\nFile no.(---) %d\n",fno);
     printf("--rec bytes rec: %d\n", rec);
     printf("--bytes size: %d\n", sizeof(rec_msg));
     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
@@ -200,11 +205,15 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
    //{
    //     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[i],rec_msg[0].filepath[i],rec_msg[0].filesize[i], rec_msg[0].filenum);
   // }     
-    for(int i=0; i < len; i++ )
+    for(int i=0; i < fno; i++ )
     {
         
         (*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber,10);
+        (*env)->SetShortField(env,obj,fnumber,fno);
+        (*env)->SetShortField(env,obj,stat,1);
+        (*env)->SetShortField(env,obj,fnumber,fno);
+        (*env)->SetShortField(env,obj,stat,1);
+        (*env)->SetShortField(env,obj,fnumber,fno);
 
         //Add to the objcet array
         (*env)->SetObjectArrayElement(env,args, i, obj);

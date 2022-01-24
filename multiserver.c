@@ -285,7 +285,8 @@ void GET_File(int sockfd)
 {
 
 	FILE *fp; 
-	struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
+	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
+	struct fileinfo f1[20];
 	struct fileinfo f2;
 	int found=0;
 	int i=0;
@@ -301,17 +302,19 @@ void GET_File(int sockfd)
          	}
          	i++;
         }
-        f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
+        //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
         
 	fclose(fp);
 	displayAll();
-	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
-	 printf("--send bytes rec: %d\n", sen);
-	  printf("Test choice  %d, %s",f1[0].filenum,f1[0].filename[0]);
+	
+	 //printf("--send bytes rec: %d\n", sen);
+	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
 	    
 	     	  
     printf("--bytes size: %d\n", sizeof(f1));
 	//return f1;
+	int sen1=send(sockfd,(int*)&i, sizeof(i), 0);
+	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
 
 	
 }
