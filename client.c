@@ -163,16 +163,15 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 
 
    //Declare an object array
-    jobjectArray args = 0;
+    jobjectArray args;
    
-    //Array size
-    jsize len=50;
+    
 
     //Get the class of the object, generally ava/lang/Object is enough
     jclass objClass = (*env)->FindClass(env,"java/lang/Object");
 
     //New object array
-    args = (*env)->NewObjectArray(env,len, objClass, 0);
+    
 
     /**//* The following are the variables in the corresponding instance class obtained in Java*/
 
@@ -181,11 +180,14 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
    
     //Get the definition of each variable in the class
     //first name
-    jfieldID str = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
-    jfieldID  = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
-    //serial number
-    jfieldID stat = (*env)->GetFieldID(env,objectClass,"status","I");
+    jfieldID user = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
+    jfieldID  fname = (*env)->GetFieldID(env,objectClass,"fnm","[Ljava/lang/String;");
+    jfieldID  fpath = (*env)->GetFieldID(env,objectClass,"fpath","[Ljava/lang/String;");
+    jfieldID  fs = (*env)->GetFieldID(env,objectClass,"fs","[I");
+    jfieldID stat = (*env)->GetFieldID(env,objectClass,"status","I"); // see if we can remove status from class
     jfieldID fnumber = (*env)->GetFieldID(env,objectClass,"fno","I");
+    
+    
     
     int choice=6,fno=0;
     
@@ -195,12 +197,14 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     //struct fileinfo *rec_msg=(struct fileinfo *)calloc(fno,sizeof(struct fileinfo));
     struct fileinfo rec_msg[fno];
     rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
-    
+    jstring str, str2;
     
     printf("\nFile no.(---) %d\n",fno);
     printf("--rec bytes rec: %d\n", rec);
     printf("--bytes size: %d\n", sizeof(rec_msg));
     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
+    
+    args = (*env)->NewObjectArray(env,fno, objClass, 0);
     //for(int i=0;i<fno;i++)
    //{
    //     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[i],rec_msg[0].filepath[i],rec_msg[0].filesize[i], rec_msg[0].filenum);
@@ -209,16 +213,30 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     {
         
         (*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber,fno);
-        (*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber,fno);
-        (*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber,fno);
-
-        //Add to the objcet array
+        (*env)->SetShortField(env,obj,fnumber,rec_msg[i].filenum);
+        printf("%d filenum %d--", i, rec_msg[i].filenum);
+        str = (*env)->NewStringUTF(env, rec_msg[i].username);
+        (*env)->SetObjectField(env,obj,user, str);
+        /*jintArray j_arr = (*env)->NewIntArray(env, rec_msg[i].filenum);
+        (*env)->SetIntArrayRegion(env, j_arr, 0, rec_msg[i].filenum, rec_msg[i].filesize);
+        (*env)->SetObjectField(env, obj, fs, j_arr);
+        
+        jobjectArray js_arr = (*env)->NewObjectArray(env, rec_msg[i].filenum, (*env)->FindClass(env,"java/lang/String"), NULL);
+        jobjectArray jp_arr = (*env)->NewObjectArray(env, rec_msg[i].filenum, (*env)->FindClass(env,"java/lang/String"), NULL);
+        
+        for(int j=0;j<rec_msg[i].filenum;j++){
+        	str = (*env)->NewStringUTF(env,(*env)->GetObjectArrayElement(env, rec_msg[i].filepath, j));
+        	(*env)->SetObjectArrayElement(env,js_arr,j,str);
+        	str2 = (*env)->NewStringUTF(env, (*env)->GetObjectArrayElement(env, rec_msg[i].filename, j));
+        	(*env)->SetObjectArrayElement(env,jp_arr,j,str2);
+        }
+	(*env)->SetObjectField(env, obj, fname, js_arr);
+	(*env)->SetObjectField(env, obj, fpath, jp_arr);*/
         (*env)->SetObjectArrayElement(env,args, i, obj);
+        //printf("\nObject %d--- %d",i, objClass.fno);
     }
     //Return object array
+    //printf("\n\nArgs 0--- %d", args.fno);
     return args;
 
 }
