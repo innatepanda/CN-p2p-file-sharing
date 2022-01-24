@@ -247,7 +247,7 @@ void ADD_File(struct fileinfo finfo)
 	   
                 found=1;
                 
-                for(int i=0;i<finfo[].filenum;i++)
+                for(int i=0;i<finfo.filenum;i++)
                 {
                 	strcpy(f1.filename[f1.filenum+i],finfo.filename[i]);
                 	strcpy(f1.filepath[f1.filenum+i],finfo.filepath[i]);
@@ -281,11 +281,11 @@ void ADD_File(struct fileinfo finfo)
 
 	
 }
-struct fileinfo * GET_File()
+void GET_File(int sockfd)
 {
 
 	FILE *fp; 
-	struct fileinfo f1[20];
+	struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
 	struct fileinfo f2;
 	int found=0;
 	int i=0;
@@ -301,12 +301,17 @@ struct fileinfo * GET_File()
          	}
          	i++;
         }
+        f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
         
-     
-     
 	fclose(fp);
 	displayAll();
-	return f1;
+	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
+	 printf("--send bytes rec: %d\n", sen);
+	  printf("Test choice  %d, %s",f1[0].filenum,f1[0].filename[0]);
+	    
+	     	  
+    printf("--bytes size: %d\n", sizeof(f1));
+	//return f1;
 
 	
 }
@@ -604,12 +609,13 @@ void *func(void *id)
 	     	//rec=recv(*cfd,&finfo, sizeof(finfo), 0);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	   
+	     	   //struct fileinfo *finfo;
+	     	   GET_File(*cfd);
 	     	   
-	     	   finfo=GET_File();
-	     	   
-	     	   
-	     	   sen=send(sockfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
-	     	   
+	     	   //printf("Test choice %d , %d, %s", choice,finfo[0].filenum,finfo[0].filename[0]);
+	     	   //sen=send(*cfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
+	     	  
+    //printf("--bytes size: %d\n", sizeof(finfo));
 	     	   strcpy(sent_msg,"file added");
                    sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     

@@ -94,6 +94,15 @@ public class Home implements ActionListener{
                g.Auth(g.username,"password", -1);
                //crd.show(cPane,"b");
            }
+           if(e.getSource()==search ){  
+               fileinfo[] finfo=g.getStructArray();
+                  for (int i = 0; i < finfo[0].fno; i++) {
+                     System.out.println("Username:" + finfo[i].usern);
+                     System.out.println("Status:" + finfo[i].status);
+                     System.out.println("File no.:" + finfo[i].fno);
+              }
+                  
+           }
            if(e.getSource()==add ){  
           
                JFileChooser jchooser= new JFileChooser();
@@ -105,18 +114,7 @@ public class Home implements ActionListener{
                if(response==JFileChooser.APPROVE_OPTION){
                   File[] files = jchooser.getSelectedFiles();
                   
-                  fileinfo[] finfo=g.getStructArray();
-                  for (int i = 0; i < finfo.length; i++) {
-            System.out.println("Username:" + finfo[i].usern);
-            System.out.println("Status:" + finfo[i].status);
-            System.out.println("File no.:" + finfo[i].fno);
-        }
-                  
-                  
-                  
-                  
-               
-                  
+        
                   final int fs[] = new int[50]; final String fnm[] = new String[50]; final String fpath[] = new String[100];
                   System.out.println("--n files:"+files.length);
                   

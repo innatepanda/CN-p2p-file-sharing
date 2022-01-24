@@ -169,37 +169,45 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     jsize len=50;
 
     //Get the class of the object, generally ava/lang/Object is enough
-    jclass objClass = (env)->FindClass("java/lang/Object");
+    jclass objClass = (*env)->FindClass(env,"java/lang/Object");
 
     //New object array
-    args = (env)->NewObjectArray(len, objClass, 0);
+    args = (*env)->NewObjectArray(env,len, objClass, 0);
 
     /**//* The following are the variables in the corresponding instance class obtained in Java*/
 
     //Get the instance class in Java
-    jclass objectClass = (env)->FindClass("fileinfo");
+    jclass objectClass = (*env)->FindClass(env,"fileinfo");
    
     //Get the definition of each variable in the class
     //first name
-    jfieldID str = (env)->GetFieldID(objectClass,"usern","Ljava/lang/String;");
+    jfieldID str = (*env)->GetFieldID(env,objectClass,"usern","Ljava/lang/String;");
     //serial number
-    jfieldID stat = (env)->GetFieldID(objectClass,"status","I");
-    jfieldID fnumber = (env)->GetFieldID(objectClass,"fno","I");
-    int choice=6;
-    sen=send(sockfd, &choice, sizeof(userChoice), 0);
+    jfieldID stat = (*env)->GetFieldID(env,objectClass,"status","I");
+    jfieldID fnumber = (*env)->GetFieldID(env,objectClass,"fno","I");
     
+    int choice=6,fno=0;
+    struct fileinfo *rec_msg;
+    
+    sen=send(sockfd, &choice, sizeof(userChoice), 0);
+    rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
+    fno=rec_msg[0].filenum;
+    printf("\nFile no.(new func) %d\n",fno);
+    printf("--rec bytes rec: %d\n", rec);
+    printf("--bytes size: %d\n", sizeof(rec_msg));
+    printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
+    //for(int i=0;i<fno;i++)
+   //{
+   //     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[i],rec_msg[0].filepath[i],rec_msg[0].filesize[i], rec_msg[0].filenum);
+  // }     
     for(int i=0; i < len; i++ )
     {
-        //Pay value to each instance variable
-        //jstring jstr = WindowsTojstring(env,"My disk name is D:");
-        //(env)->SetObjectField(_obj,str,(env)->NewStringUTF("my name is D:"));
-        const char *uname = (*env)->GetStringUTFChars(env, user,  NULL) ;
-        (env)->SetObjectField(obj,str,uname);
-        (env)->SetShortField(obj,stat,10);
-        (env)->SetShortField(obj,fnumber,10);
+        
+        (*env)->SetShortField(env,obj,stat,1);
+        (*env)->SetShortField(env,obj,fnumber,10);
 
         //Add to the objcet array
-        (env)->SetObjectArrayElement(args, i, obj);
+        (*env)->SetObjectArrayElement(env,args, i, obj);
     }
     //Return object array
     return args;
