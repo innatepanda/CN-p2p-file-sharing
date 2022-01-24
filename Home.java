@@ -95,8 +95,9 @@ public class Home implements ActionListener{
                //crd.show(cPane,"b");
            }
            if(e.getSource()==search ){  
-               fileinfo[] finfo=g.getStructArray();
-                  for (int i = 0; i < 2; i++) {
+               fileinfo[] finfo=new fileinfo[20];
+               finfo=g.getStructArray();
+                  for (int i = 0; i < 4; i++) {
                      System.out.println("Username:" + finfo[i].usern);
                      System.out.println("Status:" + finfo[i].status);
                      System.out.println("File no.:" + finfo[i].fno);

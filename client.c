@@ -189,35 +189,40 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     
     
     
-    int choice=6,fno=0;
+    int choice=6,unum=0;
     
     
     sen=send(sockfd, &choice, sizeof(userChoice), 0);
-    rec=recv(sockfd,(int*)&fno, sizeof(fno), 0);
-    //struct fileinfo *rec_msg=(struct fileinfo *)calloc(fno,sizeof(struct fileinfo));
-    struct fileinfo rec_msg[fno];
+    rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
+    //struct fileinfo *rec_msg=(struct fileinfo *)calloc(unum,sizeof(struct fileinfo));
+    struct fileinfo rec_msg[unum];
     rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
     jstring str, str2;
     
-    printf("\nFile no.(---) %d\n",fno);
+    printf("\nFile no.(---) %d\n",unum);
     printf("--rec bytes rec: %d\n", rec);
     printf("--bytes size: %d\n", sizeof(rec_msg));
     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
     
-    args = (*env)->NewObjectArray(env,fno, objClass, 0);
+    args = (*env)->NewObjectArray(env,unum, objClass, 0);
     //for(int i=0;i<fno;i++)
    //{
    //     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[i],rec_msg[0].filepath[i],rec_msg[0].filesize[i], rec_msg[0].filenum);
-  // }     
-    for(int i=0; i < fno; i++ )
+  // }    
+   
+   
+   printf("\n------- loop start--------- \n");
+    for(int i=0; i < unum; i++ )
     {
-        
+        printf("\ni-%d---", i);
         (*env)->SetShortField(env,obj,stat,1);
+        (*env)->SetShortField(env,obj,fnumber, i);
+        /*(*env)->SetShortField(env,obj,stat,1);
         (*env)->SetShortField(env,obj,fnumber,rec_msg[i].filenum);
         printf("%d filenum %d--", i, rec_msg[i].filenum);
         str = (*env)->NewStringUTF(env, rec_msg[i].username);
         (*env)->SetObjectField(env,obj,user, str);
-        /*jintArray j_arr = (*env)->NewIntArray(env, rec_msg[i].filenum);
+        jintArray j_arr = (*env)->NewIntArray(env, rec_msg[i].filenum);
         (*env)->SetIntArrayRegion(env, j_arr, 0, rec_msg[i].filenum, rec_msg[i].filesize);
         (*env)->SetObjectField(env, obj, fs, j_arr);
         
@@ -233,7 +238,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 	(*env)->SetObjectField(env, obj, fname, js_arr);
 	(*env)->SetObjectField(env, obj, fpath, jp_arr);*/
         (*env)->SetObjectArrayElement(env,args, i, obj);
-        //printf("\nObject %d--- %d",i, objClass.fno);
+        //printf("\nObject %d--- %d",i, objClass.unum);
     }
     //Return object array
     //printf("\n\nArgs 0--- %d", args.fno);
