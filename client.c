@@ -161,19 +161,18 @@ JNIEXPORT jstring JNICALL Java_Gui_Files
 
 JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj){
 
-
+    int choice=6,unum=0;
+       
+    sen=send(sockfd, &choice, sizeof(userChoice), 0);
+    rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
    //Declare an object array
-    jobjectArray args;
-   
-    
+    jobjectArray args; 
 
     //Get the class of the object, generally ava/lang/Object is enough
     jclass objClass = (*env)->FindClass(env,"java/lang/Object");
 
     //New object array
-    
-
-    /**//* The following are the variables in the corresponding instance class obtained in Java*/
+    args = (*env)->NewObjectArray(env,unum, objClass, 0);
 
     //Get the instance class in Java
     jclass objectClass = (*env)->FindClass(env,"fileinfo");
@@ -189,59 +188,65 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     
     
     
-    int choice=6,unum=0;
     
-    
-    sen=send(sockfd, &choice, sizeof(userChoice), 0);
-    rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
     //struct fileinfo *rec_msg=(struct fileinfo *)calloc(unum,sizeof(struct fileinfo));
     struct fileinfo rec_msg[unum];
     rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
     jstring str, str2;
     
-    printf("\nFile no.(---) %d\n",unum);
+    printf("\nUser no.(---) %d\n",unum);
     printf("--rec bytes rec: %d\n", rec);
     printf("--bytes size: %d\n", sizeof(rec_msg));
     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
     
-    args = (*env)->NewObjectArray(env,unum, objClass, 0);
-    //for(int i=0;i<fno;i++)
-   //{
-   //     printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[i],rec_msg[0].filepath[i],rec_msg[0].filesize[i], rec_msg[0].filenum);
-  // }    
+    
+      
    
+   jmethodID method = (*env)->GetMethodID(env,objectClass, "<init>", "()V");
+   /*int flag=0;
+   for(int i=0;i<unum;i++){
+   str = (*env)->NewStringUTF(env, rec_msg[i].username);
+   (*env)->SetObjectField(env,objectClass,user, str);
+ 
+   
+   (*env)->SetShortField(env,objectClass,fnumber,3 );
+   //jobject filen = (*env)->NewObject(env, objectClass, method,rec_msg[0].filenum);
+   //printf("\nFile number test----%d\n",rec_msg[0].filenum);
+   
+   (*env)->SetShortField(env,objectClass,stat,1);
+   //jobject status = (*env)->NewObject(env, objectClass, method, 1 );
+   flag++;
+   (*env)->SetObjectArrayElement(env, args, 2,objectClass);
+   (*env)->SetObjectArrayElement(env, args, 1,objectClass);
+   (*env)->SetObjectArrayElement(env, args, 0,objectClass);
+   
+    
+   }
+   if(flag>0)
+   {
+   return args;
+   }*/
    
    printf("\n------- loop start--------- \n");
     for(int i=0; i < unum; i++ )
     {
+       // for(int j=0; j < 3; j++ )
         printf("\ni-%d---", i);
-        (*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber, i);
-        /*(*env)->SetShortField(env,obj,stat,1);
-        (*env)->SetShortField(env,obj,fnumber,rec_msg[i].filenum);
-        printf("%d filenum %d--", i, rec_msg[i].filenum);
-        str = (*env)->NewStringUTF(env, rec_msg[i].username);
-        (*env)->SetObjectField(env,obj,user, str);
-        jintArray j_arr = (*env)->NewIntArray(env, rec_msg[i].filenum);
-        (*env)->SetIntArrayRegion(env, j_arr, 0, rec_msg[i].filenum, rec_msg[i].filesize);
-        (*env)->SetObjectField(env, obj, fs, j_arr);
-        
-        jobjectArray js_arr = (*env)->NewObjectArray(env, rec_msg[i].filenum, (*env)->FindClass(env,"java/lang/String"), NULL);
-        jobjectArray jp_arr = (*env)->NewObjectArray(env, rec_msg[i].filenum, (*env)->FindClass(env,"java/lang/String"), NULL);
-        
-        for(int j=0;j<rec_msg[i].filenum;j++){
-        	str = (*env)->NewStringUTF(env,(*env)->GetObjectArrayElement(env, rec_msg[i].filepath, j));
-        	(*env)->SetObjectArrayElement(env,js_arr,j,str);
-        	str2 = (*env)->NewStringUTF(env, (*env)->GetObjectArrayElement(env, rec_msg[i].filename, j));
-        	(*env)->SetObjectArrayElement(env,jp_arr,j,str2);
-        }
-	(*env)->SetObjectField(env, obj, fname, js_arr);
-	(*env)->SetObjectField(env, obj, fpath, jp_arr);*/
+       // {
+            (*env)->SetShortField(env,obj,stat,1);
+            (*env)->SetShortField(env,obj,fnumber,rec_msg[i].filenum );
+            printf("Fileno---%d",rec_msg[i].filenum);
+            
+             str = (*env)->NewStringUTF(env, rec_msg[i].username);
+            (*env)->SetObjectField(env,obj,user, str);
+            printf("Uesrname---%s",rec_msg[i].username);
+                
+                
+            //(*env)->SetObjectArrayElement(env,args, j,objectClass);
+        //}
         (*env)->SetObjectArrayElement(env,args, i, obj);
-        //printf("\nObject %d--- %d",i, objClass.unum);
-    }
-    //Return object array
-    //printf("\n\nArgs 0--- %d", args.fno);
+      
+  }
     return args;
 
 }
