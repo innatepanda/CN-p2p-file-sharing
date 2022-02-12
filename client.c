@@ -87,7 +87,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
   
    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
-   const char *pwd = (*env)->GetStringUTFChars(env, pd,NULL ) ;
+   const char *pwd = (*env)->GetStringUTFChars(env, pd,  NULL ) ;
    
    struct clientinfo client;
 			
@@ -245,8 +245,15 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
             //(*env)->SetObjectArrayElement(env,args, j,objectClass);
         //}
         (*env)->SetObjectArrayElement(env,args, i, obj);
+        printf("|||||args fnum%d\n", (*env)->GetShortField(env, (*env)->GetObjectArrayElement(env, args, i), fnumber));
+        
       
   }
+  for(int i=0; i < unum; i++ )
+    {
+  	printf("\ni-%d ARGS fnum%d",i, (*env)->GetShortField(env, (*env)->GetObjectArrayElement(env, args, i), fnumber));
+  }
+  printf("\n\n");
     return args;
 
 }
