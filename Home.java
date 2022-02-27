@@ -12,8 +12,10 @@ class fileinfo{
    int fno;
    String fnm[];
    String fpath[];
+   fileinfo(){}
    
 }
+
 public class Home implements ActionListener{
     JTextField s; 
     JButton logout,delete,add,search;  
