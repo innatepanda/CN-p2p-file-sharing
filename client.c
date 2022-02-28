@@ -244,22 +244,20 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     for(int i=0; i < unum; i++ )
     {
       
-        printf("\ni-%d---", i);
-      
-             jobject obj2 = (*env)->NewObjectA(env,objectClass,method,"()V");
-            (*env)->SetShortField(env,obj2,stat,1);
-            (*env)->SetShortField(env,obj2,fnumber,rec_msg[i].filenum );
-            printf("Fileno---%d",rec_msg[i].filenum);
-            
-             str = (*env)->NewStringUTF(env, rec_msg[i].username);
-            (*env)->SetObjectField(env,obj2,user, str);
-            
-            printf("Uesrname---%s",rec_msg[i].username);
+	     jobject obj2 = (*env)->NewObjectA(env,objectClass,method,"()V");
+	    (*env)->SetShortField(env,obj2,stat,1);
+	    (*env)->SetShortField(env,obj2,fnumber,rec_msg[i].filenum );
+	    printf("Fileno---%d",rec_msg[i].filenum);
+	    
+	     str = (*env)->NewStringUTF(env, rec_msg[i].username);
+	    (*env)->SetObjectField(env,obj2,user, str);
+	    
+	    printf("Uesrname---%s",rec_msg[i].username);
                 
           
-         str = (*env)->NewStringUTF(env, rec_msg[i].username);
+           str = (*env)->NewStringUTF(env, rec_msg[i].username);
        
-        (*env)->SetObjectArrayElement(env,args, i,obj2);
+           (*env)->SetObjectArrayElement(env,args, i,obj2);
        
    }
     return args;
