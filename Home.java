@@ -3,7 +3,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.AbstractAction;
-import java.util.Scanner;
+import java.util.*;
+import java.nio.file.Files;
 
 class fileinfo{
    String usern;
@@ -18,8 +19,8 @@ class fileinfo{
 
 public class Home implements ActionListener{
     JTextField s; 
-    JButton logout,delete,add,search;  
-    JLabel welcome,fname,fsize;
+    JButton logout,download, delete ,add,search, getFiles;  
+    JLabel welcome,fname,fsize,userl,fnol;
     JPanel p;
     CardLayout crd;
     JPanel cPane;
@@ -66,6 +67,7 @@ public class Home implements ActionListener{
         gbc.gridx=2;
         p.add(search,gbc);
         
+        
         logout =new JButton("Logout");
         logout.addActionListener(this);    
         gbc.gridx=3;
@@ -73,10 +75,20 @@ public class Home implements ActionListener{
         
         gbc.gridy=1;
         gbc.gridx=0;
-        add =new JButton("Add new file");     
+        
+        
+        getFiles = new JButton("Get files");     
+        getFiles.addActionListener(this);
+        p.add(getFiles, gbc);
+        gbc.gridx++;
+        
+        
+        add = new JButton("Add new file");     
         add.addActionListener(this);
         p.add(add, gbc);
         gbc.gridy++;
+        
+        
         
         
     }
@@ -88,6 +100,125 @@ public class Home implements ActionListener{
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
     }
+    
+    
+    public void refreshUI(ArrayList<fileinfo> files){
+    	
+    	//System.out.println(files);
+    	for (int i = 0; i < files.size(); i++)  {
+    		final fileinfo curr = files.get(i);
+    		int fno = curr.fno; //number of files per user
+    		String str1 = Integer.toString(fno);
+    		//System.out.println(fno);
+    		
+	       //long filesize=files.elementAt(i).length();
+	       userl=new JLabel(curr.usern);
+			
+                gbc.gridx=0;
+                p.add(userl,gbc);
+                
+                fnol=new JLabel(str1);
+			
+                gbc.gridx=1;
+                p.add(fnol,gbc);
+                gbc.gridx++;
+               
+                
+	       for (int j = 0; j < fno; j++)
+	       {
+		       final int index = j;
+		       
+		       //System.out.println("path "+curr.fpath[j]);
+		       
+		       
+			fname=new JLabel(curr.fnm[j]);
+			
+			gbc.gridx=2;
+			p.add(fname,gbc);
+			gbc.gridx++;
+
+			fsize=new JLabel("Size "+curr.fs[j]);
+		      
+			p.add(fsize,gbc);
+			gbc.gridx++;
+			
+			//TODO: del only for own files, username for others
+			
+
+			download=new JButton(new AbstractAction(""+j) {
+			@Override
+			  public void actionPerformed(ActionEvent e) {
+			  downloadFile(curr.fpath[index], curr.fnm[index]);
+			   System.out.println("--result: "+(usern.equals(curr.usern)));
+			  }
+			});
+			download.setText("Download");
+			gbc.gridx++;
+			p.add(download, gbc);
+			
+			if(usern.equals( curr.usern)){
+			
+			delete=new JButton(new AbstractAction(""+j) {
+			@Override
+			  public void actionPerformed(ActionEvent e) {
+			  
+			  int nfs[]=new int[1]; String nfnm[]=new String[1]; String nfpath[]=new String[1];
+			   nfs[0]=(int)curr.fs[index];
+			   nfnm[0]=curr.fnm[index];
+			   nfpath[0]=curr.fpath[index];
+			    //System.out.println("--del path: "+files[index]);
+			    //TODO
+			   result = g.Files(usern, nfnm,nfpath,nfs,1, 4);
+			   System.out.println("--result: "+result);
+			  }
+			});
+			delete.setText("Delete");
+			gbc.gridx++;
+			p.add(delete, gbc);}
+			
+			gbc.gridy++;
+			
+			
+			
+		}
+		
+		//System.out.println(files.length);
+		
+		//p.add(l4, gbc);
+		
+		
+          }
+          
+                  
+            
+	  p.revalidate();
+          //p.repaint();
+      
+    
+    }
+    
+    public void downloadFile(String path, String fname)
+    {
+        File src = new File(path);
+        JFileChooser jchooser= new JFileChooser(fname);
+       
+       jchooser.setSelectedFile(new File(fname));
+       int response =jchooser.showSaveDialog(null);
+       if (response == JFileChooser.APPROVE_OPTION)
+ 
+            {
+                // set the label to the path of the selected file
+                System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
+                //File dest = jchooser.getSelectedFile();
+                try{
+                Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
+                }catch(Exception e)
+                {
+                        System.out.println("error"+e.getMessage());
+                }
+            }
+    
+    }
     public void actionPerformed(ActionEvent e) 
     {    
        
@@ -96,16 +227,22 @@ public class Home implements ActionListener{
                g.Auth(g.username,"password", -1);
                //crd.show(cPane,"b");
            }
-           if(e.getSource()==search ){  
-               fileinfo[] finfo = new fileinfo[20];
-                finfo=g.getStructArray();
+           if(e.getSource()==getFiles ){  
+               //fileinfo[] finfo = new fileinfo[20];
+               //Vector<fileinfo> finfo = new Vector<fileinfo>();
+               ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
+                
+                
                
-                for (int i = 0; i < 3; i++) {
-                     System.out.println("---Test i---" + i);
-                     System.out.println("Username:" + finfo[i].usern);
-                     System.out.println("Status:" + finfo[i].status);
-                     System.out.println("File no.:" + finfo[i].fno);
+                for (int i = 0; i < finfo.size(); i++) {
+                     System.out.println("---Test " + i + "---");
+                     System.out.println("Username:" + finfo.get(i).usern);
+                     //System.out.println("Status:" + finfo.elementAt(i).status);
+                     System.out.println("File name:" + finfo.get(i).fnm[0]);
+                     System.out.println("File no.:" + finfo.get(i).fno);
               }
+              
+              refreshUI(finfo);
                   
            }
            if(e.getSource()==add ){  
@@ -133,52 +270,8 @@ public class Home implements ActionListener{
                        
                   result = g.Files(usern, fnm,fpath,fs,files.length, 2);
                   
+                  //TODO
                   
-                  for (int i = 0; i < files.length; i++)  {
-                       long filesize=files[i].length();
-                       
-                       final int index = i;
-                       System.out.println(files[i].getName());
-                       System.out.println("path "+files[i]);
-                       
-                       
-                        fname=new JLabel(files[i].getName());
-                        
-                        gbc.gridx=0;
-                        p.add(fname,gbc);
-                        gbc.gridx++;
-
-                        fsize=new JLabel("Size "+filesize);
-                      
-                        p.add(fsize,gbc);
-                        gbc.gridx++;
-
-                        delete=new JButton(new AbstractAction(""+i) {
-                        @Override
-			  public void actionPerformed(ActionEvent e) {
-			  
-			  int nfs[]=new int[1]; String nfnm[]=new String[1]; String nfpath[]=new String[1];
-			    nfs[0]=(int)files[index].length();
-                           nfnm[0]=files[index].getName();
-                           nfpath[0]=files[index].getPath();
-			    System.out.println("--del path: "+files[index]);
-			    result = g.Files(usern, nfnm,nfpath,nfs,1, 4);
-			    System.out.println("--result: "+result);
-			  }
-			});
-			delete.setText("Delete");
-                        gbc.gridx++;
-                        p.add(delete, gbc);
-                        gbc.gridy++;
-                        
-                        //System.out.println(files.length);
-                        
-                        //p.add(l4, gbc);
-                  }
-                  
-            
-		  p.validate();
-                  p.repaint();
 		
                }
                
@@ -187,6 +280,12 @@ public class Home implements ActionListener{
  
        
     }
+    
+    
+    
+    
+    
+    
    
    
 }

@@ -313,8 +313,9 @@ void GET_File(int sockfd)
 	     	  
     printf("--bytes size: %d\n", sizeof(f1));
 	//return f1;
-	int sen1=send(sockfd,(int*)&i, sizeof(i), 0);
+	int sen1=send(sockfd,&i, sizeof(i), 0);
 	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
+	printf("send status:%d %d\n\n", sen1, sen);
 
 	
 }
@@ -619,8 +620,8 @@ void *func(void *id)
 	     	   //sen=send(*cfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
 	     	  
     //printf("--bytes size: %d\n", sizeof(finfo));
-	     	   strcpy(sent_msg,"file added");
-                   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+	     	  // strcpy(sent_msg,"file added");
+                  // sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
 	     
