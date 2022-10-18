@@ -21,10 +21,10 @@ public class Home implements ActionListener{
     JTextField s; 
     JButton logout,download, delete ,add,search, getFiles;  
     JLabel welcome,fname,fsize,userl,fnol;
-    JPanel p;
+    JPanel p, dataPanel;
     CardLayout crd;
     JPanel cPane;
-    GridBagConstraints gbc;
+    GridBagConstraints gbc, data_gbc;
     public String result="default";
     Gui g;
     final fileinfo finfo=new fileinfo();
@@ -86,7 +86,27 @@ public class Home implements ActionListener{
         add = new JButton("Add new file");     
         add.addActionListener(this);
         p.add(add, gbc);
-        gbc.gridy++;
+        gbc.gridx=0;
+        
+		dataPanel = new JPanel();
+		dataPanel.setLayout(new GridBagLayout());
+		
+		dataPanel.setSize( 1700, 700);
+		dataPanel.setVisible(true);
+        
+		data_gbc = new GridBagConstraints();
+		data_gbc.insets = new Insets(2, 2, 2, 2);
+		data_gbc.weightx = 1;
+		data_gbc.weighty=2;
+		//data_gbc.anchor = GridBagConstraints.PAGE_START; 
+        
+        gbc.weightx=1;
+        gbc.gridwidth = 5; 
+        
+        gbc.gridy+=2;
+        
+        p.add(dataPanel, gbc);
+        
         
         
         
@@ -103,29 +123,36 @@ public class Home implements ActionListener{
     
     
     public void refreshUI(ArrayList<fileinfo> files){
+    	dataPanel.removeAll();
     	
+            data_gbc.gridx = 0;
+            data_gbc.gridy = 0;
+            //gbc.weighty = 1; 
+            
     	//System.out.println(files);
     	for (int i = 0; i < files.size(); i++)  {
+
     		final fileinfo curr = files.get(i);
     		int fno = curr.fno; //number of files per user
     		String str1 = Integer.toString(fno);
     		//System.out.println(fno);
     		
 	       //long filesize=files.elementAt(i).length();
-	       userl=new JLabel(curr.usern);
+	       userl=new JLabel(curr.usern);//username
 			
-                gbc.gridx=0;
-                p.add(userl,gbc);
+                data_gbc.gridx=0;
+                dataPanel.add(userl,data_gbc);
                 
-                fnol=new JLabel(str1);
-			
-                gbc.gridx=1;
-                p.add(fnol,gbc);
-                gbc.gridx++;
-               
+                fnol=new JLabel(str1);//no of files
+                data_gbc.gridx++;
+                
+                dataPanel.add(fnol,data_gbc);
+                data_gbc.gridx++;
+               	data_gbc.gridy++;
                 
 	       for (int j = 0; j < fno; j++)
 	       {
+	       	
 		       final int index = j;
 		       
 		       //System.out.println("path "+curr.fpath[j]);
@@ -133,14 +160,14 @@ public class Home implements ActionListener{
 		       
 			fname=new JLabel(curr.fnm[j]);
 			
-			gbc.gridx=2;
-			p.add(fname,gbc);
-			gbc.gridx++;
+			data_gbc.gridx=0;
+			dataPanel.add(fname,gbc);
+			data_gbc.gridx+=2;
 
 			fsize=new JLabel("Size "+curr.fs[j]);
 		      
-			p.add(fsize,gbc);
-			gbc.gridx++;
+			dataPanel.add(fsize,data_gbc);
+			data_gbc.gridx++;
 			
 			//TODO: del only for own files, username for others
 			
@@ -153,8 +180,8 @@ public class Home implements ActionListener{
 			  }
 			});
 			download.setText("Download");
-			gbc.gridx++;
-			p.add(download, gbc);
+			data_gbc.gridx++;
+			dataPanel.add(download, data_gbc);
 			
 			if(usern.equals( curr.usern)){
 			
@@ -173,10 +200,11 @@ public class Home implements ActionListener{
 			  }
 			});
 			delete.setText("Delete");
-			gbc.gridx++;
-			p.add(delete, gbc);}
+			data_gbc.gridx++;
+			dataPanel.add(delete, data_gbc);
+			}
 			
-			gbc.gridy++;
+			data_gbc.gridy+=2;
 			
 			
 			
@@ -191,8 +219,9 @@ public class Home implements ActionListener{
           
                   
             
-	  p.revalidate();
-          //p.repaint();
+	  
+          p.repaint();
+          p.revalidate();
       
     
     }
@@ -219,6 +248,23 @@ public class Home implements ActionListener{
             }
     
     }
+    
+    public void getFiles()
+    {
+    	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
+                
+                
+               
+        for (int i = 0; i < finfo.size(); i++) {
+             System.out.println("---Test " + i + "---");
+             System.out.println("Username:" + finfo.get(i).usern);
+             //System.out.println("Status:" + finfo.elementAt(i).status);
+             System.out.println("File name:" + finfo.get(i).fnm[0]);
+             System.out.println("File no.:" + finfo.get(i).fno);
+      }
+      
+      refreshUI(finfo);
+    }
     public void actionPerformed(ActionEvent e) 
     {    
        
@@ -230,19 +276,7 @@ public class Home implements ActionListener{
            if(e.getSource()==getFiles ){  
                //fileinfo[] finfo = new fileinfo[20];
                //Vector<fileinfo> finfo = new Vector<fileinfo>();
-               ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
-                
-                
-               
-                for (int i = 0; i < finfo.size(); i++) {
-                     System.out.println("---Test " + i + "---");
-                     System.out.println("Username:" + finfo.get(i).usern);
-                     //System.out.println("Status:" + finfo.elementAt(i).status);
-                     System.out.println("File name:" + finfo.get(i).fnm[0]);
-                     System.out.println("File no.:" + finfo.get(i).fno);
-              }
-              
-              refreshUI(finfo);
+               getFiles();
                   
            }
            if(e.getSource()==add ){  

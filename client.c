@@ -203,10 +203,12 @@ JNIEXPORT jint JNICALL Java_Gui_getUserNumber(JNIEnv *env, jobject obj){
 
 JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj){
 
-    int choice=6,unum=3;
+    int choice=6;
+    uint32_t unum=0;
        
     sen=send(sockfd, &choice, sizeof(choice), 0);
     rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
+    //unum = ntohl(unum);
     printf("\nUser no.(---) %d \tuser bytes%d\n",unum, rec);
    //Declare an object array
     jobjectArray args;
@@ -236,7 +238,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     
     //struct fileinfo *rec_msg=(struct fileinfo *)calloc(unum,sizeof(struct fileinfo));
     struct fileinfo rec_msg[unum];
-    rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
+    rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), SOCK_DGRAM);
     jstring str, str2;
     
     

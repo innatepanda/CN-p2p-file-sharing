@@ -138,6 +138,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 	fclose(fp);
 	
 	displayAll();
+	displayUsers();
 }
 
 void ADD_USER (char usrn[50],char pwd[50])
@@ -203,7 +204,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 	FILE *fp;
 	struct fileinfo t;
 	int count=0;
-	
+	printf("HERE");
 	fp=fopen(userdb,"r+");
 		
 	while(1)
@@ -221,7 +222,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 			
 	}
 	fclose(fp);
-	//displayAll();
+	displayAll();
 }
 
 
@@ -286,10 +287,8 @@ void GET_File(int sockfd)
 
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
-	struct fileinfo f1[20];
-	struct fileinfo f2;
-	int found=0;
-	int i=0;
+	struct fileinfo f1[15];
+	uint32_t i=0;
 	fp=fopen(userdb,"r+");
 	//for(int n=0; n<fnum; n++)
 	//{
@@ -309,7 +308,7 @@ void GET_File(int sockfd)
 	
 	 //printf("--send bytes rec: %d\n", sen);
 	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
-	    
+	  i = htonl(i);  
 	     	  
     printf("--bytes size: %d\n", sizeof(f1));
 	//return f1;

@@ -19,7 +19,7 @@ public class Gui extends JFrame{
        
         q = new JPanel();
    
-        q = new JPanel();
+        
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
             qgbc.insets = new Insets(8, 8, 8, 8);
