@@ -130,7 +130,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			
 			
-			t.status=1;
+			t.status=-1;
 			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
@@ -219,6 +219,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
+		
 			
 	}
 	fclose(fp);
@@ -287,7 +288,7 @@ void GET_File(int sockfd)
 
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
-	struct fileinfo f1[15];
+	struct fileinfo f1[5];
 	uint32_t i=0;
 	fp=fopen(userdb,"r+");
 	//for(int n=0; n<fnum; n++)
@@ -308,7 +309,7 @@ void GET_File(int sockfd)
 	
 	 //printf("--send bytes rec: %d\n", sen);
 	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
-	  i = htonl(i);  
+	  
 	     	  
     printf("--bytes size: %d\n", sizeof(f1));
 	//return f1;
