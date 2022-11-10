@@ -130,8 +130,8 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			
 			
-			t.status=-1;
-			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
+			t.status=1;
+			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
 	}
@@ -154,13 +154,7 @@ void ADD_USER (char usrn[50],char pwd[50])
 	time(c1.date);
 	fwrite(&c1,sizeof(c1),1,fp);
 	fclose(fp);
-	//fp=fopen(userdb,"ab");
 	
-        //f1.status=1;
-	        
-								
-	//fwrite(&f1,sizeof(f1),1,fp);	
-	//fclose(fp);
 	displayUsers();
 	//displayAll();
 }
@@ -216,7 +210,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 		{
 			
 			t.status=0;
-			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
+			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 		}
 		
@@ -283,24 +277,38 @@ void ADD_File(struct fileinfo finfo)
 
 	
 }
+
+
+void Delete_empty_users()
+{
+
+//TODO: delete empty user entries once no of users with filenum=0 reaches 1/3 of all users
+
+}
+
 void GET_File(int sockfd)
 {
 
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
-	struct fileinfo f1[5];
-	uint32_t i=0;
+	struct fileinfo f1[10];
+	int i=0;
 	fp=fopen(userdb,"r+");
+	
 	//for(int n=0; n<fnum; n++)
 	//{
 	while(1)
         {
-	        fread(&f1[i],sizeof(f1[i]),1,fp);
+	        fread(&f1[i],sizeof(struct fileinfo),1,fp);
+	        
          	if(feof(fp))
          	{
          		break;
          	}
+         	
+         	if(f1[i].filenum>0)
          	i++;
+         	
         }
         //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
         
@@ -311,11 +319,16 @@ void GET_File(int sockfd)
 	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
 	  
 	     	  
-    printf("--bytes size: %d\n", sizeof(f1));
+    
 	//return f1;
-	int sen1=send(sockfd,&i, sizeof(i), 0);
-	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
-	printf("send status:%d %d\n\n", sen1, sen);
+	int sen1=send(sockfd,(int *)&i, sizeof(int), 0);
+	int sen;
+	for(int j=0; j<i; j++)
+	{ 
+		sen=send(sockfd,(struct fileinfo *)&f1[j], sizeof(struct fileinfo), 0); 
+		printf("send status:%d %d\n\n", sen1, sen);
+	}
+	
 
 	
 }
@@ -409,6 +422,7 @@ void DELETE(struct fileinfo finfo)
 				}
 				
 				t.filenum--;
+				
 				fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);	
 				fwrite(&t,sizeof(t),1,fp);
 				

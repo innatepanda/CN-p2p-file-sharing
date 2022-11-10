@@ -57,6 +57,9 @@ public class Gui extends JFrame{
     public native String Auth(String usr, String pwd, int choice);
     public native String Files(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
     public native fileinfo[] getStructArray();
+    public native int getFilesNew();
+    
+    
     public void changeUsername(String msg)
     {
     	 username=msg;
@@ -65,8 +68,11 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
+       	
           Gui g=new Gui();
+          
           int res=g.Cmain();
+          
           g.setSize(700,700);  
           //g.setLayout();  
          // g. setResizable(false);

@@ -20,11 +20,11 @@ class fileinfo{
 public class Home implements ActionListener{
     JTextField s; 
     JButton logout,download, delete ,add,search, getFiles;  
-    JLabel welcome,fname,fsize,userl,fnol;
-    JPanel p, dataPanel;
+    JLabel welcome,fname,fsize,userl,fnol, noData;
+    JPanel mainPanel, topPanel, dataPanel;
     CardLayout crd;
     JPanel cPane;
-    GridBagConstraints gbc, data_gbc;
+    GridBagConstraints main_gbc, gbc, data_gbc;
     public String result="default";
     Gui g;
     final fileinfo finfo=new fileinfo();
@@ -34,25 +34,52 @@ public class Home implements ActionListener{
         this.g=g;
         this.crd=crd;
         this.cPane=cards;
-        p = new JPanel();
-        p.setLayout(new GridBagLayout());
-         gbc = new GridBagConstraints();
-            gbc.insets = new Insets(2, 2, 0, 0);
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            //gbc.weighty = 1; 
-            gbc.weightx = 1;
-            gbc.anchor = GridBagConstraints.PAGE_START; 
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+         
            // gbc.setVgap(0);
-        p.setBounds(0,0,700,700);
-        p.setBackground(Color.white);
+        mainPanel.setBounds(0,0,700,700);
+        mainPanel.setBackground(Color.white);
        // gbc.setBackground(Color.red);  
+       
+       main_gbc = new GridBagConstraints();
+       main_gbc.insets = new Insets(2, 2, 0, 0);
+       main_gbc.gridx = 0;
+       main_gbc.gridy = 0;
+            //gbc.weighty = 1; 
+       main_gbc.weightx = 1;
+       main_gbc.anchor = GridBagConstraints.PAGE_START; 
+       
+       noData = new JLabel(); 
+       noData.setFont (noData.getFont ().deriveFont (20.0f));
+       noData.setText("No Files Available");
      
+     
+     
+     
+     	topPanel = new JPanel();
+	topPanel.setLayout(new GridBagLayout());
+	
+	topPanel.setSize( 700, 700);
+	topPanel.setVisible(true);
+	gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 2, 0, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+            //gbc.weighty = 1; 
+        gbc.weightx = 1;
+        gbc.anchor = GridBagConstraints.PAGE_START; 
+
+	
+	
+	
+	
+	
         welcome=new JLabel();
         welcome.setFont (welcome.getFont ().deriveFont (20.0f));
        // gbc.gridx=1;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        p.add(welcome,gbc);
+        topPanel.add(welcome,gbc);
         
         s=new JTextField(15); 
         //s.setHorizontalAlignment(JTextField.RIGHT);
@@ -62,16 +89,16 @@ public class Home implements ActionListener{
         gbc.gridx=1;
         s.setOpaque(false);
         gbc.ipady = 10;  
-        p.add(s, gbc);
+        topPanel.add(s, gbc);
         //search.setHorizontalAlignment(JButton.RIGHT);
         gbc.gridx=2;
-        p.add(search,gbc);
+        topPanel.add(search,gbc);
         
         
         logout =new JButton("Logout");
         logout.addActionListener(this);    
         gbc.gridx=3;
-        p.add(logout,gbc);
+        topPanel.add(logout,gbc);
         
         gbc.gridy=1;
         gbc.gridx=0;
@@ -79,25 +106,25 @@ public class Home implements ActionListener{
         
         getFiles = new JButton("Get files");     
         getFiles.addActionListener(this);
-        p.add(getFiles, gbc);
+        topPanel.add(getFiles, gbc);
         gbc.gridx++;
         
         
         add = new JButton("Add new file");     
         add.addActionListener(this);
-        p.add(add, gbc);
+        topPanel.add(add, gbc);
         gbc.gridx=0;
         
-		dataPanel = new JPanel();
-		dataPanel.setLayout(new GridBagLayout());
-		
-		dataPanel.setSize( 1700, 700);
-		dataPanel.setVisible(true);
-        
-		data_gbc = new GridBagConstraints();
-		data_gbc.insets = new Insets(2, 2, 2, 2);
-		data_gbc.weightx = 1;
-		data_gbc.weighty=2;
+	dataPanel = new JPanel();
+	dataPanel.setLayout(new GridBagLayout());
+	
+	dataPanel.setSize( 700, 700);
+	dataPanel.setVisible(true);
+
+	data_gbc = new GridBagConstraints();
+	data_gbc.insets = new Insets(2, 2, 2, 2);
+	data_gbc.weightx = 1;
+	data_gbc.weighty=2;
 		//data_gbc.anchor = GridBagConstraints.PAGE_START; 
         
         gbc.weightx=1;
@@ -105,7 +132,9 @@ public class Home implements ActionListener{
         
         gbc.gridy+=2;
         
-        p.add(dataPanel, gbc);
+        mainPanel.add(topPanel, main_gbc);
+        main_gbc.gridy+=2;
+        mainPanel.add(dataPanel, main_gbc);
         
         
         
@@ -115,8 +144,10 @@ public class Home implements ActionListener{
 
     public JPanel getpanel()
     {
-        return p;
+        return mainPanel;
     }
+    
+    
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
     }
@@ -128,12 +159,20 @@ public class Home implements ActionListener{
             data_gbc.gridx = 0;
             data_gbc.gridy = 0;
             //gbc.weighty = 1; 
-            
+        int n =   files.size();  
+        System.out.println(n+" files");
+        if(n==0) 
+        {
+        	
+        	dataPanel.add(noData, data_gbc);
+        	//return;
+        }
     	//System.out.println(files);
-    	for (int i = 0; i < files.size(); i++)  {
+    	for (int i = 0; i < n ; i++)  {
 
     		final fileinfo curr = files.get(i);
     		int fno = curr.fno; //number of files per user
+    		if(fno==0) continue;
     		String str1 = Integer.toString(fno);
     		//System.out.println(fno);
     		
@@ -197,6 +236,7 @@ public class Home implements ActionListener{
 			    //TODO
 			   result = g.Files(usern, nfnm,nfpath,nfs,1, 4);
 			   System.out.println("--result: "+result);
+			   getFiles();
 			  }
 			});
 			delete.setText("Delete");
@@ -212,19 +252,39 @@ public class Home implements ActionListener{
 		
 		//System.out.println(files.length);
 		
-		//p.add(l4, gbc);
+		//mainPanel.add(l4, gbc);
 		
 		
           }
           
                   
             
-	  
-          p.repaint();
-          p.revalidate();
+	  dataPanel.repaint();
+	  dataPanel.revalidate();
+          mainPanel.repaint();
+          mainPanel.revalidate();
       
     
     }
+    
+    public void getFiles()
+    {
+    	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
+                
+                
+               
+        for (int i = 0; i < finfo.size(); i++) {
+             System.out.println("---Test " + i + "---");
+             System.out.println("Username:" + finfo.get(i).usern);
+             //System.out.println("Status:" + finfo.elementAt(i).status);
+             if(finfo.get(i).fno>0)
+             {System.out.println("File name:" + finfo.get(i).fnm[0]);
+             System.out.println("File no.:" + finfo.get(i).fno);}
+      }
+      
+      refreshUI(finfo);
+    }
+    
     
     public void downloadFile(String path, String fname)
     {
@@ -249,22 +309,7 @@ public class Home implements ActionListener{
     
     }
     
-    public void getFiles()
-    {
-    	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
-                
-                
-               
-        for (int i = 0; i < finfo.size(); i++) {
-             System.out.println("---Test " + i + "---");
-             System.out.println("Username:" + finfo.get(i).usern);
-             //System.out.println("Status:" + finfo.elementAt(i).status);
-             System.out.println("File name:" + finfo.get(i).fnm[0]);
-             System.out.println("File no.:" + finfo.get(i).fno);
-      }
-      
-      refreshUI(finfo);
-    }
+    
     public void actionPerformed(ActionEvent e) 
     {    
        
@@ -303,6 +348,7 @@ public class Home implements ActionListener{
                   }
                        
                   result = g.Files(usern, fnm,fpath,fs,files.length, 2);
+                  getFiles();
                   
                   //TODO
                   

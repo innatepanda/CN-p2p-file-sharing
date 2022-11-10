@@ -81,6 +81,7 @@ public class Login implements ActionListener{
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
+           
             result=g.Auth(s1,s2,1);
             if(result.substring(0,3).equals("200")){
                g.changeUsername(s1);
@@ -94,8 +95,7 @@ public class Login implements ActionListener{
             else{
                 
                 msg1.setText("Incorrect usern,please try again "+result);
-                //msg2.setText("Incorrect pass,please try again "+result);
-                System.out.println("err - " +result);
+                
             }
             
           }
