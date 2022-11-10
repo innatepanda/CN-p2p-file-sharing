@@ -9,11 +9,17 @@
 #include <netinet/ip.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 #include "Gui.h"
 
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
+ int range[3][2]={
+			{65, 90},
+			{97, 122},
+			{48, 57}
+			};
 struct clientinfo
 {
 	char username[50];
@@ -118,6 +124,41 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 }
 
+void createRandomSalt()
+{
+	
+	srand(time(0));
+	int length = 5;
+	char salt[length];
+	int selection=0;
+	
+	for(int i=0; i<length; i++)
+	{
+		selection = rand()%3;
+		salt[i] = (char)(range[selection][0] + rand()%(range[selection][1]-range[selection][0]));
+			
+	
+	}
+	printf("%s\n", salt);
+	fwrite(&salt, sizeof(salt), 1, fp);
+}
+
+char* hashPassword(char  password[50])
+{
+	fseek(fp, 0, SEEK_SET);
+	char f1[50];
+	fread(&f1,5*sizeof(char),1,fp);
+	printf("%s\n", f1);
+	int j=0;
+	while(password[j]!='\0')
+	{
+		f1[5+j]=password[j];
+		printf("%c %d--", f1[j]);
+		j++;
+	
+	}
+	printf("hashed:%s", f1);
+}
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
@@ -133,7 +174,16 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
-   //hashPassword(&client.password);
+   fp = fopen(unm, "a");
+   fseek(fp, 0, SEEK_END);
+   
+   if(ftell(fp)==0)
+   {
+   	createRandomSalt();
+   
+   }
+   hashPassword(client.password);
+   //strcpy(client.password, hashPassword(client.password));
    
    
    //client.filenum=fno;
