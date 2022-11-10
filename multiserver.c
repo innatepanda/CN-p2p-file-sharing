@@ -115,7 +115,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 	FILE *fp;
 	struct fileinfo t;
 	fp=fopen(userdb,"r+");
-	printf("update login %s\n", user);
+	
 	
 	while(1)
 	{
@@ -125,7 +125,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			break;
 		}
-		//printf("t user %s\n", t.username);
+		
 		if(strcmp(t.username,user)==0)
 		{
 			
