@@ -133,6 +133,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 			t.status=1;
 			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
+			break;
 		}
 	}
 	fclose(fp);
@@ -198,7 +199,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 	FILE *fp;
 	struct fileinfo t;
 	int count=0;
-	printf("HERE");
+	
 	fp=fopen(userdb,"r+");
 		
 	while(1)
@@ -210,8 +211,11 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 		{
 			
 			t.status=0;
-			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
+			
+			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
+			
 			fwrite(&t,sizeof(t),1,fp);
+			break;
 		}
 		
 			
@@ -552,7 +556,7 @@ void *func(void *id)
 		  int found = SEARCH_USER(rec_msg.username,"p");
 		  if(found==1)
 		  {
-		      strcpy(sent_msg,"500 Username alreay exists\n");
+		      strcpy(sent_msg,"500 Username already exists\n");
 		      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 		        
 		  }
@@ -588,7 +592,7 @@ void *func(void *id)
 								
 		   //update the status to online of the logged in user
 		  UPDATE_STATUS_LOGIN(rec_msg.username);
-		  printf("New client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
+		  printf("Client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
 		  
 		  //displayAll();
 		   //return "Successfully Logedin";
@@ -621,23 +625,6 @@ void *func(void *id)
 	     
 	     }
 	     
-	     else if(choice == 6)
-	     {
-	     	
-	     	//rec=recv(*cfd,&finfo, sizeof(finfo), 0);
-	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
-	     	   
-	     	   //struct fileinfo *finfo;
-	     	   GET_File(*cfd);
-	     	   
-	     	   //printf("Test choice %d , %d, %s", choice,finfo[0].filenum,finfo[0].filename[0]);
-	     	   //sen=send(*cfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
-	     	  
-    //printf("--bytes size: %d\n", sizeof(finfo));
-	     	  // strcpy(sent_msg,"file added");
-                  // sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-	     
-	     }
 	     
 	     else if(choice == 4)
 	     {
@@ -657,23 +644,28 @@ void *func(void *id)
 		
 	     else if(choice==5){
 	          rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
                   sen=send(*cfd, sent_msg, strlen(sent_msg),0);
                   
-                  
-                  //close(*cfd);
-                 // pthread_exit(0);
-                  //break;
 	     } 
+	     
+	     else if(choice == 6)
+	     {
+	
+	     	   GET_File(*cfd);
+	    
+	     }
+	     
 	     else if(choice==-1){
 	         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
+	          	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);
                   
                   
-                  //close(*cfd);
+                  close(*cfd);
                   pthread_exit(0);
                   //break;
 	     } 

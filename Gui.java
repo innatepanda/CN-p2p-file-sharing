@@ -55,7 +55,7 @@ public class Gui extends JFrame{
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int choice);
-    public native String Files(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
+    public native String File(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
     public native fileinfo[] getStructArray();
     public native int getFilesNew();
     

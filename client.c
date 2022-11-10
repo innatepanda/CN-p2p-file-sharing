@@ -154,7 +154,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 	         
 }
 
-JNIEXPORT jstring JNICALL Java_Gui_Files
+JNIEXPORT jstring JNICALL Java_Gui_File
   (JNIEnv *env, jobject obj,jstring user, jobjectArray fn,jobjectArray fp, jintArray fs,jint fno, jint choice)
 {
     //printf("user info %s\n", user);

@@ -234,7 +234,7 @@ public class Home implements ActionListener{
 			   nfpath[0]=curr.fpath[index];
 			    //System.out.println("--del path: "+files[index]);
 			    //TODO
-			   result = g.Files(usern, nfnm,nfpath,nfs,1, 4);
+			   result = g.File(usern, nfnm,nfpath,nfs,1, 4);
 			   System.out.println("--result: "+result);
 			   getFiles();
 			  }
@@ -347,7 +347,7 @@ public class Home implements ActionListener{
                        fpath[i]=files[i].getPath();
                   }
                        
-                  result = g.Files(usern, fnm,fpath,fs,files.length, 2);
+                  result = g.File(usern, fnm,fpath,fs,files.length, 2);
                   getFiles();
                   
                   //TODO
