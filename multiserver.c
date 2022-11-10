@@ -31,8 +31,8 @@ struct fileinfo //to write in database, prev struct + incoming struct, then writ
 };
 
 
-char userdb[] = "mydb.dat"; //username, number of files, filenames, filesizes, status
-char users[] = "users.dat"; //username, password, date joined
+char userdb[] = "mydb.bin"; //username, number of files, filenames, filesizes, status
+char users[] = "users.bin"; //username, password, date joined
 
 
 void displayAll()

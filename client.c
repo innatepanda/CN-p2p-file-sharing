@@ -71,6 +71,7 @@ char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
 int userChoice;
 struct fileinfo fi[50];
+FILE *fp;
 
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
@@ -131,6 +132,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    //strcpy(client.filename,fname);
    userChoice=choice;
    //client.filesize=fs;
+   
+   //hashPassword(&client.password);
+   
    
    //client.filenum=fno;
    printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, choice);
