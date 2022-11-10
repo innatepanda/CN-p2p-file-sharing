@@ -44,7 +44,7 @@ void displayAll()
 	fp=fopen(userdb,"rb");
 
 	printf("\n========================================================\n\n");
-	printf("\t\t All Client Details\n\n");
+	printf("\t\t All File Details\n\n");
 	printf("========================================================\n\n");
 
 	printf("Username\tStatus\tno. of files\tfilenames\t\tfile size\t\n\n");
@@ -310,7 +310,7 @@ void GET_File(int sockfd)
          		break;
          	}
          	
-         	if(f1[i].filenum>0)
+         	if(f1[i].filenum>0 && f1[i].status)
          	i++;
          	
         }
