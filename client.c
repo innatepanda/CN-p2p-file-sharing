@@ -86,7 +86,7 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 	if(sockfd==-1)
 	{
                    printf("Socket creation failed...\n");
-                   return 0;
+                   return 0; //TODO: show error msg on GUI
 	}
 	else
 	{

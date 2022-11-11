@@ -28,6 +28,12 @@ void createRandomSalt()
 	fwrite(&salt, sizeof(char), length+1, fp);
 }
 
+void encrypt(char * password)
+{
+
+
+}
+
 void hashPassword(char * unm, char  *password)
 {
 	fp = fopen(unm, "a+");
@@ -47,6 +53,8 @@ void hashPassword(char * unm, char  *password)
 	strcat(f1, password);
 	
 	printf("hashed:%s", f1);
+	encrypt(&f1);
+	
 	fclose(fp);
 	strcpy(password, f1);
 }
