@@ -128,7 +128,7 @@ void createRandomSalt()
 {
 	
 	srand(time(0));
-	int length = 5;
+	int length = 5 + rand()%5;
 	char salt[length];
 	int selection=0;
 	
@@ -139,25 +139,25 @@ void createRandomSalt()
 			
 	
 	}
-	printf("%s\n", salt);
-	fwrite(&salt, sizeof(salt), 1, fp);
+	salt[length]='\0';
+	printf("%s \n", salt);
+	
+	fwrite(&salt, sizeof(char), length+1, fp);
 }
 
-char* hashPassword(char  password[50])
+void hashPassword(char  *password)
 {
-	fseek(fp, 0, SEEK_SET);
-	char f1[50];
-	fread(&f1,5*sizeof(char),1,fp);
-	printf("%s\n", f1);
-	int j=0;
-	while(password[j]!='\0')
-	{
-		f1[5+j]=password[j];
-		printf("%c %d--", f1[j]);
-		j++;
 	
-	}
+	char f1[50];
+	
+	int count=fread(&f1,sizeof(char),50,fp); 
+	f1[count]='\0';
+	
+	strcat(f1, password);
+	
 	printf("hashed:%s", f1);
+	fclose(fp);
+	strcpy(password, f1);
 }
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
@@ -174,7 +174,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
-   fp = fopen(unm, "a");
+   fp = fopen(unm, "a+");
    fseek(fp, 0, SEEK_END);
    
    if(ftell(fp)==0)
@@ -182,7 +182,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    	createRandomSalt();
    
    }
-   hashPassword(client.password);
+   fseek(fp, 0, SEEK_SET);
+   
+   hashPassword(&client.password);
    //strcpy(client.password, hashPassword(client.password));
    
    
