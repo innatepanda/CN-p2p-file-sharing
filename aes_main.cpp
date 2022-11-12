@@ -1,15 +1,18 @@
    
-#include<stdio.h>
- 
- 
+#include <iostream>  
+#include <bitset>  
+#include <string>  
+
+#include "aes_header.h"
+using namespace std;   
+typedef bitset<8> byteData;  
+typedef bitset<32> word;  
   
-typedef bool byte[8];  
-typedef bool word[32];  
   
 const int Nr = 10;  //AES-128 requires 10 rounds of encryption  
 const int Nk = 4;   //Nk Represents the number of word s that are input keys  
   
-byte S_Box[16][16] = {  
+byteData S_Box[16][16] = {  
     {0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76},  
     {0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0},  
     {0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15},  
@@ -28,7 +31,7 @@ byte S_Box[16][16] = {
     {0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16}  
 };  
   
-byte Inv_S_Box[16][16] = {  
+byteData Inv_S_Box[16][16] = {  
     {0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB},  
     {0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB},  
     {0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E},  
@@ -54,7 +57,7 @@ word Rcon[10] = {0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
  
 
 // S Box Conversion - The first four bits are line numbers and the last four bits are column numbers  
-void SubBytes(byte mtx[4*4])  
+void SubBytes(byteData mtx[4*4])  
 {  
     for(int i=0; i<16; ++i)  
     {  
@@ -67,10 +70,10 @@ void SubBytes(byte mtx[4*4])
 
 // Line Transform - Byte Cyclic Shift 
   
-void ShiftRows(byte mtx[4*4])  
+void ShiftRows(byteData mtx[4*4])  
 {  
     //The second line circle moves one bit to the left  
-    byte temp = mtx[4];  
+    byteData temp = mtx[4];  
     for(int i=0; i<3; ++i)  
         mtx[i+4] = mtx[i+5];  
     mtx[7] = temp;  
@@ -91,14 +94,14 @@ void ShiftRows(byte mtx[4*4])
  
  //  Multiplication over Finite Fields GF(2^8) 
 
-byte GFMul(byte a, byte b) {   
-    byte p = 0;  
-    byte hi_bit_set;  
+byteData GFMul(byteData a, byteData b) {   
+    byteData p = 0;  
+    byteData hi_bit_set;  
     for (int counter = 0; counter < 8; counter++) {  
-        if ((b & byte(1)) != 0) {  
+        if ((b & byteData(1)) != 0) {  
             p ^= a;  
         }  
-        hi_bit_set = (byte) (a & byte(0x80));  
+        hi_bit_set = (byteData) (a & byteData(0x80));  
         a <<= 1;  
         if (hi_bit_set != 0) {  
             a ^= 0x1b; /* x^8 + x^4 + x^3 + x + 1 */  
@@ -110,9 +113,9 @@ byte GFMul(byte a, byte b) {
   
 //  Column transformation 
    
-void MixColumns(byte mtx[4*4])  
+void MixColumns(byteData mtx[4*4])  
 {  
-    byte arr[4];  
+    byteData arr[4];  
     for(int i=0; i<4; ++i)  
     {  
         for(int j=0; j<4; ++j)  
@@ -128,7 +131,7 @@ void MixColumns(byte mtx[4*4])
    
 //  Round Key Plus Transform - XOR each column with the extended key 
 
-void AddRoundKey(byte mtx[4*4], word k[4])  
+void AddRoundKey(byteData mtx[4*4], word k[4])  
 {  
     for(int i=0; i<4; ++i)  
     {  
@@ -137,17 +140,17 @@ void AddRoundKey(byte mtx[4*4], word k[4])
         word k3 = (k[i] << 16) >> 24;  
         word k4 = (k[i] << 24) >> 24;  
           
-        mtx[i] = mtx[i] ^ byte(k1.to_ulong());  
-        mtx[i+4] = mtx[i+4] ^ byte(k2.to_ulong());  
-        mtx[i+8] = mtx[i+8] ^ byte(k3.to_ulong());  
-        mtx[i+12] = mtx[i+12] ^ byte(k4.to_ulong());  
+        mtx[i] = mtx[i] ^ byteData(k1.to_ulong());  
+        mtx[i+4] = mtx[i+4] ^ byteData(k2.to_ulong());  
+        mtx[i+8] = mtx[i+8] ^ byteData(k3.to_ulong());  
+        mtx[i+12] = mtx[i+12] ^ byteData(k4.to_ulong());  
     }  
 }  
   
 
  //  Inverse S-box transformation 
    
-void InvSubBytes(byte mtx[4*4])  
+void InvSubBytes(byteData mtx[4*4])  
 {  
     for(int i=0; i<16; ++i)  
     {  
@@ -160,10 +163,10 @@ void InvSubBytes(byte mtx[4*4])
 
  //  Reverse Transform - Cyclic Right Shift in Bytes 
   
-void InvShiftRows(byte mtx[4*4])  
+void InvShiftRows(byteData mtx[4*4])  
 {  
     //The second line circle moves one bit to the right  
-    byte temp = mtx[7];  
+    byteData temp = mtx[7];  
     for(int i=3; i>0; --i)  
         mtx[i+4] = mtx[i+3];  
     mtx[4] = temp;  
@@ -181,9 +184,9 @@ void InvShiftRows(byte mtx[4*4])
     mtx[15] = temp;  
 }  
   
-void InvMixColumns(byte mtx[4*4])  
+void InvMixColumns(byteData mtx[4*4])  
 {  
-    byte arr[4];  
+    byteData arr[4];  
     for(int i=0; i<4; ++i)  
     {  
         for(int j=0; j<4; ++j)  
@@ -198,9 +201,9 @@ void InvMixColumns(byte mtx[4*4])
   
  
 
-// Convert four byte s to one word. 
+// Convert four byteData s to one word. 
  
-word Word(byte& k1, byte& k2, byte& k3, byte& k4)  
+word Word(byteData& k1, byteData& k2, byteData& k3, byteData& k4)  
 {  
     word result(0x00000000);  
     word temp;  
@@ -218,7 +221,7 @@ word Word(byte& k1, byte& k2, byte& k3, byte& k4)
     return result;  
 }  
   
- //  Cyclic left shift by byte 
+ //  Cyclic left shift by byteData 
  //  That is to say, [a0, a1, a2, a3] becomes [a1, a2, a3, a0] 
  
 word RotWord(word& rw)  
@@ -229,7 +232,7 @@ word RotWord(word& rw)
 }  
   
 
-//  S-box transformation for each byte in input word 
+//  S-box transformation for each byteData in input word 
   
 word SubWord(word& sw)  
 {  
@@ -238,7 +241,7 @@ word SubWord(word& sw)
     {  
         int row = sw[i+7]*8 + sw[i+6]*4 + sw[i+5]*2 + sw[i+4];  
         int col = sw[i+3]*8 + sw[i+2]*4 + sw[i+1]*2 + sw[i];  
-        byte val = S_Box[row][col];  
+        byteData val = S_Box[row][col];  
         for(int j=0; j<8; ++j)  
             temp[i+j] = val[j];  
     }  
@@ -248,7 +251,7 @@ word SubWord(word& sw)
 
 //  Key Extension Function - Extended 128-bit key to w[4*(Nr+1)] 
    
-void KeyExpansion(byte key[4*Nk], word w[4*(Nr+1)])  
+void KeyExpansion(byteData key[4*Nk], word w[4*(Nr+1)])  
 {  
     word temp;  
     int i = 0;  
@@ -276,7 +279,7 @@ void KeyExpansion(byte key[4*Nk], word w[4*(Nr+1)])
   
  
   
-void encrypt(byte in[4*4], word w[4*(Nr+1)])  
+void encrypt(byteData in[4*4], word w[4*(Nr+1)])  
 {  
     word key[4];  
     for(int i=0; i<4; ++i)  
@@ -301,7 +304,7 @@ void encrypt(byte in[4*4], word w[4*(Nr+1)])
 }  
   
   
-void decrypt(byte in[4*4], word w[4*(Nr+1)])  
+void decrypt(byteData in[4*4], word w[4*(Nr+1)])  
 {  
     word key[4];  
     for(int i=0; i<4; ++i)  
@@ -326,26 +329,29 @@ void decrypt(byte in[4*4], word w[4*(Nr+1)])
 }  
   
   
-void aes(char * plaintext, int length)  
+void aes_main(char pass[50])  
 {  
 
-    byte key[16] = {111, 0x7e, 0x15, 0x16,   
+    byteData key[16] = {111, 0x7e, 0x15, 0x16,   
                     0x28, 0xae, 0xd2, 0xa6,   
                     0xab, 0xf7, 0x15, 0x88,   
                     0x09, 0xcf, 0x4f, 0x3c};  
   
   
+    string plaintext = pass; 
     
+    cout<<"Enter plaintext"<<'\n';
+    getline(cin, plaintext);
     //gets();
-    int size = length + 16 - length%16;
-    byte plain[16*size];
+    int size = plaintext.length() + 16 - plaintext.length()%16;
+    byteData plain[16*size];
     
     
     
     
     for(int i=0;i<16;i++)
     {
-    	plain[i]=(byte)plaintext[i];
+    	plain[i]=(byteData)plaintext[i];
     }
     for(int i=plaintext.length();i<size*16;i++)
     {
@@ -353,79 +359,54 @@ void aes(char * plaintext, int length)
     }
       
     //Output key  
-    /*cout << "The key is:";  
+    cout << "The key is:";  
     for(int i=0; i<16; ++i)  
         cout << hex << key[i].to_ulong() << " ";  
-    cout << endl;*/  
+    cout << endl;  
   
     word w[4*(Nr+1)];  
     KeyExpansion(key, w);  
   
     //Output plaintext to be encrypted  
-    /*printf("Plaintext to be encrypted");
-    for(int i=0; i<16; ++i)  
-    {  
-        printf("%hex << plain[i].to_ulong() << " ";  
-        if((i+1)%4 == 0)  
-            cout << endl;  
-    }  
-    */
-  
-    //Encryption, output ciphertext  
-    encrypt(plain, w);  
-    /*printf("Plaintext encrypted"); 
+    cout << endl << "Plaintext to be encrypted:"<<endl;  
     for(int i=0; i<16; ++i)  
     {  
         cout << hex << plain[i].to_ulong() << " ";  
         if((i+1)%4 == 0)  
             cout << endl;  
     }  
-    cout << endl;  */
+    cout << endl;  
+  
+    //Encryption, output ciphertext  
+    encrypt(plain, w);  
+    cout << "Encrypted ciphertext: "<<endl;  
+    for(int i=0; i<16; ++i)  
+    {  
+        cout << hex << plain[i].to_ulong() << " ";  
+        if((i+1)%4 == 0)  
+            cout << endl;  
+    }  
+    cout << endl;  
   
     //Decrypt, output plaintext  
     decrypt(plain, w);  
     
-    //check last byte
-    //You read the last byte, if there is 0, then it was not padded, or similar, otherwise you remove the number of bytes represnedt by the last byte
-    /*printf("Plaintext decrypted");  
+    //check last byteData
+    //You read the last byteData, if there is 0, then it was not padded, or similar, otherwise you remove the number of byteDatas represnedt by the last byteData
+    cout << "Decrypted plaintext: "<<endl;  
     for(int i=0; i<16; ++i)  
     {  
         cout << hex << plain[i].to_ulong() << " ";  
         if((i+1)%4 == 0)  
             cout << endl;  
     }  
-    */
+    cout << endl; 
     
     for(int i=0;i<16;i++)
     {
     
     	plaintext[i]=plain[i].to_ulong();
     }
-    printf("Plaintext in string: %s", plaintext); 
-    return 0;  
+    cout<<"Plaintext in String: "<<plaintext<<endl;
+     
 }  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,5 +1,13 @@
 #include<stdio.h>
 #include <time.h>
+#include <string.h>
+#include <stdlib.h>
+
+//#include "aes.c"
+#include "aes_connector.h"
+
+
+/* reference: https://stackoverflow.com/questions/2744181/how-to-call-c-function-from-c*/
 
 FILE *fp;
  int range[3][2]={
@@ -28,11 +36,7 @@ void createRandomSalt()
 	fwrite(&salt, sizeof(char), length+1, fp);
 }
 
-void encrypt(char * password)
-{
 
-
-}
 
 void hashPassword(char * unm, char  *password)
 {
@@ -53,12 +57,21 @@ void hashPassword(char * unm, char  *password)
 	strcat(f1, password);
 	
 	printf("hashed:%s", f1);
-	encrypt(&f1);
+	//count=0;
+	//while(f1[count]!='\0') count++;
+	AES_enc(f1);
 	
 	fclose(fp);
 	strcpy(password, f1);
 }
 
+int main()
+{
+	char u[50]="zzzz", pass[50]="zz";
+	hashPassword(u, pass);
+
+	return 0;
+}
 
 
 
