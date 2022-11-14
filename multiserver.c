@@ -11,25 +11,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#include "structs.h"
 void *func(void *id);
-struct clientinfo
-{
-	char username[50];
-	char password[50];
-	time_t date[50]; //at time of reg, server assigns
-	
-};
-struct fileinfo //to write in database, prev struct + incoming struct, then write
-{
-	char username[50];
-	char filename[50][50];
-	char filepath[50][50];
-	int filesize[50];
-	int filenum; 
-	int status;
-	
-};
-
 
 char userdb[] = "mydb.bin"; //username, number of files, filenames, filesizes, status
 char users[] = "users.bin"; //username, password, date joined
@@ -39,7 +22,7 @@ void displayAll()
 {
 	FILE *fp;
 	struct fileinfo t;
-	//struct clientinfo c;
+	//struct clientinfo_server c;
 
 	fp=fopen(userdb,"rb");
 
@@ -81,7 +64,7 @@ void displayAll()
 void displayUsers()
 {
 	FILE *fp;
-	struct clientinfo t;
+	struct clientinfo_server t;
 
 	fp=fopen(users,"rb");
 
@@ -145,7 +128,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 void ADD_USER (char usrn[50],char pwd[50])
 {
 
-	FILE *fp; struct clientinfo c1; struct fileinfo f1;
+	FILE *fp; struct clientinfo_server c1; struct fileinfo f1;
 	time_t t;   // date of joining
 	time(&t);
 	
@@ -163,7 +146,7 @@ void ADD_USER (char usrn[50],char pwd[50])
 int SEARCH_USER(char usrn[50],char pwd[50]){
      FILE *fp;
       fp=fopen(users,"rb");
-      struct clientinfo c2;
+      struct clientinfo_server c2;
       int found=0;
       //printf("search user %s %s %d\n",usrn, pwd, strlen(pwd));
       while(1)
@@ -529,7 +512,7 @@ void *func(void *id)
     pthread_detach(pthread_self());
     int *cfd = (int*)id;
     char sent_msg[500];
-    struct clientinfo rec_msg; int choice; struct fileinfo finfo;
+    struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
    if(*cfd==-1)
    {
      printf("Accept failed....\n");

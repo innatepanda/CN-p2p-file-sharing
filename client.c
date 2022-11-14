@@ -11,47 +11,12 @@
 #include <arpa/inet.h>
 #include <time.h>
 
+#include "structs.h"
 #include "Gui.h"
 #include "aes_connector.h"
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
 
-struct clientinfo
-{
-	char username[50];
-	char password[50];
-
-	char filename[50];
-	int status; // 1-online  0-offline 
-	
-};
-
-struct signup
-{
-	char username[50];
-	char password[50];
-	char filename[50]; 
-	int filenum;
-	
-};
-
-struct login
-{
-	char username[50];
-	char password[50];
-};
-
-
-struct fileinfo
-{
-	char username[50];
-	char filename[50][50];
-	char filepath[50][50];
-	int filesize[50];
-	int filenum;
-	int status;
-	
-};
 
 char cliIP[16];int cliPort;
 char serIP[16];int serPort;
