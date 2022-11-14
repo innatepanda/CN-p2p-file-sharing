@@ -2,6 +2,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h> 
 
 //#include "aes.c"
 #include "aes_connector.h"
@@ -40,6 +41,7 @@ void createRandomSalt()
 
 void hashPassword(char * unm, char  *password)
 {
+	
 	fp = fopen(unm, "a+");
 	fseek(fp, 0, SEEK_END);
 	   
@@ -59,20 +61,24 @@ void hashPassword(char * unm, char  *password)
 	printf("hashed:%s", f1);
 	//count=0;
 	//while(f1[count]!='\0') count++;
-	AES_enc(f1);
+	sprintf(f1, "%x", AES_enc(f1));
+	printf("hashed:%s", f1);
+	
 	
 	fclose(fp);
 	strcpy(password, f1);
+	
 }
-
+/*
 int main()
 {
-	char u[50]="zzzz", pass[50]="zz";
-	hashPassword(u, pass);
-
-	return 0;
+char pass[50]="z";
+hashPassword("zz", pass);
+printf("\n%s", pass);
 }
 
+
+*/
 
 
 

@@ -14,8 +14,8 @@ extern "C" {
 
 
 
-void AES_enc( char *name) {
-    aes_main(name);
+int AES_enc( char name[50]) {
+    return aes_main(name);
 }
 
 #ifdef __cplusplus

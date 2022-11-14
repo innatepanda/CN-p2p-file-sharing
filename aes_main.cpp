@@ -2,6 +2,7 @@
 #include <iostream>  
 #include <bitset>  
 #include <string>  
+#include <cstring>
 
 #include "aes_header.h"
 using namespace std;   
@@ -329,9 +330,9 @@ void decrypt(byteData in[4*4], word w[4*(Nr+1)])
 }  
   
   
-void aes_main(char pass[50])  
+int aes_main(char pass[50])  
 {  
-
+	//TODO: dynamic key
     byteData key[16] = {111, 0x7e, 0x15, 0x16,   
                     0x28, 0xae, 0xd2, 0xa6,   
                     0xab, 0xf7, 0x15, 0x88,   
@@ -340,8 +341,8 @@ void aes_main(char pass[50])
   
     string plaintext = pass; 
     
-    cout<<"Enter plaintext"<<'\n';
-    getline(cin, plaintext);
+    /*cout<<"Enter plaintext"<<'\n';
+    getline(cin, plaintext);*/
     //gets();
     int size = plaintext.length() + 16 - plaintext.length()%16;
     byteData plain[16*size];
@@ -379,17 +380,22 @@ void aes_main(char pass[50])
   
     //Encryption, output ciphertext  
     encrypt(plain, w);  
-    cout << "Encrypted ciphertext: "<<endl;  
+    char endTest[50];
+    cout << "Encrypted ciphertext: "<<endl;
+     int x=0;  
     for(int i=0; i<16; ++i)  
     {  
-        cout << hex << plain[i].to_ulong() << " ";  
+    	x = x*10+plain[i].to_ulong();
+        cout << plain[i].to_ulong()  << " ";  
+        
         if((i+1)%4 == 0)  
             cout << endl;  
     }  
-    cout << endl;  
-  
+    
+     
+  return x;
     //Decrypt, output plaintext  
-    decrypt(plain, w);  
+    /*decrypt(plain, w);  
     
     //check last byteData
     //You read the last byteData, if there is 0, then it was not padded, or similar, otherwise you remove the number of byteDatas represnedt by the last byteData
@@ -407,6 +413,29 @@ void aes_main(char pass[50])
     
     	plaintext[i]=plain[i].to_ulong();
     }
-    cout<<"Plaintext in String: "<<plaintext<<endl;
+    cout<<"Plaintext in String: "<<plaintext<<endl;*/
      
 }  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

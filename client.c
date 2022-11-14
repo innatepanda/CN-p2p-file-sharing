@@ -12,6 +12,7 @@
 #include <time.h>
 
 #include "Gui.h"
+//#include "aes_connector.h"
 #include "hashPassword.c"
 
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
@@ -123,7 +124,11 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 
 
+void px()
+{
 
+	printf("ppp");
+}
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
@@ -139,9 +144,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
-   
-   
-   hashPassword(client.username,&client.password);
+   px();
+   printf("pass: %s\n", client.password);
+   hashPassword(client.username,client.password);
    //strcpy(client.password, hashPassword(client.password));
    
    

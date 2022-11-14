@@ -51,7 +51,9 @@ public class Gui extends JFrame{
    
   
     static {
+    	
         System.loadLibrary("native");
+        
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int choice);
@@ -68,7 +70,8 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
-       	
+       	Runtime.getRuntime().loadLibrary("aes");
+        Runtime.getRuntime().loadLibrary("aes_connector");
           Gui g=new Gui();
           
           int res=g.Cmain();
