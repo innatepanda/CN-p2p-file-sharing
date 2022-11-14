@@ -11,9 +11,11 @@
 #include <arpa/inet.h>
 #include <time.h>
 
+#include <math.h> 
+
 #include "Gui.h"
-//#include "aes_connector.h"
-#include "hashPassword.c"
+#include "aes_connector.h"
+//#include "hashPassword.c"
 
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
@@ -77,12 +79,91 @@ int userChoice;
 struct fileinfo fi[50];
 
 
+
+/* reference: https://stackoverflow.com/questions/2744181/how-to-call-c-function-from-c*/
+
+FILE *fp;
+ int range[3][2]={
+			{65, 90},
+			{97, 122},
+			{48, 57}
+			};
+void createRandomSalt()
+{
+	
+	srand(time(0));
+	int length = 5 + rand()%5;
+	char salt[length];
+	int selection=0;
+	
+	for(int i=0; i<length; i++)
+	{
+		selection = rand()%3;
+		salt[i] = (char)(range[selection][0] + rand()%(range[selection][1]-range[selection][0]));
+			
+	
+	}
+	salt[length]='\0';
+	printf("%s \n", salt);
+	
+	fwrite(&salt, sizeof(char), length+1, fp);
+}
+
+
+
+void hashPassword(char * unm, char  *password)
+{
+	
+	fp = fopen(unm, "a+");
+	fseek(fp, 0, SEEK_END);
+	   
+	   if(ftell(fp)==0)
+	   {
+	   	createRandomSalt();
+	   
+	   }
+	fseek(fp, 0, SEEK_SET);
+	char f1[50];
+	
+	int count=fread(&f1,sizeof(char),50,fp); 
+	f1[count]='\0';
+	
+	strcat(f1, password);
+	
+	printf("hashed:%s", f1);
+	//count=0;
+	//while(f1[count]!='\0') count++;
+	sprintf(f1, "%x", AES_enc(f1));
+	printf("hashed:%s", f1);
+	
+	
+	fclose(fp);
+	strcpy(password, f1);
+	
+}
+/*
+int main()
+{
+char pass[50]="z";
+hashPassword("zz", pass);
+printf("\n%s", pass);
+}
+
+
+*/
+
+
+
+
+
+
+
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
 	
 	
 /****************************  SOCKET API  **********************************/
-
+	px();
 	sockfd=socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd==-1)
 	{
@@ -124,12 +205,6 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 
 
-void px()
-{
-
-	printf("ppp");
-}
-
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
   
@@ -146,7 +221,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    
    px();
    printf("pass: %s\n", client.password);
-   hashPassword(client.username,client.password);
+   //hashPassword(client.username,client.password);
    //strcpy(client.password, hashPassword(client.password));
    
    

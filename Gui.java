@@ -70,7 +70,7 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
-       	Runtime.getRuntime().loadLibrary("aes");
+       	//Runtime.getRuntime().loadLibrary("aes");
         Runtime.getRuntime().loadLibrary("aes_connector");
           Gui g=new Gui();
           
