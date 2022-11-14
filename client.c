@@ -15,11 +15,7 @@
 #include "aes_connector.h"
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
- int range[3][2]={
-			{65, 90},
-			{97, 122},
-			{48, 57}
-			};
+
 struct clientinfo
 {
 	char username[50];
@@ -65,7 +61,7 @@ char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
 int userChoice;
 struct fileinfo fi[50];
-FILE *fp;
+
 
 int main(int argc,char *argv[])
 {
@@ -126,71 +122,6 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 }
 
-void createRandomSalt()
-{
-	
-	srand(time(0));
-	int length = 5 + rand()%5;
-	char salt[length];
-	int selection=0;
-	
-	for(int i=0; i<length; i++)
-	{
-		selection = rand()%3;
-		salt[i] = (char)(range[selection][0] + rand()%(range[selection][1]-range[selection][0]));
-			
-	
-	}
-	salt[length]='\0';
-	printf("%s \n", salt);
-	
-	fwrite(&salt, sizeof(char), length+1, fp);
-}
-/*
-void hashPassword(char  *password)
-{
-	
-	char f1[50];
-	
-	int count=fread(&f1,sizeof(char),50,fp); 
-	f1[count]='\0';
-	
-	strcat(f1, password);
-	
-	printf("hashed:%s", f1);
-	fclose(fp);
-	strcpy(password, f1);
-}*/
-void hashPassword(char * unm, char  *password)
-{
-	
-	fp = fopen(unm, "a+");
-	fseek(fp, 0, SEEK_END);
-	   
-	   if(ftell(fp)==0)
-	   {
-	   	createRandomSalt();
-	   
-	   }
-	fseek(fp, 0, SEEK_SET);
-	char f1[50];
-	
-	int count=fread(&f1,sizeof(char),50,fp); 
-	f1[count]='\0';
-	
-	strcat(f1, password);
-	
-	printf("\nsalted:%s\n", f1);
-	//count=0;
-	//while(f1[count]!='\0') count++;
-	sprintf(f1, "%x", AES_enc(f1));
-	printf("\nhashed:%s", f1);
-	
-	
-	fclose(fp);
-	strcpy(password, f1);
-	
-}
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
@@ -208,18 +139,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    
    if(choice!=-1)
    {
-	   fp = fopen(unm, "a+");
-	   fseek(fp, 0, SEEK_END);
 	   
-	   if(ftell(fp)==0)
-	   {
-	   	createRandomSalt();
+	AES_hashPassword(client.username, &client.password);
 	   
-	   }
-	   fseek(fp, 0, SEEK_SET);
-	   
-	   hashPassword(client.username, &client.password);
-	   //strcpy(client.password, hashPassword(client.password));
    }
    
    //client.filenum=fno;
