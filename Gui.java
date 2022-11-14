@@ -19,14 +19,14 @@ public class Gui extends JFrame{
        
         q = new JPanel();
    
-        q = new JPanel();
+        
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
             qgbc.insets = new Insets(8, 8, 8, 8);
             qgbc.gridx = 0;
             qgbc.gridy = 0;
        // q.setBounds(0,0,500,500);
-        //q.setBackground(Color.blue);
+        q.setBackground(Color.blue);
         
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");
@@ -55,8 +55,11 @@ public class Gui extends JFrame{
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int choice);
-    public native String Files(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
+    public native String File(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
     public native fileinfo[] getStructArray();
+    public native int getFilesNew();
+    
+    
     public void changeUsername(String msg)
     {
     	 username=msg;
@@ -65,8 +68,11 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
+       	
           Gui g=new Gui();
+          
           int res=g.Cmain();
+          
           g.setSize(700,700);  
           //g.setLayout();  
          // g. setResizable(false);

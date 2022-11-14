@@ -71,6 +71,7 @@ char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
 int userChoice;
 struct fileinfo fi[50];
+FILE *fp;
 
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
@@ -132,6 +133,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
+   //hashPassword(&client.password);
+   
+   
    //client.filenum=fno;
    printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, choice);
    //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);	
@@ -154,7 +158,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
 	         
 }
 
-JNIEXPORT jstring JNICALL Java_Gui_Files
+JNIEXPORT jstring JNICALL Java_Gui_File
   (JNIEnv *env, jobject obj,jstring user, jobjectArray fn,jobjectArray fp, jintArray fs,jint fno, jint choice)
 {
     //printf("user info %s\n", user);
@@ -203,10 +207,12 @@ JNIEXPORT jint JNICALL Java_Gui_getUserNumber(JNIEnv *env, jobject obj){
 
 JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj){
 
-    int choice=6,unum=3;
+    int choice=6;
+    uint32_t unum=0;
        
     sen=send(sockfd, &choice, sizeof(choice), 0);
     rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
+    //unum = ntohl(unum);
     printf("\nUser no.(---) %d \tuser bytes%d\n",unum, rec);
    //Declare an object array
     jobjectArray args;
@@ -236,7 +242,13 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     
     //struct fileinfo *rec_msg=(struct fileinfo *)calloc(unum,sizeof(struct fileinfo));
     struct fileinfo rec_msg[unum];
-    rec=recv(sockfd,(struct fileinfo *)rec_msg, sizeof(rec_msg), 0);
+    for(int i=0; i<unum; i++)
+    {
+    	rec=recv(sockfd,(struct fileinfo *)&rec_msg[i], sizeof(struct fileinfo), 0);
+    	
+    	
+    }
+    
     jstring str, str2;
     
     
@@ -249,6 +261,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
    
    jmethodID method = (*env)->GetMethodID(env,objectClass, "<init>", "()V");
   
+  if(unum)
    printf("\n------- loop start get files--------- \n");
     for(int i=0; i < unum; i++ )
     {
@@ -295,7 +308,53 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 
 }
 
+/*
+JNIEXPORT jint JNICALL Java_Gui_getFilesNew(JNIEnv *env, jobject obj){
 
+    int choice=6;
+    int unum=0;
+       
+    sen=send(sockfd, &choice, sizeof(int), 0);
+    rec=recv(sockfd,(int*)&unum, sizeof(int), 0);
+    //unum = ntohl(unum);
+    printf("\nUser no.(---) %d \tuser bytes%d\n",unum, rec);
+   //Declare an object array
+    
+    
+    
+    
+    
+    //struct fileinfo *rec_msg=(struct fileinfo *)calloc(unum,sizeof(struct fileinfo));
+    
+    
+    printf("--rec bytes rec: %d\n", rec);
+    printf("--bytes size: %d\n", sizeof(rec_msg));
+    printf("File info(new func) %s ,%s, %d , %d\n\n",rec_msg[0].filename[0],rec_msg[0].filepath[0],rec_msg[0].filesize[0], rec_msg[0].filenum);
+    
+    
+      
+   
+   
+   printf("\n------- loop start get files--------- \n");
+    for(int i=0; i < unum; i++ )
+    {
+      
+	     
+	    printf("Fileno---%d",rec_msg[i].filenum);
+	    
+            
+	    for(int j=0;j<rec_msg[i].filenum;j++){
+	    printf("%s ",rec_msg[i].filepath[j]);
+        	
+        }
+	
+       
+   }
+    return 0;
+
+
+}
+*/
 
 
 
