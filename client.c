@@ -11,15 +11,15 @@
 #include <arpa/inet.h>
 #include <time.h>
 
-#include <math.h> 
-
 #include "Gui.h"
 #include "aes_connector.h"
-//#include "hashPassword.c"
-
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
-
+ int range[3][2]={
+			{65, 90},
+			{97, 122},
+			{48, 57}
+			};
 struct clientinfo
 {
 	char username[50];
@@ -45,19 +45,7 @@ struct login
 	char password[50];
 };
 
-int main(int argc,char *argv[])
-{
-	char cliIP[16];int cliPort;
-	char serIP[16];int serPort;
-	int connvar,sockfd;
-	int rec,sen;
-	char rec_msg[500],sent_msg[500],menu[500];
-	char unm[50],pwd[50],fnm[50];
-	int a= atoi(argv[1]);
 
-	time_t date[50]; //at time of reg, server assigns
-	
-};
 struct fileinfo
 {
 	char username[50];
@@ -77,98 +65,33 @@ char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
 int userChoice;
 struct fileinfo fi[50];
-
-
-
-/* reference: https://stackoverflow.com/questions/2744181/how-to-call-c-function-from-c*/
-
 FILE *fp;
- int range[3][2]={
-			{65, 90},
-			{97, 122},
-			{48, 57}
-			};
-void createRandomSalt()
+
+int main(int argc,char *argv[])
 {
-	
-	srand(time(0));
-	int length = 5 + rand()%5;
-	char salt[length];
-	int selection=0;
-	
-	for(int i=0; i<length; i++)
-	{
-		selection = rand()%3;
-		salt[i] = (char)(range[selection][0] + rand()%(range[selection][1]-range[selection][0]));
-			
-	
-	}
-	salt[length]='\0';
-	printf("%s \n", salt);
-	
-	fwrite(&salt, sizeof(char), length+1, fp);
-}
+	char cliIP[16];int cliPort;
+	char serIP[16];int serPort;
+	int connvar,sockfd;
+	int rec,sen;
+	char rec_msg[500],sent_msg[500],menu[500];
+	char unm[50],pwd[50],fnm[50];
+	int a= atoi(argv[1]);
 
-
-
-void hashPassword(char * unm, char  *password)
-{
+	time_t date[50]; //at time of reg, server assigns
 	
-	fp = fopen(unm, "a+");
-	fseek(fp, 0, SEEK_END);
-	   
-	   if(ftell(fp)==0)
-	   {
-	   	createRandomSalt();
-	   
-	   }
-	fseek(fp, 0, SEEK_SET);
-	char f1[50];
-	
-	int count=fread(&f1,sizeof(char),50,fp); 
-	f1[count]='\0';
-	
-	strcat(f1, password);
-	
-	printf("hashed:%s", f1);
-	//count=0;
-	//while(f1[count]!='\0') count++;
-	sprintf(f1, "%x", AES_enc(f1));
-	printf("hashed:%s", f1);
-	
-	
-	fclose(fp);
-	strcpy(password, f1);
-	
-}
-/*
-int main()
-{
-char pass[50]="z";
-hashPassword("zz", pass);
-printf("\n%s", pass);
-}
-
-
-*/
-
-
-
-
-
-
+};
 
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
 	
 	
 /****************************  SOCKET API  **********************************/
-	px();
+
 	sockfd=socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd==-1)
 	{
                    printf("Socket creation failed...\n");
-                   return 0; //TODO: show error msg on GUI
+                   return 0;
 	}
 	else
 	{
@@ -203,7 +126,71 @@ JNIEXPORT jint JNICALL Java_Gui_Cmain
 
 }
 
-
+void createRandomSalt()
+{
+	
+	srand(time(0));
+	int length = 5 + rand()%5;
+	char salt[length];
+	int selection=0;
+	
+	for(int i=0; i<length; i++)
+	{
+		selection = rand()%3;
+		salt[i] = (char)(range[selection][0] + rand()%(range[selection][1]-range[selection][0]));
+			
+	
+	}
+	salt[length]='\0';
+	printf("%s \n", salt);
+	
+	fwrite(&salt, sizeof(char), length+1, fp);
+}
+/*
+void hashPassword(char  *password)
+{
+	
+	char f1[50];
+	
+	int count=fread(&f1,sizeof(char),50,fp); 
+	f1[count]='\0';
+	
+	strcat(f1, password);
+	
+	printf("hashed:%s", f1);
+	fclose(fp);
+	strcpy(password, f1);
+}*/
+void hashPassword(char * unm, char  *password)
+{
+	
+	fp = fopen(unm, "a+");
+	fseek(fp, 0, SEEK_END);
+	   
+	   if(ftell(fp)==0)
+	   {
+	   	createRandomSalt();
+	   
+	   }
+	fseek(fp, 0, SEEK_SET);
+	char f1[50];
+	
+	int count=fread(&f1,sizeof(char),50,fp); 
+	f1[count]='\0';
+	
+	strcat(f1, password);
+	
+	printf("\nhashed:%s", f1);
+	//count=0;
+	//while(f1[count]!='\0') count++;
+	sprintf(f1, "%x", AES_enc(f1));
+	printf("\nhashed:%s", f1);
+	
+	
+	fclose(fp);
+	strcpy(password, f1);
+	
+}
 
 JNIEXPORT jstring JNICALL Java_Gui_Auth
   (JNIEnv *env, jobject obj, jstring un, jstring pd, jint choice) {
@@ -219,9 +206,17 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
-   px();
-   printf("pass: %s\n", client.password);
-   //hashPassword(client.username,client.password);
+   fp = fopen(unm, "a+");
+   fseek(fp, 0, SEEK_END);
+   
+   if(ftell(fp)==0)
+   {
+   	createRandomSalt();
+   
+   }
+   fseek(fp, 0, SEEK_SET);
+   
+   hashPassword(client.username, &client.password);
    //strcpy(client.password, hashPassword(client.password));
    
    
