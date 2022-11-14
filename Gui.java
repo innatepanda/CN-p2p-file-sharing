@@ -26,7 +26,7 @@ public class Gui extends JFrame{
             qgbc.gridx = 0;
             qgbc.gridy = 0;
        // q.setBounds(0,0,500,500);
-        //q.setBackground(Color.blue);
+        q.setBackground(Color.blue);
         
         Login login = (new Login(crd, cPane, this));
         cPane.add(login.getpanel(), "a");

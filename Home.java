@@ -39,7 +39,7 @@ public class Home implements ActionListener{
          
            // gbc.setVgap(0);
         mainPanel.setBounds(0,0,700,700);
-        mainPanel.setBackground(Color.white);
+        mainPanel.setBackground(Color.black);
        // gbc.setBackground(Color.red);  
        
        main_gbc = new GridBagConstraints();
@@ -53,82 +53,81 @@ public class Home implements ActionListener{
        noData = new JLabel(); 
        noData.setFont (noData.getFont ().deriveFont (20.0f));
        noData.setText("No Files Available");
-     
-     
-     
-     
+
      	topPanel = new JPanel();
 	topPanel.setLayout(new GridBagLayout());
 	
 	topPanel.setSize( 700, 700);
 	topPanel.setVisible(true);
 	gbc = new GridBagConstraints();
-        gbc.insets = new Insets(2, 2, 0, 0);
+        gbc.insets = new Insets(25, 10,10, 10);
         gbc.gridx = 0;
         gbc.gridy = 0;
             //gbc.weighty = 1; 
         gbc.weightx = 1;
         gbc.anchor = GridBagConstraints.PAGE_START; 
-
-	
-	
-	
-	
 	
         welcome=new JLabel();
         welcome.setFont (welcome.getFont ().deriveFont (20.0f));
        // gbc.gridx=1;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gbc.ipadx = 10; 
         topPanel.add(welcome,gbc);
         
         s=new JTextField(15); 
         //s.setHorizontalAlignment(JTextField.RIGHT);
         
-        search=new JButton("Search");
-        search.addActionListener(this);    
-        gbc.gridx=1;
-        s.setOpaque(false);
-        gbc.ipady = 10;  
-        topPanel.add(s, gbc);
-        //search.setHorizontalAlignment(JButton.RIGHT);
-        gbc.gridx=2;
-        topPanel.add(search,gbc);
-        
         
         logout =new JButton("Logout");
         logout.addActionListener(this);    
-        gbc.gridx=3;
+        gbc.gridx=4;
+        gbc.ipady = 10; 
         topPanel.add(logout,gbc);
         
         gbc.gridy=1;
         gbc.gridx=0;
-        
+        gbc.gridy++;
         
         getFiles = new JButton("Get files");     
         getFiles.addActionListener(this);
         topPanel.add(getFiles, gbc);
+        gbc.ipady = 10; 
         gbc.gridx++;
         
         
         add = new JButton("Add new file");     
         add.addActionListener(this);
         topPanel.add(add, gbc);
-        gbc.gridx=0;
+        gbc.gridx++;
         
+        search=new JButton("Search");
+        search.addActionListener(this);
+        //insets = new Insets(10,0,0,0) ;   
+        gbc.gridx=3;
+        s.setOpaque(false);
+        gbc.ipady = 10;  
+        topPanel.add(s, gbc);
+        //search.setHorizontalAlignment(JButton.RIGHT);
+        gbc.gridx=4;
+        topPanel.add(search,gbc);
+
+	
 	dataPanel = new JPanel();
 	dataPanel.setLayout(new GridBagLayout());
 	
-	dataPanel.setSize( 700, 700);
+	dataPanel.setSize( 1000, 1000);
 	dataPanel.setVisible(true);
 
 	data_gbc = new GridBagConstraints();
-	data_gbc.insets = new Insets(2, 2, 2, 2);
+	data_gbc.insets = new Insets(25, 10, 10, 10);
+	data_gbc.gridx = 0;
+        data_gbc.gridy = 0;
 	data_gbc.weightx = 1;
-	data_gbc.weighty=2;
-		//data_gbc.anchor = GridBagConstraints.PAGE_START; 
+	//data_gbc.weighty=2;
+	data_gbc.anchor = GridBagConstraints.PAGE_START; 
         
-        gbc.weightx=1;
-        gbc.gridwidth = 5; 
+        //gbc.weightx=1;
+        //gbc.gridwidth = 5; 
         
         gbc.gridy+=2;
         
@@ -154,12 +153,12 @@ public class Home implements ActionListener{
     
     
     public void refreshUI(ArrayList<fileinfo> files){
-    	dataPanel.removeAll();
+            dataPanel.removeAll();
     	
             data_gbc.gridx = 0;
             data_gbc.gridy = 0;
             //gbc.weighty = 1; 
-        int n =   files.size();  
+            int n = files.size();  
         System.out.println(n+" files");
         if(n==0) 
         {
@@ -177,17 +176,21 @@ public class Home implements ActionListener{
     		//System.out.println(fno);
     		
 	       //long filesize=files.elementAt(i).length();
-	       userl=new JLabel(curr.usern);//username
-			
+	
+        
+	       
+	        userl=new JLabel(curr.usern);//username
+	        userl.setFont(userl.getFont().deriveFont(16.0f));
+	        data_gbc.anchor = GridBagConstraints.FIRST_LINE_START;	
                 data_gbc.gridx=0;
                 dataPanel.add(userl,data_gbc);
                 
                 fnol=new JLabel(str1);//no of files
-                data_gbc.gridx++;
+                data_gbc.gridx=1;
                 
                 dataPanel.add(fnol,data_gbc);
                 data_gbc.gridx++;
-               	data_gbc.gridy++;
+               	//data_gbc.gridy++;
                 
 	       for (int j = 0; j < fno; j++)
 	       {
@@ -199,10 +202,10 @@ public class Home implements ActionListener{
 		       
 			fname=new JLabel(curr.fnm[j]);
 			
-			data_gbc.gridx=0;
-			dataPanel.add(fname,gbc);
-			data_gbc.gridx+=2;
-
+			data_gbc.gridx=2;
+			dataPanel.add(fname,data_gbc);
+			//data_gbc.gridx+=2;
+                        data_gbc.gridx++;
 			fsize=new JLabel("Size "+curr.fs[j]);
 		      
 			dataPanel.add(fsize,data_gbc);
@@ -218,8 +221,10 @@ public class Home implements ActionListener{
 			   System.out.println("--result: "+(usern.equals(curr.usern)));
 			  }
 			});
+			
 			download.setText("Download");
 			data_gbc.gridx++;
+			gbc.ipady = 10; 
 			dataPanel.add(download, data_gbc);
 			
 			if(usern.equals( curr.usern)){
@@ -240,6 +245,8 @@ public class Home implements ActionListener{
 			  }
 			});
 			delete.setText("Delete");
+			gbc.gridx=4;
+			gbc.ipady = 10; 
 			data_gbc.gridx++;
 			dataPanel.add(delete, data_gbc);
 			}
