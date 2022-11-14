@@ -180,7 +180,7 @@ void hashPassword(char * unm, char  *password)
 	
 	strcat(f1, password);
 	
-	printf("\nhashed:%s", f1);
+	printf("\nsalted:%s\n", f1);
 	//count=0;
 	//while(f1[count]!='\0') count++;
 	sprintf(f1, "%x", AES_enc(f1));
@@ -206,19 +206,21 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    userChoice=choice;
    //client.filesize=fs;
    
-   fp = fopen(unm, "a+");
-   fseek(fp, 0, SEEK_END);
-   
-   if(ftell(fp)==0)
+   if(choice!=-1)
    {
-   	createRandomSalt();
-   
+	   fp = fopen(unm, "a+");
+	   fseek(fp, 0, SEEK_END);
+	   
+	   if(ftell(fp)==0)
+	   {
+	   	createRandomSalt();
+	   
+	   }
+	   fseek(fp, 0, SEEK_SET);
+	   
+	   hashPassword(client.username, &client.password);
+	   //strcpy(client.password, hashPassword(client.password));
    }
-   fseek(fp, 0, SEEK_SET);
-   
-   hashPassword(client.username, &client.password);
-   //strcpy(client.password, hashPassword(client.password));
-   
    
    //client.filenum=fno;
    printf("\nOn client side\nUser info %s , %s , %d\n",client.username,client.password, choice);
