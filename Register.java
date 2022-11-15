@@ -80,24 +80,21 @@ public class Register implements ActionListener{
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
-           // l4.setText("usr , pass of "+s1+" is: "+s2);
-         
-          //  result="usr "+s1+"pass "+s2;
-          //  result+=" is: "+g.sayHello(Integer.parseInt(s1),Integer.parseInt(s2));
-            result=g.Auth(s1,s2,0);
-            if(result.substring(0,3).equals("200")){
-               g.changeUsername(s1);
-               System.out.println(result);
-              // g.changeText(result);
-               // crd.next(cPane);  
-              crd.next(cPane);
-            }
-             else{
-               msg2.setText("usern already exists,please try again "+result);
-               System.out.print("err - " +result);
-            }
+           if(s1.length()>3 && s2.length()>3){
+		    result=g.Auth(s1,s2,0);
+		    if(result.substring(0,3).equals("200")){
+		       g.changeUsername(s1);
+		       System.out.println(result);
+		      // g.changeText(result);
+		       // crd.next(cPane);  
+		      crd.next(cPane);
+		    }
+		     else{
+		       msg2.setText("Usern already exists,please try again "+result);
+		       
+		    }
            
-              
+             } else msg1.setText("Username or password too short (>3)");
           }
           if(e.getSource()==c ){   
             //Login login = (new Login(crd, cPane, lg));

@@ -11,40 +11,23 @@
 #include <pthread.h>
 #include <time.h>
 
+#include "structs.h"
 void *func(void *id);
-struct clientinfo
-{
-	char username[50];
-	char password[50];
-	time_t date[50]; //at time of reg, server assigns
-	
-};
-struct fileinfo //to write in database, prev struct + incoming struct, then write
-{
-	char username[50];
-	char filename[50][50];
-	char filepath[50][50];
-	int filesize[50];
-	int filenum; 
-	int status;
-	
-};
 
-
-char userdb[] = "mydb.dat"; //username, number of files, filenames, filesizes, status
-char users[] = "users.dat"; //username, password, date joined
+char userdb[] = "mydb.bin"; //username, number of files, filenames, filesizes, status
+char users[] = "users.bin"; //username, password, date joined
 
 
 void displayAll()
 {
 	FILE *fp;
 	struct fileinfo t;
-	//struct clientinfo c;
+	//struct clientinfo_server c;
 
 	fp=fopen(userdb,"rb");
 
 	printf("\n========================================================\n\n");
-	printf("\t\t All Client Details\n\n");
+	printf("\t\t All File Details\n\n");
 	printf("========================================================\n\n");
 
 	printf("Username\tStatus\tno. of files\tfilenames\t\tfile size\t\n\n");
@@ -81,7 +64,7 @@ void displayAll()
 void displayUsers()
 {
 	FILE *fp;
-	struct clientinfo t;
+	struct clientinfo_server t;
 
 	fp=fopen(users,"rb");
 
@@ -115,7 +98,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 	FILE *fp;
 	struct fileinfo t;
 	fp=fopen(userdb,"r+");
-	printf("update login %s\n", user);
+	
 	
 	while(1)
 	{
@@ -125,25 +108,27 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			break;
 		}
-		//printf("t user %s\n", t.username);
+		
 		if(strcmp(t.username,user)==0)
 		{
 			
 			
 			t.status=1;
-			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
+			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
+			break;
 		}
 	}
 	fclose(fp);
 	
 	displayAll();
+	displayUsers();
 }
 
 void ADD_USER (char usrn[50],char pwd[50])
 {
 
-	FILE *fp; struct clientinfo c1; struct fileinfo f1;
+	FILE *fp; struct clientinfo_server c1; struct fileinfo f1;
 	time_t t;   // date of joining
 	time(&t);
 	
@@ -153,13 +138,7 @@ void ADD_USER (char usrn[50],char pwd[50])
 	time(c1.date);
 	fwrite(&c1,sizeof(c1),1,fp);
 	fclose(fp);
-	//fp=fopen(userdb,"ab");
 	
-        //f1.status=1;
-	        
-								
-	//fwrite(&f1,sizeof(f1),1,fp);	
-	//fclose(fp);
 	displayUsers();
 	//displayAll();
 }
@@ -167,7 +146,7 @@ void ADD_USER (char usrn[50],char pwd[50])
 int SEARCH_USER(char usrn[50],char pwd[50]){
      FILE *fp;
       fp=fopen(users,"rb");
-      struct clientinfo c2;
+      struct clientinfo_server c2;
       int found=0;
       //printf("search user %s %s %d\n",usrn, pwd, strlen(pwd));
       while(1)
@@ -215,13 +194,17 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 		{
 			
 			t.status=0;
+			
 			fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);
+			
 			fwrite(&t,sizeof(t),1,fp);
+			break;
 		}
+		
 			
 	}
 	fclose(fp);
-	//displayAll();
+	displayAll();
 }
 
 
@@ -281,26 +264,38 @@ void ADD_File(struct fileinfo finfo)
 
 	
 }
+
+
+void Delete_empty_users()
+{
+
+//TODO: delete empty user entries once no of users with filenum=0 reaches 1/3 of all users
+
+}
+
 void GET_File(int sockfd)
 {
 
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
-	struct fileinfo f1[20];
-	struct fileinfo f2;
-	int found=0;
+	struct fileinfo f1[10];
 	int i=0;
 	fp=fopen(userdb,"r+");
+	
 	//for(int n=0; n<fnum; n++)
 	//{
 	while(1)
         {
-	        fread(&f1[i],sizeof(f1[i]),1,fp);
+	        fread(&f1[i],sizeof(struct fileinfo),1,fp);
+	        
          	if(feof(fp))
          	{
          		break;
          	}
+         	
+         	if(f1[i].filenum>0 && f1[i].status)
          	i++;
+         	
         }
         //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
         
@@ -309,12 +304,18 @@ void GET_File(int sockfd)
 	
 	 //printf("--send bytes rec: %d\n", sen);
 	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
-	    
+	  
 	     	  
-    printf("--bytes size: %d\n", sizeof(f1));
+    
 	//return f1;
-	int sen1=send(sockfd,(int*)&i, sizeof(i), 0);
-	int sen=send(sockfd,(struct fileinfo *)f1, sizeof(f1), 0);
+	int sen1=send(sockfd,(int *)&i, sizeof(int), 0);
+	int sen;
+	for(int j=0; j<i; j++)
+	{ 
+		sen=send(sockfd,(struct fileinfo *)&f1[j], sizeof(struct fileinfo), 0); 
+		printf("send status:%d %d\n\n", sen1, sen);
+	}
+	
 
 	
 }
@@ -408,6 +409,7 @@ void DELETE(struct fileinfo finfo)
 				}
 				
 				t.filenum--;
+				
 				fseek(fp, ftell(fp)-sizeof(t), SEEK_SET);	
 				fwrite(&t,sizeof(t),1,fp);
 				
@@ -510,7 +512,7 @@ void *func(void *id)
     pthread_detach(pthread_self());
     int *cfd = (int*)id;
     char sent_msg[500];
-    struct clientinfo rec_msg; int choice; struct fileinfo finfo;
+    struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
    if(*cfd==-1)
    {
      printf("Accept failed....\n");
@@ -537,7 +539,7 @@ void *func(void *id)
 		  int found = SEARCH_USER(rec_msg.username,"p");
 		  if(found==1)
 		  {
-		      strcpy(sent_msg,"500 Username alreay exists\n");
+		      strcpy(sent_msg,"500 Username already exists\n");
 		      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 		        
 		  }
@@ -573,7 +575,7 @@ void *func(void *id)
 								
 		   //update the status to online of the logged in user
 		  UPDATE_STATUS_LOGIN(rec_msg.username);
-		  printf("New client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
+		  printf("Client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
 		  
 		  //displayAll();
 		   //return "Successfully Logedin";
@@ -606,23 +608,6 @@ void *func(void *id)
 	     
 	     }
 	     
-	     else if(choice == 6)
-	     {
-	     	
-	     	//rec=recv(*cfd,&finfo, sizeof(finfo), 0);
-	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
-	     	   
-	     	   //struct fileinfo *finfo;
-	     	   GET_File(*cfd);
-	     	   
-	     	   //printf("Test choice %d , %d, %s", choice,finfo[0].filenum,finfo[0].filename[0]);
-	     	   //sen=send(*cfd,(struct fileinfo *)finfo, sizeof(finfo), 0);
-	     	  
-    //printf("--bytes size: %d\n", sizeof(finfo));
-	     	   strcpy(sent_msg,"file added");
-                   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-	     
-	     }
 	     
 	     else if(choice == 4)
 	     {
@@ -642,23 +627,28 @@ void *func(void *id)
 		
 	     else if(choice==5){
 	          rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
                   sen=send(*cfd, sent_msg, strlen(sent_msg),0);
                   
-                  
-                  //close(*cfd);
-                 // pthread_exit(0);
-                  //break;
 	     } 
+	     
+	     else if(choice == 6)
+	     {
+	
+	     	   GET_File(*cfd);
+	    
+	     }
+	     
 	     else if(choice==-1){
 	         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
-	          printf("Client ( username : %s and password : %s) logged out of the server.Status updated to offline\n",rec_msg.username,rec_msg.password);	
+	          	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);
                   
                   
-                  //close(*cfd);
+                  close(*cfd);
                   pthread_exit(0);
                   //break;
 	     } 

@@ -19,7 +19,7 @@ public class Gui extends JFrame{
        
         q = new JPanel();
    
-        q = new JPanel();
+        
         q.setLayout(new GridBagLayout());
         GridBagConstraints qgbc = new GridBagConstraints();
             qgbc.insets = new Insets(8, 8, 8, 8);
@@ -51,12 +51,17 @@ public class Gui extends JFrame{
    
   
     static {
+    	
         System.loadLibrary("native");
+        
     }
     public native int Cmain();
     public native String Auth(String usr, String pwd, int choice);
-    public native String Files(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
+    public native String File(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
     public native fileinfo[] getStructArray();
+    public native int getFilesNew();
+    
+    
     public void changeUsername(String msg)
     {
     	 username=msg;
@@ -65,8 +70,12 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
+       	//Runtime.getRuntime().loadLibrary("aes");
+        Runtime.getRuntime().loadLibrary("aes_connector");
           Gui g=new Gui();
+          
           int res=g.Cmain();
+          
           g.setSize(700,700);  
           //g.setLayout();  
          // g. setResizable(false);

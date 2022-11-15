@@ -81,22 +81,24 @@ public class Login implements ActionListener{
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  
-            result=g.Auth(s1,s2,1);
-            if(result.substring(0,3).equals("200")){
-               g.changeUsername(s1);
-                
-               System.out.println("username: "+g.username);
-               System.out.println(result);
-              
-               // crd.next(cPane);  
-               crd.show(cPane,"b");
+           if(s1.length()>3 && s2.length()>3){
+		    result=g.Auth(s1,s2,1);
+		    if(result.substring(0,3).equals("200")){
+		       g.changeUsername(s1);
+		        
+		       System.out.println("username: "+g.username);
+		       System.out.println(result);
+		      
+		       // crd.next(cPane);  
+		       crd.show(cPane,"b");
+		    }
+		    else{
+		        
+		        msg1.setText("Incorrect usern,please try again "+result);
+		        
+		    }
             }
-            else{
-                
-                msg1.setText("Incorrect usern,please try again "+result);
-                //msg2.setText("Incorrect pass,please try again "+result);
-                System.out.println("err - " +result);
-            }
+            else msg1.setText("Username or password too short (>3)");
             
           }
           if(e.getSource()==c ){  

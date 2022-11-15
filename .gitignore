@@ -1,4 +1,5 @@
 *.class
-*.h
 *.dat
 *.log
+*.o
+*.so
