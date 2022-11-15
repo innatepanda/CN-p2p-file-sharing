@@ -242,6 +242,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 	     jobject obj2 = (*env)->NewObjectA(env,objectClass,method,"()V");
 	    (*env)->SetShortField(env,obj2,stat,1);
 	    (*env)->SetShortField(env,obj2,fnumber,rec_msg[i].filenum );
+
 	    //printf("Fileno---%d",rec_msg[i].filenum);
 	    //TODO: filename, filepath, filesize loop
 	    jobjectArray js_arr = (*env)->NewObjectArray(env, rec_msg[i].filenum, stringClass, 0);
@@ -269,6 +270,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 	    (*env)->SetObjectField(env,obj2,user, str);
 	    
 	    //printf("Username---%s",rec_msg[i].username);
+
                 
           
            str = (*env)->NewStringUTF(env, rec_msg[i].username);
