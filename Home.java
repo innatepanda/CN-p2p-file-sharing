@@ -149,6 +149,7 @@ public class Home implements ActionListener{
     
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
+         getFiles();
     }
     
     

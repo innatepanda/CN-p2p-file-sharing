@@ -93,7 +93,7 @@ void displayUsers()
 	fclose(fp);
 }
 
-void UPDATE_STATUS_LOGIN(char user[50])
+void UPDATE_STATUS_LOGIN(char user[50], int cli_port)
 {
 	FILE *fp;
 	struct fileinfo t;
@@ -113,7 +113,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			
 			
-			t.status=1;
+			t.status=cli_port;
 			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
 			break;
@@ -519,6 +519,7 @@ void *func(void *connection_info)
     int *cfd = &(conn->id);
     char sent_msg[500];
     struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
+    int cli_port = ntohs(client.sin_port);
     
    if(*cfd==-1)
    {
@@ -527,7 +528,7 @@ void *func(void *connection_info)
    }
    else
    {
-       printf("Client with port no %d connected to the server...\n",ntohs(client.sin_port));
+       printf("Client with port no %d connected to the server...\n",cli_port);
       while(1)
       {
          rec = recv(*cfd,&choice, sizeof(choice), 0);
@@ -571,17 +572,18 @@ void *func(void *connection_info)
              	rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);								
              //check for the details in database and return found or not found
 		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
-       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
-       	printf("login found %d\n", found);			
+	       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
+	       	printf("login found %d\n", found);			
 		if(found==1)
 		{
 		   
+		   UPDATE_STATUS_LOGIN(rec_msg.username, cli_port);
+		   printf("Client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
 		   strcpy(sent_msg,"200 f");
 		   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
 								
 		   //update the status to online of the logged in user
-		  UPDATE_STATUS_LOGIN(rec_msg.username);
-		  printf("Client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
+		   
 		  
 		  //displayAll();
 		   //return "Successfully Logedin";
