@@ -1,3 +1,9 @@
+struct connection
+{
+ 	struct sockaddr_in client;
+ 	int id;
+
+};
 struct clientinfo
 {
 	char username[50];

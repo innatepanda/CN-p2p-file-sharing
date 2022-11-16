@@ -2,4 +2,5 @@
 *.dat
 *.log
 *.o
-*.so
+libaes_connector.so
+libaes.so

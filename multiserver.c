@@ -432,16 +432,14 @@ void DELETE(struct fileinfo finfo)
 	
 
 int sen,rec;
-int cliPort;
-struct sockaddr_in client;
 int main()
 {
       
 	int sockfd,bindvar,listenvar;
 	int clientfd[100];
-	int i=1,flag=0;
-	char serIP[16];int serPort;
-	char cliIP[16];
+	int i=1;
+	
+	
 	
 	
 	//int a= atoi(argv[1]);
@@ -463,7 +461,7 @@ int main()
 		server.sin_port=htons(4000);
 		server.sin_addr.s_addr=INADDR_ANY;
 		
-		int clen = sizeof(client);
+		int clen = sizeof(struct sockaddr_in );
 
 		bindvar = bind(sockfd,(const struct sockaddr *)(&server),sizeof(server));
 		if(bindvar==-1)
@@ -493,10 +491,14 @@ int main()
 	               {
 				
 	                   struct sockaddr_in client;	
+	                   struct connection conn;
 	        //printf("Waiting for the connection request from clients at server\n");	
 	                   clientfd[i] = accept(sockfd,(struct sockaddr*)&client,&clen);
 	                  
-	                   pthread_create(&thread_id[i],NULL,func,&clientfd[i]);
+	                  conn.client = client;
+	                  conn.id = clientfd[i];
+       			
+	                   pthread_create(&thread_id[i],NULL,func,&conn);
 	                   ++i;
 	          
                        }
@@ -507,12 +509,17 @@ int main()
   return 0;	
 
 }
-void *func(void *id)
+void *func(void *connection_info)
 {
     pthread_detach(pthread_self());
-    int *cfd = (int*)id;
+    
+    struct connection * conn = connection_info;
+    struct sockaddr_in client = conn->client;
+    
+    int *cfd = &(conn->id);
     char sent_msg[500];
     struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
+    
    if(*cfd==-1)
    {
      printf("Accept failed....\n");
@@ -520,8 +527,7 @@ void *func(void *id)
    }
    else
    {
-       cliPort=ntohs(client.sin_port);
-       printf("Client with port no %d connected to the server...\n",cliPort);
+       printf("Client with port no %d connected to the server...\n",ntohs(client.sin_port));
       while(1)
       {
          rec = recv(*cfd,&choice, sizeof(choice), 0);

@@ -28,20 +28,6 @@ int userChoice;
 struct fileinfo fi[50];
 
 
-int main(int argc,char *argv[])
-{
-	char cliIP[16];int cliPort;
-	char serIP[16];int serPort;
-	int connvar,sockfd;
-	int rec,sen;
-	char rec_msg[500],sent_msg[500],menu[500];
-	char unm[50],pwd[50],fnm[50];
-	int a= atoi(argv[1]);
-
-	time_t date[50]; //at time of reg, server assigns
-	
-};
-
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
 	
