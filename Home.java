@@ -134,11 +134,7 @@ public class Home implements ActionListener{
         mainPanel.add(topPanel, main_gbc);
         main_gbc.gridy+=2;
         mainPanel.add(dataPanel, main_gbc);
-        
-        
-        
-        
-        
+      
     }
 
     public JPanel getpanel()
@@ -160,26 +156,21 @@ public class Home implements ActionListener{
             data_gbc.gridy = 0;
             //gbc.weighty = 1; 
             int n = files.size();  
-        System.out.println(n+" files");
+        
         if(n==0) 
         {
         	
         	dataPanel.add(noData, data_gbc);
         	//return;
         }
-    	//System.out.println(files);
+    	
     	for (int i = 0; i < n ; i++)  {
 
     		final fileinfo curr = files.get(i);
     		int fno = curr.fno; //number of files per user
     		if(fno==0) continue;
     		String str1 = Integer.toString(fno);
-    		//System.out.println(fno);
     		
-	       //long filesize=files.elementAt(i).length();
-	
-        
-	       
 	        userl=new JLabel(curr.usern);//username
 	        userl.setFont(userl.getFont().deriveFont(16.0f));
 	        data_gbc.anchor = GridBagConstraints.FIRST_LINE_START;	
@@ -258,10 +249,6 @@ public class Home implements ActionListener{
 			
 		}
 		
-		//System.out.println(files.length);
-		
-		//mainPanel.add(l4, gbc);
-		
 		
           }
           
@@ -278,19 +265,7 @@ public class Home implements ActionListener{
     public void getFiles()
     {
     	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
-                
-                
-               
-        for (int i = 0; i < finfo.size(); i++) {
-             System.out.println("---Test " + i + "---");
-             System.out.println("Username:" + finfo.get(i).usern);
-             //System.out.println("Status:" + finfo.elementAt(i).status);
-             if(finfo.get(i).fno>0)
-             {System.out.println("File name:" + finfo.get(i).fnm[0]);
-             System.out.println("File no.:" + finfo.get(i).fno);}
-      }
-      
-      refreshUI(finfo);
+        refreshUI(finfo);
     }
     
     
@@ -305,7 +280,7 @@ public class Home implements ActionListener{
  
             {
                 // set the label to the path of the selected file
-                System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
+                //System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
                 //File dest = jchooser.getSelectedFile();
                 try{
                 Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
@@ -350,7 +325,6 @@ public class Home implements ActionListener{
                   for (int i = 0; i < files.length; i++)  {
                   
                        fs[i]=(int)files[i].length();
-                       System.out.println("--length:"+ fs[i]);
                        fnm[i]=files[i].getName();
                        fpath[i]=files[i].getPath();
                   }

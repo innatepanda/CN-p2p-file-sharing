@@ -359,37 +359,38 @@ int aes_main(char pass[50])
     	plain[i]=size*16 - plaintext.length();
     }
       
-    //Output key  
+    //Output key 
+    /* 
     cout << "The key is:";  
     for(int i=0; i<16; ++i)  
         cout << hex << key[i].to_ulong() << " ";  
     cout << endl;  
-  
+  */
     word w[4*(Nr+1)];  
     KeyExpansion(key, w);  
   
     //Output plaintext to be encrypted  
-    cout << endl << "Plaintext to be encrypted:"<<endl;  
+    /*cout << endl << "Plaintext to be encrypted:"<<endl;  
     for(int i=0; i<16; ++i)  
     {  
         cout << hex << plain[i].to_ulong() << " ";  
         if((i+1)%4 == 0)  
             cout << endl;  
     }  
-    cout << endl;  
+    cout << endl;  */
   
     //Encryption, output ciphertext  
     encrypt(plain, w);  
-    char endTest[50];
-    cout << "Encrypted ciphertext: "<<endl;
+   
+    //cout << "Encrypted ciphertext: "<<endl;
      int x=0;  
     for(int i=0; i<16; ++i)  
     {  
     	x = x*10+plain[i].to_ulong();
-        cout << plain[i].to_ulong()  << " ";  
+        /*cout << plain[i].to_ulong()  << " ";  
         
         if((i+1)%4 == 0)  
-            cout << endl;  
+            cout << endl;  */
     }  
     
      

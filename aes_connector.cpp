@@ -13,10 +13,12 @@ FILE * fp;
 			{97, 122},
 			{48, 57}
 			};
+
 void createRandomSalt()
 {
-	
-	srand(time_t(0));
+	time_t t;
+	srand(time_t(&t));
+	rand();
 	int length = 5 + rand()%5;
 	char salt[length];
 	int selection=0;
@@ -29,7 +31,7 @@ void createRandomSalt()
 	
 	}
 	salt[length]='\0';
-	printf("%s \n", salt);
+	printf("\nnew salt%s \n", salt);
 	
 	fwrite(&salt, sizeof(char), length+1, fp);
 }
@@ -42,8 +44,9 @@ extern "C" {
 //   (overloading) and hence uses function signature hashing to enforce unique IDs),
 
 
-void AES_hashPassword(char *unm, char  *password) {
+void AES_hashPassword(char * unm, char  * password) {
 	fp = fopen(unm, "a+");
+	printf("username: %s", unm);
 	fseek(fp, 0, SEEK_END);
 	   
 	   if(ftell(fp)==0)

@@ -76,13 +76,12 @@ public class Gui extends JFrame{
           
           int res=g.Cmain();
           
+          if(res==0) return;
           g.setSize(700,700);  
           //g.setLayout();  
          // g. setResizable(false);
           g.setVisible(true);
           //g.setUndecorated(true);
-          System.out.println("java");
-         
           WindowListener exitListener = new WindowAdapter() {
 
             @Override
