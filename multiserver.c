@@ -296,7 +296,11 @@ void GET_File(int sockfd)
          	}
          	
          	if(f1[i].filenum>0 && f1[i].status)
-         	i++;
+         	{
+         		printf("status %d", f1[i].status);
+         		i++;
+         		
+         		}
          	
         }
         //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
@@ -305,9 +309,7 @@ void GET_File(int sockfd)
 	displayAll();
 	
 	 //printf("--send bytes rec: %d\n", sen);
-	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
-	  
-	     	  
+ 	  
     
 	//return f1;
 	int sen1=send(sockfd,(int *)&i, sizeof(int), 0);
@@ -315,7 +317,7 @@ void GET_File(int sockfd)
 	for(int j=0; j<i; j++)
 	{ 
 		sen=send(sockfd,(struct fileinfo *)&f1[j], sizeof(struct fileinfo), 0); 
-		printf("send status:%d %d\n\n", sen1, sen);
+		
 	}
 	
 

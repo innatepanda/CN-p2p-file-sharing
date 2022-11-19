@@ -334,7 +334,7 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
     {
       
 	     jobject obj2 = (*env)->NewObjectA(env,objectClass,method,"()V");
-	    (*env)->SetShortField(env,obj2,stat,1);
+	    (*env)->SetShortField(env,obj2,stat,rec_msg[i].status);
 	    (*env)->SetShortField(env,obj2,fnumber,rec_msg[i].filenum );
 
 	    //printf("Fileno---%d",rec_msg[i].filenum);

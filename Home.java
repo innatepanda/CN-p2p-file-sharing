@@ -183,7 +183,7 @@ public class Home implements ActionListener{
                 dataPanel.add(fnol,data_gbc);
                 data_gbc.gridx++;
                	//data_gbc.gridy++;
-                
+                System.out.println("port numbers:"+curr.status);
 	       for (int j = 0; j < fno; j++)
 	       {
 	       	
@@ -210,14 +210,11 @@ public class Home implements ActionListener{
 			@Override
 			  public void actionPerformed(ActionEvent e) {
 			  downloadFile(curr.fpath[index], curr.fnm[index]);
-			   System.out.println("--result: "+(usern.equals(curr.usern)));
+			   
 			  }
 			});
 			
-			download.setText("Download");
-			data_gbc.gridx++;
-			gbc.ipady = 10; 
-			dataPanel.add(download, data_gbc);
+			
 			
 			if(usern.equals( curr.usern)){
 			
@@ -241,6 +238,13 @@ public class Home implements ActionListener{
 			gbc.ipady = 10; 
 			data_gbc.gridx++;
 			dataPanel.add(delete, data_gbc);
+			}else
+			{
+				download.setText("Download");
+				data_gbc.gridx++;
+				gbc.ipady = 10; 
+				dataPanel.add(download, data_gbc);
+			
 			}
 			
 			data_gbc.gridy+=2;
