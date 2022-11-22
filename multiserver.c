@@ -529,7 +529,7 @@ void *func(void *connection_info)
    if(cfd==-1)
    {
      printf("Accept failed....\n");
-     exit(1);
+     pthread_exit(1);
    }
    else
    {
@@ -584,7 +584,7 @@ void *func(void *connection_info)
 		{
 		   
 		   int n = UPDATE_STATUS_LOGIN(rec_msg.username, lis_port);
-		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",rec_msg.username,lis_port);
+		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",rec_msg.username,cli_port);
 		   strcpy(sent_msg,"200 f");
 		   sen=send(cfd, (int *)&n, sizeof(int), 0);
 		   sen=send(cfd, sent_msg, strlen(sent_msg), 0);

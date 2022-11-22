@@ -5,6 +5,8 @@ g++ -fpic -shared aes_connector.cpp -L. -laes -o libaes_connector.so &&
 
 #export LD_LIBRARY_PATH=/home/virtualpanda/Desktop/p2p:$LD_LIBRARY_PATH &&
 
+javac DownloadThread.java &&
+javac -h . Bridge.java &&
 javac -h . Gui.java &&
 export LD_LIBRARY_PATH=. &&
 #gcc hashPassword.c -L. -laes_connector -o c_aes -laes

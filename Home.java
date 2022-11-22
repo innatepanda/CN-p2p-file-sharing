@@ -206,13 +206,7 @@ public class Home implements ActionListener{
 			//TODO: del only for own files, username for others
 			
 
-			download=new JButton(new AbstractAction(""+j) {
-			@Override
-			  public void actionPerformed(ActionEvent e) {
-			  downloadFile(curr.fpath[index], curr.fnm[index]);
-			   
-			  }
-			});
+			
 			
 			
 			
@@ -240,6 +234,13 @@ public class Home implements ActionListener{
 			dataPanel.add(delete, data_gbc);
 			}else
 			{
+				download=new JButton(new AbstractAction(""+j) {
+				@Override
+				  public void actionPerformed(ActionEvent e) {
+				  downloadFile(curr.status, curr.fpath[index], curr.fnm[index]);
+				   
+				  }
+				});
 				download.setText("Download");
 				data_gbc.gridx++;
 				gbc.ipady = 10; 
@@ -255,9 +256,7 @@ public class Home implements ActionListener{
 		
 		
           }
-          
-                  
-            
+           
 	  dataPanel.repaint();
 	  dataPanel.revalidate();
           mainPanel.repaint();
@@ -273,8 +272,13 @@ public class Home implements ActionListener{
     }
     
     
-    public void downloadFile(String path, String fname)
+    public void downloadFile(int port, String path, String fname)
     {
+    	DownloadThread d = new DownloadThread(port, path, fname);
+    	d.start();
+    	    	
+    	    	
+    /*
         File src = new File(path);
         JFileChooser jchooser= new JFileChooser(fname);
        
@@ -287,13 +291,18 @@ public class Home implements ActionListener{
                 //System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
                 //File dest = jchooser.getSelectedFile();
                 try{
-                Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
+                //Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
+                     //make new file out of string downloaded
+                     //copy contents to file
+                     //pass new filepath 
+                     
+                     
                 }catch(Exception e)
                 {
                         System.out.println("error"+e.getMessage());
                 }
             }
-    
+    */
     }
     
     

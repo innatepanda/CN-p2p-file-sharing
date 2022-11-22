@@ -4,6 +4,12 @@ struct connection
  	int id;
 
 };
+struct peer_dets
+{
+	int fd;
+	char filepath[50];
+	
+};
 struct clientinfo
 {
 	char username[50];

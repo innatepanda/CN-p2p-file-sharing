@@ -10,9 +10,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <time.h>
+#include <pthread.h>
+#include <stdio.h>
 
 #include "structs.h"
 #include "Gui.h"
+#include "Bridge.h"
 #include "aes_connector.h"
 //0-reg, 1-login, 2-add file, 3-search, 4-del file, 5-logout, -1 - err logout
 
@@ -26,19 +29,22 @@ char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
 int userChoice;
 struct fileinfo fi[50];
-pthread_t listen_id;
-int n_files=0;
-
+pthread_t listen_id, thread_id[50];
+int n_files=0, d=0;
+int listen_fd,listenvar;
+//----------FUNCTIONS------------------------
 int create_receiving_socket();
 int create_listening_socket();
+int create_download_socket();
 void * listening_thread(void *port);
+void * upload_files(void *);
+//--------------------------------------------
 
 JNIEXPORT jint JNICALL Java_Gui_Cmain
   (JNIEnv *env, jobject obj){
   
   	return (create_receiving_socket() && create_listening_socket());
   	
-
 }
 
 int create_receiving_socket()
@@ -80,7 +86,7 @@ int create_receiving_socket()
               //create fork
               	//pthread_create(&listen_id,NULL,create_listening_thread, NULL);
               	
-              
+              //pthread_create(&listen_id,NULL,listening_thread, (sockfd));
                
                return 1;
             }
@@ -91,9 +97,7 @@ int create_receiving_socket()
 
 int create_listening_socket()
 {
-      
-	int listen_fd,listenvar;
-	
+   
 /****************************  SOCKET API  ***********************************************************************************************/
 
 	listen_fd=socket(AF_INET,SOCK_STREAM,0);
@@ -136,7 +140,7 @@ int create_listening_socket()
 void * listening_thread(void *fd)
 {	
 	int listening_fd = (int)fd;
-	
+	pthread_detach(pthread_self());
 	int clientfd[100];
 	int i=0;
 	
@@ -148,9 +152,6 @@ void * listening_thread(void *fd)
 	
            clientfd[i] = accept(listening_fd,(struct sockaddr*)&client,&clen);
           
-          
-           //pthread_create(&thread_id[i],NULL,func,&conn);
-           
            int cli_port = ntohs(client.sin_port);
     
 	   if(clientfd[i]==-1)
@@ -160,12 +161,108 @@ void * listening_thread(void *fd)
 	   }
 	   else
 	   {
-	   	++i;
+	   	
 	       printf("...Client with port no %d connected to server...\n",cli_port);
+	       pthread_create(&thread_id[i],NULL,upload_files,&clientfd[i]);
+	       ++i;
 	   }
   
        }
 
+}
+
+void * upload_files(void * dets)
+{
+	pthread_detach(pthread_self());
+	int * cfd = (int *)dets;
+	char buffer[1024];
+	char filepath[50];
+	int rec = recv(*cfd,&filepath, sizeof(filepath), 0);
+	printf("\n file %s\n", filepath);
+	FILE *fp; 
+	fp = fopen(filepath, "r");
+	int s;
+	if(!fp)
+        {
+        	printf("\n file not found\n");
+        	s = send(*cfd, buffer, 0, 0);
+        }
+        else{
+		 while(!feof( fp ))
+		{
+			int byteread=fread(buffer, sizeof(char), 1024, fp);
+			 s= send(*cfd, buffer, byteread, 0);
+			 printf("%d bytes sent\n",s);
+			 if(s<1024) break;
+		}
+		printf("\n Contents sent successfully");
+		fclose(fp);
+		
+	}
+	pthread_exit(1);
+	
+
+
+}
+
+//TODO: MOVE FUNCTIONS TO SEPARATE FILES/PACKAGES
+JNIEXPORT void JNICALL Java_Bridge_DownloadFile
+  (JNIEnv *env, jobject obj,jint port, jstring peer_fp, jstring new_fp)
+{
+    
+   const char *fpath = (*env)->GetStringUTFChars(env, peer_fp, NULL) ;
+   const char *new_fpath = (*env)->GetStringUTFChars(env, new_fp, NULL) ;
+   char fpath_arr[50];
+   strcpy(fpath_arr, fpath);
+   printf("dets_port%d path %s", port, fpath);
+  
+   int cfd = socket(PF_INET, SOCK_STREAM, 0);
+    if(cfd!=-1){
+    printf("Socket Created Sucessfully.\n");
+    }
+    else{exit(1);}
+    
+        struct sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    
+    serverAddr.sin_port = htons(port);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+    int r1=connect(cfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+    if(r1==-1){
+    printf("\nconnection error");
+    exit(1);}
+    
+    FILE * fp; char buffer[1024];
+    int sen = send(cfd, fpath_arr, sizeof(fpath_arr), 0);
+    fp = fopen(new_fpath, "w");
+    int r;
+    if(!fp) 
+    {
+    	printf("cannot open file %s\n",new_fpath);
+    
+    }
+    while(1)
+    {
+	r=recv(cfd,&buffer, 1024, 0);
+	fwrite(&buffer, sizeof(char), r, fp);
+        //fwrite(buffer, 1, 1024, fp);
+        printf("%d\n",r);
+                        
+       if(r<0)
+       {
+       	printf("err in receiving\n");
+       	exit(0);
+       }
+        
+        if(r<1024)
+        break;
+         
+		
+    }
+	fclose(fp);
+	printf("File content received from server. Open file to verify \n");
+  
 }
 
 void update_n_files(int n)
@@ -376,10 +473,5 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj)
 
 
 }
-
-
-
-
-
 
 
