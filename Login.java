@@ -75,9 +75,11 @@ public class Login implements ActionListener{
     }
     public void actionPerformed(ActionEvent e) 
     {    
-        
+        //TODO: remove default
          s1=t1.getText();  
-         s2=t2.getText();  
+         s1 = "user1";
+         s2=t2.getText(); 
+         s2="12345"; 
         //Scanner scanner = new Scanner(System.in);
         
            if(e.getSource()==b ){  

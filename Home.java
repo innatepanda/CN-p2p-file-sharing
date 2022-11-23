@@ -39,11 +39,12 @@ public class Home implements ActionListener{
          
            // gbc.setVgap(0);
         mainPanel.setBounds(0,0,700,700);
-        mainPanel.setBackground(Color.black);
+        mainPanel.setBackground(Color.white);
        // gbc.setBackground(Color.red);  
        
        main_gbc = new GridBagConstraints();
        main_gbc.insets = new Insets(2, 2, 0, 0);
+       main_gbc.fill = GridBagConstraints.BOTH; 
        main_gbc.gridx = 0;
        main_gbc.gridy = 0;
             //gbc.weighty = 1; 
@@ -57,7 +58,8 @@ public class Home implements ActionListener{
      	topPanel = new JPanel();
 	topPanel.setLayout(new GridBagLayout());
 	
-	topPanel.setSize( 700, 700);
+	//topPanel.setSize( 700, 700);
+	topPanel.setBounds(0,0, 700, 700);
 	topPanel.setVisible(true);
 	gbc = new GridBagConstraints();
         gbc.insets = new Insets(25, 10,10, 10);
