@@ -76,7 +76,8 @@ public class Gui extends JFrame{
           Gui g=new Gui();          
           int res=g.Cmain();          
           if(res==0) return;
-          g.setSize(700,700);  
+          g.setSize(900,700);  
+          g.setResizable(false);
           //g.setLayout();  
          // g. setResizable(false);
           g.setVisible(true);

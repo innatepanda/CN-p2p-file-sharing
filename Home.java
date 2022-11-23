@@ -43,13 +43,15 @@ public class Home implements ActionListener{
        // gbc.setBackground(Color.red);  
        
        main_gbc = new GridBagConstraints();
-       main_gbc.insets = new Insets(2, 2, 0, 0);
-       main_gbc.fill = GridBagConstraints.BOTH; 
+       main_gbc.insets = new Insets(25, 10,10, 10);
+       main_gbc.fill = GridBagConstraints.HORIZONTAL; 
        main_gbc.gridx = 0;
        main_gbc.gridy = 0;
             //gbc.weighty = 1; 
-       main_gbc.weightx = 1;
-       main_gbc.anchor = GridBagConstraints.PAGE_START; 
+       main_gbc.weightx = 0.5;
+       main_gbc.weighty=1;
+       
+       main_gbc.anchor = GridBagConstraints.FIRST_LINE_START; 
        
        noData = new JLabel(); 
        noData.setFont (noData.getFont ().deriveFont (20.0f));
@@ -62,18 +64,20 @@ public class Home implements ActionListener{
 	topPanel.setBounds(0,0, 700, 700);
 	topPanel.setVisible(true);
 	gbc = new GridBagConstraints();
-        gbc.insets = new Insets(25, 10,10, 10);
+        gbc.insets = new Insets(15, 10,10, 10);
         gbc.gridx = 0;
         gbc.gridy = 0;
             //gbc.weighty = 1; 
         gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.PAGE_START; 
 	
         welcome=new JLabel();
         welcome.setFont (welcome.getFont ().deriveFont (20.0f));
        // gbc.gridx=1;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.ipadx = 10; 
+        gbc.ipadx = 2; 
+        gbc.ipady = 2;
         topPanel.add(welcome,gbc);
         
         s=new JTextField(15); 
@@ -83,7 +87,7 @@ public class Home implements ActionListener{
         logout =new JButton("Logout");
         logout.addActionListener(this);    
         gbc.gridx=4;
-        gbc.ipady = 10; 
+        //gbc.ipady = 10; 
         topPanel.add(logout,gbc);
         
         gbc.gridy=1;
@@ -93,7 +97,7 @@ public class Home implements ActionListener{
         getFiles = new JButton("Get files");     
         getFiles.addActionListener(this);
         topPanel.add(getFiles, gbc);
-        gbc.ipady = 10; 
+        //gbc.ipadx = 10; 
         gbc.gridx++;
         
         
@@ -105,12 +109,12 @@ public class Home implements ActionListener{
         search=new JButton("Search");
         search.addActionListener(this);
         //insets = new Insets(10,0,0,0) ;   
-        gbc.gridx=3;
+        gbc.gridx++;
         s.setOpaque(false);
-        gbc.ipady = 10;  
+        //gbc.ipady = 10;  
         topPanel.add(s, gbc);
         //search.setHorizontalAlignment(JButton.RIGHT);
-        gbc.gridx=4;
+        gbc.gridx++;
         topPanel.add(search,gbc);
 
 	
@@ -125,6 +129,7 @@ public class Home implements ActionListener{
 	data_gbc.gridx = 0;
         data_gbc.gridy = 0;
 	data_gbc.weightx = 1;
+	data_gbc.fill = GridBagConstraints.HORIZONTAL;
 	//data_gbc.weighty=2;
 	data_gbc.anchor = GridBagConstraints.PAGE_START; 
         
@@ -134,7 +139,9 @@ public class Home implements ActionListener{
         gbc.gridy+=2;
         
         mainPanel.add(topPanel, main_gbc);
-        main_gbc.gridy+=2;
+        main_gbc.gridy++;
+        main_gbc.fill = GridBagConstraints.BOTH;
+        main_gbc.weighty=0;
         mainPanel.add(dataPanel, main_gbc);
       
     }
