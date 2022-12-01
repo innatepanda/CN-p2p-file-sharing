@@ -117,6 +117,14 @@ JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray
 JNIEXPORT jint JNICALL Java_Gui_getFilesNew
   (JNIEnv *, jobject);
 
+/*
+ * Class:     Gui
+ * Method:    DownloadFile
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_Gui_DownloadFile
+  (JNIEnv *, jobject, jint, jstring, jstring);
+
 #ifdef __cplusplus
 }
 #endif

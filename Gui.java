@@ -60,6 +60,7 @@ public class Gui extends JFrame{
     public native String File(String user, String fname[],String fpath[], int fsize[],int fno, int choice);
     public native fileinfo[] getStructArray();
     public native int getFilesNew();
+    public native void DownloadFile(int port, String fp, String new_fp);
     
     
     public void changeUsername(String msg)
@@ -70,19 +71,17 @@ public class Gui extends JFrame{
     }
 
        public static void main(String[] args) {  
-       	//Runtime.getRuntime().loadLibrary("aes");
         Runtime.getRuntime().loadLibrary("aes_connector");
-          Gui g=new Gui();
-          
-          int res=g.Cmain();
-          
-          g.setSize(700,700);  
+        
+          Gui g=new Gui();          
+          int res=g.Cmain();          
+          if(res==0) return;
+          g.setSize(900,700);  
+          g.setResizable(false);
           //g.setLayout();  
          // g. setResizable(false);
           g.setVisible(true);
           //g.setUndecorated(true);
-          System.out.println("java");
-         
           WindowListener exitListener = new WindowAdapter() {
 
             @Override

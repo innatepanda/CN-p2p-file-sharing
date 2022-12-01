@@ -1,9 +1,21 @@
+struct connection
+{
+ 	struct sockaddr_in client;
+ 	int id;
+
+};
+struct peer_dets
+{
+	int fd;
+	char filepath[50];
+	
+};
 struct clientinfo
 {
 	char username[50];
 	char password[50];
 
-	char filename[50];
+	//char filename[50];
 	int status; // 1-online  0-offline 
 	
 };
@@ -12,6 +24,7 @@ struct clientinfo_server
 {
 	char username[50];
 	char password[50];
+	int status; 
 	time_t date[50]; //at time of reg, server assigns
 	
 };

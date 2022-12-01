@@ -39,16 +39,19 @@ public class Home implements ActionListener{
          
            // gbc.setVgap(0);
         mainPanel.setBounds(0,0,700,700);
-        mainPanel.setBackground(Color.black);
+        mainPanel.setBackground(Color.white);
        // gbc.setBackground(Color.red);  
        
        main_gbc = new GridBagConstraints();
-       main_gbc.insets = new Insets(2, 2, 0, 0);
+       main_gbc.insets = new Insets(25, 10,10, 10);
+       main_gbc.fill = GridBagConstraints.HORIZONTAL; 
        main_gbc.gridx = 0;
        main_gbc.gridy = 0;
             //gbc.weighty = 1; 
-       main_gbc.weightx = 1;
-       main_gbc.anchor = GridBagConstraints.PAGE_START; 
+       main_gbc.weightx = 0.5;
+       main_gbc.weighty=1;
+       
+       main_gbc.anchor = GridBagConstraints.FIRST_LINE_START; 
        
        noData = new JLabel(); 
        noData.setFont (noData.getFont ().deriveFont (20.0f));
@@ -57,21 +60,24 @@ public class Home implements ActionListener{
      	topPanel = new JPanel();
 	topPanel.setLayout(new GridBagLayout());
 	
-	topPanel.setSize( 700, 700);
+	//topPanel.setSize( 700, 700);
+	topPanel.setBounds(0,0, 700, 700);
 	topPanel.setVisible(true);
 	gbc = new GridBagConstraints();
-        gbc.insets = new Insets(25, 10,10, 10);
+        gbc.insets = new Insets(15, 10,10, 10);
         gbc.gridx = 0;
         gbc.gridy = 0;
             //gbc.weighty = 1; 
         gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.PAGE_START; 
 	
         welcome=new JLabel();
         welcome.setFont (welcome.getFont ().deriveFont (20.0f));
        // gbc.gridx=1;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.ipadx = 10; 
+        gbc.ipadx = 2; 
+        gbc.ipady = 2;
         topPanel.add(welcome,gbc);
         
         s=new JTextField(15); 
@@ -81,7 +87,7 @@ public class Home implements ActionListener{
         logout =new JButton("Logout");
         logout.addActionListener(this);    
         gbc.gridx=4;
-        gbc.ipady = 10; 
+        //gbc.ipady = 10; 
         topPanel.add(logout,gbc);
         
         gbc.gridy=1;
@@ -91,7 +97,7 @@ public class Home implements ActionListener{
         getFiles = new JButton("Get files");     
         getFiles.addActionListener(this);
         topPanel.add(getFiles, gbc);
-        gbc.ipady = 10; 
+        //gbc.ipadx = 10; 
         gbc.gridx++;
         
         
@@ -103,12 +109,12 @@ public class Home implements ActionListener{
         search=new JButton("Search");
         search.addActionListener(this);
         //insets = new Insets(10,0,0,0) ;   
-        gbc.gridx=3;
+        gbc.gridx++;
         s.setOpaque(false);
-        gbc.ipady = 10;  
+        //gbc.ipady = 10;  
         topPanel.add(s, gbc);
         //search.setHorizontalAlignment(JButton.RIGHT);
-        gbc.gridx=4;
+        gbc.gridx++;
         topPanel.add(search,gbc);
 
 	
@@ -123,6 +129,7 @@ public class Home implements ActionListener{
 	data_gbc.gridx = 0;
         data_gbc.gridy = 0;
 	data_gbc.weightx = 1;
+	data_gbc.fill = GridBagConstraints.HORIZONTAL;
 	//data_gbc.weighty=2;
 	data_gbc.anchor = GridBagConstraints.PAGE_START; 
         
@@ -132,13 +139,11 @@ public class Home implements ActionListener{
         gbc.gridy+=2;
         
         mainPanel.add(topPanel, main_gbc);
-        main_gbc.gridy+=2;
+        main_gbc.gridy++;
+        main_gbc.fill = GridBagConstraints.BOTH;
+        main_gbc.weighty=0;
         mainPanel.add(dataPanel, main_gbc);
-        
-        
-        
-        
-        
+      
     }
 
     public JPanel getpanel()
@@ -149,6 +154,7 @@ public class Home implements ActionListener{
     
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
+         getFiles();
     }
     
     
@@ -159,26 +165,21 @@ public class Home implements ActionListener{
             data_gbc.gridy = 0;
             //gbc.weighty = 1; 
             int n = files.size();  
-        System.out.println(n+" files");
+        
         if(n==0) 
         {
         	
         	dataPanel.add(noData, data_gbc);
         	//return;
         }
-    	//System.out.println(files);
+    	
     	for (int i = 0; i < n ; i++)  {
 
     		final fileinfo curr = files.get(i);
     		int fno = curr.fno; //number of files per user
     		if(fno==0) continue;
     		String str1 = Integer.toString(fno);
-    		//System.out.println(fno);
     		
-	       //long filesize=files.elementAt(i).length();
-	
-        
-	       
 	        userl=new JLabel(curr.usern);//username
 	        userl.setFont(userl.getFont().deriveFont(16.0f));
 	        data_gbc.anchor = GridBagConstraints.FIRST_LINE_START;	
@@ -191,7 +192,7 @@ public class Home implements ActionListener{
                 dataPanel.add(fnol,data_gbc);
                 data_gbc.gridx++;
                	//data_gbc.gridy++;
-                
+                System.out.println("port numbers:"+curr.status);
 	       for (int j = 0; j < fno; j++)
 	       {
 	       	
@@ -214,18 +215,9 @@ public class Home implements ActionListener{
 			//TODO: del only for own files, username for others
 			
 
-			download=new JButton(new AbstractAction(""+j) {
-			@Override
-			  public void actionPerformed(ActionEvent e) {
-			  downloadFile(curr.fpath[index], curr.fnm[index]);
-			   System.out.println("--result: "+(usern.equals(curr.usern)));
-			  }
-			});
 			
-			download.setText("Download");
-			data_gbc.gridx++;
-			gbc.ipady = 10; 
-			dataPanel.add(download, data_gbc);
+			
+			
 			
 			if(usern.equals( curr.usern)){
 			
@@ -249,6 +241,20 @@ public class Home implements ActionListener{
 			gbc.ipady = 10; 
 			data_gbc.gridx++;
 			dataPanel.add(delete, data_gbc);
+			}else
+			{
+				download=new JButton(new AbstractAction(""+j) {
+				@Override
+				  public void actionPerformed(ActionEvent e) {
+				  downloadFile(curr.status, curr.fpath[index], curr.fnm[index]);
+				   
+				  }
+				});
+				download.setText("Download");
+				data_gbc.gridx++;
+				gbc.ipady = 10; 
+				dataPanel.add(download, data_gbc);
+			
 			}
 			
 			data_gbc.gridy+=2;
@@ -257,15 +263,9 @@ public class Home implements ActionListener{
 			
 		}
 		
-		//System.out.println(files.length);
-		
-		//mainPanel.add(l4, gbc);
-		
 		
           }
-          
-                  
-            
+           
 	  dataPanel.repaint();
 	  dataPanel.revalidate();
           mainPanel.repaint();
@@ -277,24 +277,17 @@ public class Home implements ActionListener{
     public void getFiles()
     {
     	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
-                
-                
-               
-        for (int i = 0; i < finfo.size(); i++) {
-             System.out.println("---Test " + i + "---");
-             System.out.println("Username:" + finfo.get(i).usern);
-             //System.out.println("Status:" + finfo.elementAt(i).status);
-             if(finfo.get(i).fno>0)
-             {System.out.println("File name:" + finfo.get(i).fnm[0]);
-             System.out.println("File no.:" + finfo.get(i).fno);}
-      }
-      
-      refreshUI(finfo);
+        refreshUI(finfo);
     }
     
     
-    public void downloadFile(String path, String fname)
+    public void downloadFile(int port, String path, String fname)
     {
+    	DownloadThread d = new DownloadThread(port, path, fname);
+    	d.start();
+    	    	
+    	    	
+    /*
         File src = new File(path);
         JFileChooser jchooser= new JFileChooser(fname);
        
@@ -304,16 +297,21 @@ public class Home implements ActionListener{
  
             {
                 // set the label to the path of the selected file
-                System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
+                //System.out.println("pathhhhh:"+jchooser.getSelectedFile().toPath());
                 //File dest = jchooser.getSelectedFile();
                 try{
-                Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
+                //Files.copy(src.toPath(), jchooser.getSelectedFile().toPath());
+                     //make new file out of string downloaded
+                     //copy contents to file
+                     //pass new filepath 
+                     
+                     
                 }catch(Exception e)
                 {
                         System.out.println("error"+e.getMessage());
                 }
             }
-    
+    */
     }
     
     
@@ -349,7 +347,6 @@ public class Home implements ActionListener{
                   for (int i = 0; i < files.length; i++)  {
                   
                        fs[i]=(int)files[i].length();
-                       System.out.println("--length:"+ fs[i]);
                        fnm[i]=files[i].getName();
                        fpath[i]=files[i].getPath();
                   }

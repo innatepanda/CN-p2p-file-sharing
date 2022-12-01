@@ -22,7 +22,7 @@ void displayAll()
 {
 	FILE *fp;
 	struct fileinfo t;
-	//struct clientinfo_server c;
+	
 
 	fp=fopen(userdb,"rb");
 
@@ -93,12 +93,12 @@ void displayUsers()
 	fclose(fp);
 }
 
-void UPDATE_STATUS_LOGIN(char user[50])
+int UPDATE_STATUS_LOGIN(char user[50], int cli_port)
 {
 	FILE *fp;
 	struct fileinfo t;
 	fp=fopen(userdb,"r+");
-	
+	int num=0;
 	
 	while(1)
 	{
@@ -113,9 +113,10 @@ void UPDATE_STATUS_LOGIN(char user[50])
 		{
 			
 			
-			t.status=1;
+			t.status=cli_port;
 			fseek(fp, ftell(fp)-sizeof(struct fileinfo), SEEK_SET);
 			fwrite(&t,sizeof(t),1,fp);
+			num = t.filenum;
 			break;
 		}
 	}
@@ -123,6 +124,7 @@ void UPDATE_STATUS_LOGIN(char user[50])
 	
 	displayAll();
 	displayUsers();
+	return num;
 }
 
 void ADD_USER (char usrn[50],char pwd[50])
@@ -208,7 +210,7 @@ void UPDATE_STATUS_LOGOUT(char user[50])
 }
 
 
-void ADD_File(struct fileinfo finfo)
+void ADD_File(struct fileinfo finfo, int cli_port)
 {
 
 	FILE *fp; 
@@ -238,7 +240,7 @@ void ADD_File(struct fileinfo finfo)
                 	f1.filesize[f1.filenum+i]=finfo.filesize[i];
                 }
                 f1.filenum+=finfo.filenum;
-                f1.status=1;
+                f1.status=cli_port;
 		
 		fseek(fp, ftell(fp)-sizeof(f1), SEEK_SET);						
 		fwrite(&f1,sizeof(f1),1,fp);
@@ -253,7 +255,7 @@ void ADD_File(struct fileinfo finfo)
      
      if(found==0)
      {
-		finfo.status=1;
+		finfo.status=cli_port;
 		printf("adding new line\n");
 								
 		fwrite(&finfo,sizeof(finfo),1,fp);
@@ -294,7 +296,11 @@ void GET_File(int sockfd)
          	}
          	
          	if(f1[i].filenum>0 && f1[i].status)
-         	i++;
+         	{
+         		printf("status %d", f1[i].status);
+         		i++;
+         		
+         		}
          	
         }
         //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
@@ -303,9 +309,7 @@ void GET_File(int sockfd)
 	displayAll();
 	
 	 //printf("--send bytes rec: %d\n", sen);
-	  printf("Test choice  %d, %s, i=%d",f1[0].filenum,f1[0].filename[0], i);
-	  
-	     	  
+ 	  
     
 	//return f1;
 	int sen1=send(sockfd,(int *)&i, sizeof(int), 0);
@@ -313,7 +317,7 @@ void GET_File(int sockfd)
 	for(int j=0; j<i; j++)
 	{ 
 		sen=send(sockfd,(struct fileinfo *)&f1[j], sizeof(struct fileinfo), 0); 
-		printf("send status:%d %d\n\n", sen1, sen);
+		
 	}
 	
 
@@ -432,16 +436,14 @@ void DELETE(struct fileinfo finfo)
 	
 
 int sen,rec;
-int cliPort;
-struct sockaddr_in client;
 int main()
 {
       
 	int sockfd,bindvar,listenvar;
 	int clientfd[100];
-	int i=1,flag=0;
-	char serIP[16];int serPort;
-	char cliIP[16];
+	int i=1;
+	
+	
 	
 	
 	//int a= atoi(argv[1]);
@@ -463,7 +465,7 @@ int main()
 		server.sin_port=htons(4000);
 		server.sin_addr.s_addr=INADDR_ANY;
 		
-		int clen = sizeof(client);
+		int clen = sizeof(struct sockaddr_in );
 
 		bindvar = bind(sockfd,(const struct sockaddr *)(&server),sizeof(server));
 		if(bindvar==-1)
@@ -493,10 +495,14 @@ int main()
 	               {
 				
 	                   struct sockaddr_in client;	
+	                   struct connection conn;
 	        //printf("Waiting for the connection request from clients at server\n");	
 	                   clientfd[i] = accept(sockfd,(struct sockaddr*)&client,&clen);
 	                  
-	                   pthread_create(&thread_id[i],NULL,func,&clientfd[i]);
+	                  conn.client = client;
+	                  conn.id = clientfd[i];
+       			
+	                   pthread_create(&thread_id[i],NULL,func,&conn);
 	                   ++i;
 	          
                        }
@@ -507,40 +513,45 @@ int main()
   return 0;	
 
 }
-void *func(void *id)
+void *func(void *connection_info)
 {
     pthread_detach(pthread_self());
-    int *cfd = (int*)id;
+    
+    struct connection * conn = connection_info;
+    struct sockaddr_in client = conn->client;
+    
+    int cfd = (int)(conn->id);
     char sent_msg[500];
     struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
-   if(*cfd==-1)
+    int cli_port = ntohs(client.sin_port);
+    int lis_port = 0;
+    
+   if(cfd==-1)
    {
      printf("Accept failed....\n");
-     exit(1);
+     pthread_exit(1);
    }
    else
    {
-       cliPort=ntohs(client.sin_port);
-       printf("Client with port no %d connected to the server...\n",cliPort);
+       printf("...Client with port no %d connected to server...\n",cli_port);
       while(1)
       {
-         rec = recv(*cfd,&choice, sizeof(choice), 0);
+         rec = recv(cfd,&choice, sizeof(choice), 0);
          printf("choice %d\n", choice);
          
-         
-                
+            
 						
 /****************************  SIGNUP  ******************************/		
 
           if(choice==0)   //CODE FOR SIGNUP
           {
-          	rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
+          	rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
           	
 		  int found = SEARCH_USER(rec_msg.username,"p");
 		  if(found==1)
 		  {
 		      strcpy(sent_msg,"500 Username already exists\n");
-		      sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+		      sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 		        
 		  }
 		  else{
@@ -548,7 +559,7 @@ void *func(void *id)
 	               ADD_USER(rec_msg.username, rec_msg.password);
 		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
 		       printf("New client ( username : %s ) added to database.\n",rec_msg.username);
-		       sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+		       sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 							        
 		      // displayAll();
 				
@@ -562,34 +573,31 @@ void *func(void *id)
 						
         else if(choice==1)   //CODE FOR LOGIN
         {
-             	rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);								
+             	rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);	
+             	lis_port = (rec_msg.status);							
              //check for the details in database and return found or not found
 		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
-       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
-       	printf("login found %d\n", found);			
+	       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
+	       	printf("login found %d\n", found);
+	       	int n = 0;			
 		if(found==1)
 		{
 		   
+		   int n = UPDATE_STATUS_LOGIN(rec_msg.username, lis_port);
+		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",rec_msg.username,cli_port);
 		   strcpy(sent_msg,"200 f");
-		   sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
-								
-		   //update the status to online of the logged in user
-		  UPDATE_STATUS_LOGIN(rec_msg.username);
-		  printf("Client ( username : %s and password : %s) logged into server.Status updated to online\n",rec_msg.username,rec_msg.password);
+		   sen=send(cfd, (int *)&n, sizeof(int), 0);
+		   sen=send(cfd, sent_msg, strlen(sent_msg), 0);
+		   
 		  
-		  //displayAll();
-		   //return "Successfully Logedin";
-		   
-		   
-		   
-		   
 		}
 		
                
                 else if(found==0)
                 {
 	             strcpy(sent_msg,"500 nf");
-                     sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+	             sen=send(cfd, (int *)&n, sizeof(int), 0);
+                     sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	             printf("Incorrect details\n");
 	        }
 	     }
@@ -597,14 +605,14 @@ void *func(void *id)
 	     else if(choice == 2)
 	     {
 	     	
-	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
+	     	rec=recv(cfd,&finfo, sizeof(finfo), 0);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
-	     	   ADD_File(finfo);
+	     	   ADD_File(finfo, lis_port);
 	     	
 	     	
 	     	strcpy(sent_msg,"file added");
-                sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+                sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
 	     
@@ -612,48 +620,50 @@ void *func(void *id)
 	     else if(choice == 4)
 	     {
 	     	printf("--here--");
-	     	rec=recv(*cfd,&finfo, sizeof(finfo), 0);
+	     	rec=recv(cfd,&finfo, sizeof(finfo), 0);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
 	     	   DELETE(finfo);
 	     	
 	     	
 	     	strcpy(sent_msg,"200 file deleted");
-                sen=send(*cfd, sent_msg, strlen(sent_msg), 0);
+                sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
              
              
 		
 	     else if(choice==5){
-	          rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
+	          rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
-                  sen=send(*cfd, sent_msg, strlen(sent_msg),0);
-                  
+                  sen=send(cfd, sent_msg, strlen(sent_msg),0);
+                  //TODO remove this 
+                  close(cfd);
+                  pthread_exit(0);
 	     } 
 	     
 	     else if(choice == 6)
 	     {
 	
-	     	   GET_File(*cfd);
+	     	   GET_File(cfd);
 	    
 	     }
 	     
 	     else if(choice==-1){
-	         rec=recv(*cfd,&rec_msg, sizeof(rec_msg), 0);
+	         rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
 	          	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);
                   
                   
-                  close(*cfd);
+                  close(cfd);
                   pthread_exit(0);
                   //break;
 	     } 
 	     
-	     printf("---end of loop---");
+	     
 	}						
 	        
 	}
