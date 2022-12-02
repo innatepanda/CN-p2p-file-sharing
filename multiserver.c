@@ -277,7 +277,8 @@ void Delete_empty_users()
 
 void GET_File(int sockfd)
 {
-
+	clock_t start, end;
+	start = clock();
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
 	struct fileinfo f1[10];
@@ -304,7 +305,8 @@ void GET_File(int sockfd)
          	
         }
         //f1 = realloc(f1, (i+1)*sizeof(struct fileinfo));
-        
+        end = clock();
+        printf("\nTIME TAKEN: %f\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 	fclose(fp);
 	displayAll();
 	
@@ -319,6 +321,7 @@ void GET_File(int sockfd)
 		sen=send(sockfd,(struct fileinfo *)&f1[j], sizeof(struct fileinfo), 0); 
 		
 	}
+	
 	
 
 	

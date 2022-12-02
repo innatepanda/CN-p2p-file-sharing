@@ -142,7 +142,10 @@ public class Home implements ActionListener{
         main_gbc.gridy++;
         main_gbc.fill = GridBagConstraints.BOTH;
         main_gbc.weighty=0;
-        mainPanel.add(dataPanel, main_gbc);
+        JScrollPane scroller = new JScrollPane(dataPanel);
+        scroller.setPreferredSize(new Dimension( 800,400));
+        mainPanel.add(scroller, main_gbc);
+        g.pack();
       
     }
 
