@@ -255,9 +255,7 @@ void ADD_File(struct fileinfo finfo, int cli_port)
      
      if(found==0)
      {
-		finfo.status=cli_port;
-		printf("adding new line\n");
-								
+		finfo.status=cli_port;		
 		fwrite(&finfo,sizeof(finfo),1,fp);
      }
 		
@@ -298,7 +296,7 @@ void GET_File(int sockfd)
          	
          	if(f1[i].filenum>0 && f1[i].status)
          	{
-         		printf("status %d", f1[i].status);
+         		//printf("status %d", f1[i].status);
          		i++;
          		
          		}

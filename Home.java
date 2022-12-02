@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import java.util.*;
 import java.nio.file.Files;
-
+import java.util.Timer;
 class fileinfo{
    String usern;
    int status;
@@ -16,6 +16,7 @@ class fileinfo{
    fileinfo(){}
    
 }
+
 
 public class Home implements ActionListener{
     JTextField s; 
@@ -146,6 +147,10 @@ public class Home implements ActionListener{
         scroller.setPreferredSize(new Dimension( 800,400));
         mainPanel.add(scroller, main_gbc);
         g.pack();
+        
+        //Timer timer = new Timer(true);
+	//timer.schedule(new get_new_list(g), 0, 50000);
+	
       
     }
 
@@ -157,7 +162,15 @@ public class Home implements ActionListener{
     
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
-         getFiles();
+         //getFiles();
+         Timer t = new Timer();
+	t.schedule(new TimerTask() {
+	    @Override
+	    public void run() {
+	    System.out.println("GETTING FILES");
+	       getFiles();
+	    }
+	}, 0, 3*60000);//every 3 minutes
     }
     
     
