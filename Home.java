@@ -170,7 +170,7 @@ public class Home implements ActionListener{
 	    System.out.println("GETTING FILES");
 	       getFiles();
 	    }
-	}, 0, 3*60000);//every 3 minutes
+	},  3*60000, 3*60000);//every 3 minutes
     }
     
     
