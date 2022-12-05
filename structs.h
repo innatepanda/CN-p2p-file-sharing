@@ -31,6 +31,7 @@ struct clientinfo_server
 	time_t date[50]; //at time of reg, server assigns
 	
 };
+
 struct hashmap_details{
 
 	int max_size;
