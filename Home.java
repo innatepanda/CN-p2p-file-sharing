@@ -6,6 +6,7 @@ import javax.swing.AbstractAction;
 import java.util.*;
 import java.nio.file.Files;
 import java.util.Timer;
+
 class fileinfo{
    String usern;
    int status;
@@ -163,14 +164,15 @@ public class Home implements ActionListener{
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
          //getFiles();
-         Timer t = new Timer();
+         Timer t = new Timer(true);
 	t.schedule(new TimerTask() {
 	    @Override
 	    public void run() {
 	    System.out.println("GETTING FILES");
 	       getFiles();
 	    }
-	},  3*60000, 3*60000);//every 3 minutes
+	},  0, 3*60000);//every 3 minutes
+	
     }
     
     

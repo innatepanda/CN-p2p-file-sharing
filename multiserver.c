@@ -1,7 +1,7 @@
-#include<stdio.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdlib.h>
 #include <sys/un.h>
 #include <string.h>
 #include <netinet/in.h>
@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include "structs.h"
 void *func(void *id);
@@ -67,9 +68,11 @@ void displayUsers()
 	struct clientinfo_server t;
 
 	fp=fopen(users,"rb");
+	struct hashmap_details dets;
+        fread(&dets,sizeof(dets),1,fp);
 
 	printf("\n========================================================\n\n");
-	printf("\t\t Clients \n\n");
+	printf("\t\t%d Clients \n\n", dets.cur_size);
 	printf("========================================================\n\n");
 
 	printf("Username\tPassword\tDate Joined\n");
@@ -129,16 +132,29 @@ int UPDATE_STATUS_LOGIN(char user[50], int cli_port)
 
 void ADD_USER (char usrn[50],char pwd[50])
 {
-
-	FILE *fp; struct clientinfo_server c1; struct fileinfo f1;
-	time_t t;   // date of joining
-	time(&t);
 	
-	fp=fopen(users,"ab");
+	FILE *fp; struct clientinfo_server c1; struct fileinfo f1;
+	
+	
+	fp=fopen(users,"r+");
+	struct hashmap_details dets;
+	
+	
+	fread(&dets,sizeof(dets),1,fp);
+	if(!fp)
+	{
+		dets = hashmap_default;
+	}
+	else dets.cur_size++;
+	fseek(fp, ftell(fp)-sizeof(struct hashmap_details), SEEK_SET);
+	fwrite(&dets,sizeof(dets),1,fp);
+	
+	fseek(fp, 0, SEEK_END);
 	strcpy(c1.username,usrn);
 	strcpy(c1.password,pwd);
 	time(c1.date);
 	fwrite(&c1,sizeof(c1),1,fp);
+	
 	fclose(fp);
 	
 	displayUsers();
@@ -151,6 +167,8 @@ int SEARCH_USER(char usrn[50],char pwd[50]){
       struct clientinfo_server c2;
       int found=0;
       //printf("search user %s %s %d\n",usrn, pwd, strlen(pwd));
+      struct hashmap_details dets;
+      fread(&dets,sizeof(dets),1,fp);
       while(1)
       {
 	fread(&c2,sizeof(c2),1,fp);
