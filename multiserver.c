@@ -565,7 +565,7 @@ void *func(void *connection_info)
           if(choice==0)   //CODE FOR SIGNUP
           {
           	rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
-          	
+          	lis_port = (rec_msg.status);
 		  int found = SEARCH_USER(rec_msg.username,"p");
 		  if(found==1)
 		  {

@@ -69,6 +69,7 @@ int create_receiving_socket()
            server.sin_family=AF_INET;
            server.sin_port=htons(4000);
            server.sin_addr.s_addr=INADDR_ANY;
+           //inet_aton("192.168.194.154", &server.sin_addr);
            connvar=connect(sockfd,(const struct sockaddr *)(&server),sizeof(server));
            if(connvar==-1)
            {
@@ -83,11 +84,6 @@ int create_receiving_socket()
                serPort=ntohs(server.sin_port);
                printf("Connected to the server at IP address %s and port no %d...\n",serIP,serPort);
 		
-              //create fork
-              	//pthread_create(&listen_id,NULL,create_listening_thread, NULL);
-              	
-              //pthread_create(&listen_id,NULL,listening_thread, (sockfd));
-               
                return 1;
             }
 
