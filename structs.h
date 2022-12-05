@@ -1,3 +1,5 @@
+#define HASHMAP_MAX_SIZE 50
+
 struct connection
 {
  	struct sockaddr_in client;
@@ -20,6 +22,7 @@ struct clientinfo
 	
 };
 
+//TODO: for hashmap, array of struct client_server
 struct clientinfo_server
 {
 	char username[50];
@@ -29,6 +32,13 @@ struct clientinfo_server
 	
 };
 
+struct hashmap_details{
+
+	int max_size;
+	int cur_size;
+	
+} hashmap_default = {HASHMAP_MAX_SIZE, 1};
+ 
 struct signup
 {
 	char username[50];
