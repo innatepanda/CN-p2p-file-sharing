@@ -27,7 +27,7 @@ int connvar,sockfd;
 int rec,sen;
 char rec_msg[500],sent_msg[500];
 //char unm[50],pwd[50],fnm[50];
-int userChoice;
+int userChoice=0;
 struct fileinfo fi[50];
 pthread_t listen_id, thread_id[50];
 int n_files=0, d=0;
@@ -342,9 +342,9 @@ JNIEXPORT jstring JNICALL Java_Gui_File
    
    }			
    strcpy(client.username,uname);
-   userChoice=choice;
+   //userChoice=choice;
    
-   sen=send(sockfd, &userChoice, sizeof(userChoice), MSG_MORE );
+   sen=send(sockfd, &choice, sizeof(choice), MSG_MORE );
    
    sen=send(sockfd,(struct fileinfo *) &client, sizeof(client), 0); 
    
