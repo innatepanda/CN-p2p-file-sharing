@@ -344,7 +344,7 @@ JNIEXPORT jstring JNICALL Java_Gui_File
    strcpy(client.username,uname);
    userChoice=choice;
    
-   sen=send(sockfd, &userChoice, sizeof(userChoice), 0);
+   sen=send(sockfd, &userChoice, sizeof(userChoice), MSG_MORE );
    
    sen=send(sockfd,(struct fileinfo *) &client, sizeof(client), 0); 
    

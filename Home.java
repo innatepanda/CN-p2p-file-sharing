@@ -163,7 +163,7 @@ public class Home implements ActionListener{
     
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
-         getFiles();
+         //getFiles();
         /*Timer t = new Timer(true);
 	t.schedule(new TimerTask() {
 	    @Override
