@@ -163,8 +163,8 @@ public class Home implements ActionListener{
     
     public void changeText(String msg){
          welcome.setText("Welcome "+msg); 
-         //getFiles();
-        Timer t = new Timer(true);
+         getFiles();
+        /*Timer t = new Timer(true);
 	t.schedule(new TimerTask() {
 	    @Override
 	    public void run() {
@@ -172,7 +172,7 @@ public class Home implements ActionListener{
 	       getFiles();
 	    }
 	},  0, 3*60000);//every 3 minutes
-	
+	*/
 	
     }
     

@@ -297,7 +297,7 @@ void GET_File(int sockfd)
 	start = clock();
 	FILE *fp; 
 	//struct fileinfo *f1=(struct fileinfo *)calloc(100,sizeof(struct fileinfo));
-	struct fileinfo f1[10];
+	struct fileinfo f1[50];
 	int i=0;
 	fp=fopen(userdb,"r+");
 	
@@ -330,7 +330,7 @@ void GET_File(int sockfd)
  	  
     
 	//return f1;
-	int sen1=send(sockfd,(int *)&i, sizeof(int), 0);
+	int sen1=send(sockfd,(int *)&i, sizeof(int), MSG_MORE );
 	int sen;
 	for(int j=0; j<i; j++)
 	{ 
@@ -555,7 +555,7 @@ void *func(void *connection_info)
        printf("...Client with port no %d connected to server...\n",cli_port);
       while(1)
       {
-         rec = recv(cfd,&choice, sizeof(choice), 0);
+         rec = recv(cfd,&choice, sizeof(choice), MSG_WAITALL);
          printf("choice %d\n", choice);
          
             

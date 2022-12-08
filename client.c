@@ -68,8 +68,8 @@ int create_receiving_socket()
            
            server.sin_family=AF_INET;
            server.sin_port=htons(4000);
-           server.sin_addr.s_addr=INADDR_ANY;
-           //inet_aton("192.168.194.154", &server.sin_addr);
+           //server.sin_addr.s_addr=INADDR_ANY;
+           inet_aton("192.168.194.154", &server.sin_addr);
            connvar=connect(sockfd,(const struct sockaddr *)(&server),sizeof(server));
            if(connvar==-1)
            {
