@@ -295,8 +295,8 @@ public class Home implements ActionListener{
     
     public void getFiles()
     {
-    	ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
-        refreshUI(finfo);
+    	//ArrayList<fileinfo> finfo   = new ArrayList<fileinfo>(Arrays.asList(g.getStructArray()));
+        //refreshUI(finfo);
     }
     
     
@@ -371,6 +371,7 @@ public class Home implements ActionListener{
                   }
                        
                   result = g.File(usern, fnm,fpath,fs,files.length, 2);
+                  System.out.println(result);
                   getFiles();
                   
                   //TODO

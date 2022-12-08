@@ -525,6 +525,7 @@ int main()
 	                   ++i;
 	          
                        }
+                       pthread_exit(NULL);
              }
           }
         }	
@@ -548,14 +549,15 @@ void *func(void *connection_info)
    if(cfd==-1)
    {
      printf("Accept failed....\n");
-     pthread_exit(1);
+     pthread_exit(NULL);
    }
    else
    {
        printf("...Client with port no %d connected to server...\n",cli_port);
+      
       while(1)
       {
-         rec = recv(cfd,&choice, sizeof(choice), MSG_WAITALL);
+         rec = recv(cfd,&choice, sizeof(choice), 0);
          printf("choice %d\n", choice);
          
             
