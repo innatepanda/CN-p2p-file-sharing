@@ -557,7 +557,7 @@ void *func(void *connection_info)
       
       while(1)
       {
-         rec = recv(cfd,&choice, sizeof(choice), 0);
+         rec = recv(cfd,&choice, sizeof(choice), MSG_WAITALL);
          printf("choice %d\n", choice);
          
             
@@ -566,7 +566,7 @@ void *func(void *connection_info)
 
           if(choice==0)   //CODE FOR SIGNUP
           {
-          	rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
+          	rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
           	lis_port = (rec_msg.status);
 		  int found = SEARCH_USER(rec_msg.username,"p");
 		  if(found==1)
@@ -594,7 +594,7 @@ void *func(void *connection_info)
 						
         else if(choice==1)   //CODE FOR LOGIN
         {
-             	rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);	
+             	rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);	
              	lis_port = (rec_msg.status);							
              //check for the details in database and return found or not found
 		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
@@ -626,7 +626,7 @@ void *func(void *connection_info)
 	     else if(choice == 2)
 	     {
 	     	
-	     	rec=recv(cfd,&finfo, sizeof(finfo), 0);
+	     	rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
 	     	   ADD_File(finfo, lis_port);
@@ -641,7 +641,7 @@ void *func(void *connection_info)
 	     else if(choice == 4)
 	     {
 	     	printf("--here--");
-	     	rec=recv(cfd,&finfo, sizeof(finfo), 0);
+	     	rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
 	     	   DELETE(finfo);
@@ -655,14 +655,14 @@ void *func(void *connection_info)
              
 		
 	     else if(choice==5){
-	          rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
+	          rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
                   sen=send(cfd, sent_msg, strlen(sent_msg),0);
                   //TODO remove this 
                   close(cfd);
-                  pthread_exit(0);
+                  pthread_exit(NULL);
 	     } 
 	     
 	     else if(choice == 6)
@@ -673,14 +673,14 @@ void *func(void *connection_info)
 	     }
 	     
 	     else if(choice==-1){
-	         rec=recv(cfd,&rec_msg, sizeof(rec_msg), 0);
+	         rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
 	          	
 	          UPDATE_STATUS_LOGOUT(rec_msg.username);
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);
                   
                   
                   close(cfd);
-                  pthread_exit(0);
+                  pthread_exit(NULL);
                   //break;
 	     } 
 	     
