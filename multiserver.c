@@ -564,33 +564,29 @@ void *func(void *connection_info)
          rec = recv(cfd,&recv_msg, sizeof(recv_msg), 0);
          choice = recv_msg.choice;
          printf("choice %d\n", choice);
-         
             
 						
 /****************************  SIGNUP  ******************************/		
 
           if(choice==0)   //CODE FOR SIGNUP
           {
-          	//rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+          	
           	client_info = recv_msg.body.client;
           	lis_port = (client_info.status);
 		  int found = SEARCH_USER(client_info.username,"p");
 		  if(found==1)
 		  {
 		      strcpy(sent_msg,"500 Username already exists\n");
-		      sen=send(cfd, sent_msg, strlen(sent_msg), 0);
-		        
+		      
 		  }
 		  else{
-		       //ADD_USER(rec_msg.username, rec_msg.password,"",0,0);
+		       
 	               ADD_USER(client_info.username, client_info.password);
 		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
 		       printf("New client ( username : %s ) added to database.\n",client_info.username);
-		       sen=send(cfd, sent_msg, strlen(sent_msg), 0);
-							        
-		      // displayAll();
-				
-		  }				
+		      
+		  }	
+		  sen=send(cfd, sent_msg, strlen(sent_msg), 0);			
 	   
 	}				        
 	
@@ -600,7 +596,7 @@ void *func(void *connection_info)
 						
         else if(choice==1)   //CODE FOR LOGIN
         {
-             	//rec=recv(cfd,&client, sizeof(client), MSG_WAITALL);	
+             	
              	client_info = recv_msg.body.client;
              	lis_port = (client_info.status);							
              //check for the details in database and return found or not found
@@ -614,32 +610,26 @@ void *func(void *connection_info)
 		   int n = UPDATE_STATUS_LOGIN(client_info.username, lis_port);
 		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",client_info.username,cli_port);
 		   strcpy(sent_msg,"200 f");
-		   sen=send(cfd, (int *)&n, sizeof(int), 0);
-		   sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 		   
-		  
 		}
 		
                
                 else if(found==0)
                 {
 	             strcpy(sent_msg,"500 nf");
-	             sen=send(cfd, (int *)&n, sizeof(int), 0);
-                     sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	             printf("Incorrect details\n");
 	        }
+	        
+	        
+	        sen=send(cfd, (int *)&n, sizeof(int), 0);
+		sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	     }
 	     
 	     else if(choice == 2)
 	     {
 	     	
-	     	//rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
 	     	finfo = recv_msg.body.f;
-	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
-	     	
-	     	   ADD_File(finfo, lis_port);
-	     	
-	     	
+	     	ADD_File(finfo, lis_port);
 	     	strcpy(sent_msg,"file added");
                 sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	     
@@ -648,22 +638,16 @@ void *func(void *connection_info)
 	     
 	     else if(choice == 4)
 	     {
-	     	printf("--here--");
-	     	//rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
-	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
+	     	
 	     	finfo = recv_msg.body.f;
 	     	   DELETE(finfo);
-	     	
-	     	
 	     	strcpy(sent_msg,"200 file deleted");
                 sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 	     
 	     }
              
-             
-		
 	     else if(choice==5){
-	          //rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+	          
 	          client_info = recv_msg.body.client;
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",client_info.username);	
 	          UPDATE_STATUS_LOGOUT(client_info.username);
@@ -682,11 +666,10 @@ void *func(void *connection_info)
 	     }
 	     
 	     else if(choice==-1){
-	         //rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+	        
 	         client_info = recv_msg.body.client; 	
 	          UPDATE_STATUS_LOGOUT(client_info.username);
 	          printf("Client (%s) logged out of the server.Status updated to offline\n",client_info.username);
-                  
                   
                   close(cfd);
                   pthread_exit(NULL);
@@ -696,9 +679,7 @@ void *func(void *connection_info)
 	     
 	}						
 	        
-	}
-						
-
-						
-    }				
+      }
+					
+}				
 						
