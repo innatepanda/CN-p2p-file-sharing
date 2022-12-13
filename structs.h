@@ -57,6 +57,7 @@ struct login
 
 struct fileinfo //to write in database, prev struct + incoming struct, then write
 {
+	
 	char username[50];
 	char filename[50][50];
 	char filepath[50][50];
@@ -64,5 +65,16 @@ struct fileinfo //to write in database, prev struct + incoming struct, then writ
 	int filenum;
 	int status;
 	
+};
+
+//TODO: bring common elements out of union
+struct message
+{
+	int choice;
+	union b{
+	struct fileinfo f;
+	struct clientinfo client;
+	
+	}body;
 };
 

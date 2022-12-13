@@ -542,10 +542,14 @@ void *func(void *connection_info)
     
     int cfd = (int)(conn->id);
     char sent_msg[500];
-    struct clientinfo_server rec_msg; int choice; struct fileinfo finfo;
+    struct clientinfo client_info; 
+    int choice; 
+    struct fileinfo finfo;
     int cli_port = ntohs(client.sin_port);
     int lis_port = 0;
     
+    
+    struct message recv_msg;
    if(cfd==-1)
    {
      printf("Accept failed....\n");
@@ -557,7 +561,8 @@ void *func(void *connection_info)
       
       while(1)
       {
-         rec = recv(cfd,&choice, sizeof(choice), MSG_WAITALL);
+         rec = recv(cfd,&recv_msg, sizeof(recv_msg), 0);
+         choice = recv_msg.choice;
          printf("choice %d\n", choice);
          
             
@@ -566,9 +571,10 @@ void *func(void *connection_info)
 
           if(choice==0)   //CODE FOR SIGNUP
           {
-          	rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
-          	lis_port = (rec_msg.status);
-		  int found = SEARCH_USER(rec_msg.username,"p");
+          	//rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+          	client_info = recv_msg.body.client;
+          	lis_port = (client_info.status);
+		  int found = SEARCH_USER(client_info.username,"p");
 		  if(found==1)
 		  {
 		      strcpy(sent_msg,"500 Username already exists\n");
@@ -577,16 +583,16 @@ void *func(void *connection_info)
 		  }
 		  else{
 		       //ADD_USER(rec_msg.username, rec_msg.password,"",0,0);
-	               ADD_USER(rec_msg.username, rec_msg.password);
+	               ADD_USER(client_info.username, client_info.password);
 		       strcpy(sent_msg,"200 Successfully signed up and record added to database\n");
-		       printf("New client ( username : %s ) added to database.\n",rec_msg.username);
+		       printf("New client ( username : %s ) added to database.\n",client_info.username);
 		       sen=send(cfd, sent_msg, strlen(sent_msg), 0);
 							        
 		      // displayAll();
 				
 		  }				
 	   
-		}				        
+	}				        
 	
 	   
 
@@ -594,18 +600,19 @@ void *func(void *connection_info)
 						
         else if(choice==1)   //CODE FOR LOGIN
         {
-             	rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);	
-             	lis_port = (rec_msg.status);							
+             	//rec=recv(cfd,&client, sizeof(client), MSG_WAITALL);	
+             	client_info = recv_msg.body.client;
+             	lis_port = (client_info.status);							
              //check for the details in database and return found or not found
-		printf("details %s %s\n", rec_msg.username,rec_msg.password);	
-	       	int found=SEARCH_USER(rec_msg.username,rec_msg.password);
+		printf("details %s %s\n", client_info.username,client_info.password);	
+	       	int found=SEARCH_USER(client_info.username,client_info.password);
 	       	printf("login found %d\n", found);
 	       	int n = 0;			
 		if(found==1)
 		{
 		   
-		   int n = UPDATE_STATUS_LOGIN(rec_msg.username, lis_port);
-		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",rec_msg.username,cli_port);
+		   int n = UPDATE_STATUS_LOGIN(client_info.username, lis_port);
+		   printf("Client ( username : %s and port : %d) logged into server.Status updated to online\n",client_info.username,cli_port);
 		   strcpy(sent_msg,"200 f");
 		   sen=send(cfd, (int *)&n, sizeof(int), 0);
 		   sen=send(cfd, sent_msg, strlen(sent_msg), 0);
@@ -626,7 +633,8 @@ void *func(void *connection_info)
 	     else if(choice == 2)
 	     {
 	     	
-	     	rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
+	     	//rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
+	     	finfo = recv_msg.body.f;
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
 	     	
 	     	   ADD_File(finfo, lis_port);
@@ -641,9 +649,9 @@ void *func(void *connection_info)
 	     else if(choice == 4)
 	     {
 	     	printf("--here--");
-	     	rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
+	     	//rec=recv(cfd,&finfo, sizeof(finfo), MSG_WAITALL);
 	     	//printf("recvd file: %s %d", finfo.filename,finfo.filenum);
-	     	
+	     	finfo = recv_msg.body.f;
 	     	   DELETE(finfo);
 	     	
 	     	
@@ -655,9 +663,10 @@ void *func(void *connection_info)
              
 		
 	     else if(choice==5){
-	          rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
-	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);	
-	          UPDATE_STATUS_LOGOUT(rec_msg.username);
+	          //rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+	          client_info = recv_msg.body.client;
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",client_info.username);	
+	          UPDATE_STATUS_LOGOUT(client_info.username);
 	          strcpy(sent_msg,"200 Successfully Logged out of p2p server\n");
                   sen=send(cfd, sent_msg, strlen(sent_msg),0);
                   //TODO remove this 
@@ -673,10 +682,10 @@ void *func(void *connection_info)
 	     }
 	     
 	     else if(choice==-1){
-	         rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
-	          	
-	          UPDATE_STATUS_LOGOUT(rec_msg.username);
-	          printf("Client (%s) logged out of the server.Status updated to offline\n",rec_msg.username);
+	         //rec=recv(cfd,&rec_msg, sizeof(rec_msg), MSG_WAITALL);
+	         client_info = recv_msg.body.client; 	
+	          UPDATE_STATUS_LOGOUT(client_info.username);
+	          printf("Client (%s) logged out of the server.Status updated to offline\n",client_info.username);
                   
                   
                   close(cfd);

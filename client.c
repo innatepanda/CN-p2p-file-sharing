@@ -274,6 +274,9 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    const char *unm = (*env)->GetStringUTFChars(env, un,  NULL) ;
    const char *pwd = (*env)->GetStringUTFChars(env, pd,  NULL ) ;
    
+   struct message m1;
+   m1.choice=choice;
+   
    struct clientinfo client;
 			
    strcpy(client.username,unm);
@@ -292,18 +295,20 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    
    //client.filenum=fno;
    //printf("\nUser info %s , %d\n",client.username, client.status);
-   //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);	
-   sen=send(sockfd, &userChoice, sizeof(userChoice), 0);	
+   //printf("File info %s , %d , %d\n\n",client.filename,client.filesize, client.filenum);
    
-   if(userChoice==-1)
-   {
-	   exit(0);
-   }
-   else
-   {
-   	int n=0;
-   	sen=send(sockfd,(struct clientinfo *) &client, sizeof(client), 0); //sending login details
+   m1.body.client=client;
    	
+   //sen=send(sockfd, &userChoice, sizeof(userChoice), 0);	
+   
+   
+   	int n=0;
+   	sen=send(sockfd,(struct message *) &m1, sizeof(m1), 0); //sending login details
+   	
+   	if(choice==-1)
+	   {
+		   exit(0);
+	   }
    	if(choice)
    	rec = recv(sockfd, &n, sizeof(int), 0);
    	rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
@@ -313,7 +318,7 @@ JNIEXPORT jstring JNICALL Java_Gui_Auth
    	//printf("rec msg: %s",rec_msg);		
  	return  (*env)->NewStringUTF(env, rec_msg); 
  	
- }
+ 
 	         
 }
 
@@ -327,6 +332,8 @@ JNIEXPORT jstring JNICALL Java_Gui_File
    
     struct fileinfo client;
     client.filenum=fno;
+    //client.choice = choice;
+    
    if(choice == 2)
    update_n_files(n_files+fno);
    else update_n_files(n_files-1);
@@ -344,9 +351,11 @@ JNIEXPORT jstring JNICALL Java_Gui_File
    strcpy(client.username,uname);
    //userChoice=choice;
    
-   sen=send(sockfd, &choice, sizeof(choice), MSG_MORE );
-   
-   sen=send(sockfd,(struct fileinfo *) &client, sizeof(client), 0); 
+   //sen=send(sockfd, &choice, sizeof(choice), MSG_MORE );
+   struct message m1;
+   m1.choice = choice;
+   m1.body.f = client;
+   sen=send(sockfd,(struct message *) &m1, sizeof(m1), 0); 
    
    	
    rec=recv(sockfd, rec_msg, sizeof(rec_msg), 0); 
@@ -357,20 +366,21 @@ JNIEXPORT jstring JNICALL Java_Gui_File
 			
 
 }
-JNIEXPORT jint JNICALL Java_Gui_getUserNumber(JNIEnv *env, jobject obj){
+/*JNIEXPORT jint JNICALL Java_Gui_getUserNumber(JNIEnv *env, jobject obj){
    int choice=6,unum=0;
        
     sen=send(sockfd, &choice, sizeof(userChoice), 0);
     rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
-}
+}*/
 
 
 JNIEXPORT jobjectArray JNICALL Java_Gui_getStructArray(JNIEnv *env, jobject obj){
 
-    int choice=6;
+    
     uint32_t unum=0;
-       
-    sen=send(sockfd, &choice, sizeof(choice), 0);
+    struct message m1;
+    m1.choice = 6;   
+    sen=send(sockfd, &m1, sizeof(m1), 0);
     rec=recv(sockfd,(int*)&unum, sizeof(unum), 0);
     //unum = ntohl(unum);
     //printf("\nUser no.(---) %d \tuser bytes%d\n",unum, rec);
